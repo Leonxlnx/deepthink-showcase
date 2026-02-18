@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Nature - Features</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #070a08;
+            --text-primary: #f0f4f1;
+            --text-secondary: #9ab0a2;
+            --accent-gold: #c4a77d;
+            --accent-glow: rgba(196, 167, 125, 0.25);
+            --glass-bg: linear-gradient(145deg, rgba(20, 30, 24, 0.55) 0%, rgba(10, 15, 12, 0.35) 100%);
+            --glass-bg-hover: linear-gradient(145deg, rgba(26, 38, 30, 0.7) 0%, rgba(15, 22, 18, 0.5) 100%);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.18);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background-color: var(--accent-gold);
+            color: #000;
+        }
+
+        .spacer {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: #040605;
+        }
+
+        .environment-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            background-image: url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?auto=format&fit=crop&q=80&w=2560');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.55) contrast(1.15) saturate(0.85);
+            will-change: transform;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(7, 10, 8, 0.85) 0%, rgba(7, 10, 8, 0.98) 100%);
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.035;
+            mix-blend-mode: overlay;
+        }
+
+        #particle-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .features-section {
+            position: relative;
+            padding: 10rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 1280px;
+            width: 100%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+            max-width: 760px;
+            margin-inline: auto;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            background: rgba(196, 167, 125, 0.08);
+            border: 1px solid rgba(196, 167, 125, 0.2);
+            border-radius: 50px;
+            color: var(--accent-gold);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .title {
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .title i {
+            font-style: italic;
+            color: var(--accent-gold);
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 300px;
+            gap: 1.5rem;
+            perspective: 1500px;
+        }
+
+        .span-2x2 {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .span-1x2 {
+            grid-column: span 1;
+            grid-row: span 2;
+        }
+
+        .span-1x1 {
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+
+        .span-2x1 {
+            grid-column: span 2;
+            grid-row: span 1;
+        }
+
+        .feature-card {
+            position: relative;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            transform-style: preserve-3d;
+            cursor: crosshair;
+            opacity: 0;
+            transform: translateY(40px) scale(0.98);
+            transition: transform 0.6s var(--ease-out), border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.8s var(--ease-out);
+        }
+
+        .feature-card.revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .card-flare {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0.2;
+            filter: blur(40px);
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .mouse-spotlight {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.04), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .mouse-border {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(196, 167, 125, 0.5), transparent 40%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-card:hover .mouse-spotlight,
+        .feature-card:hover .mouse-border {
+            opacity: 1;
+        }
+
+        .feature-card:hover .card-flare {
+            opacity: 0.6;
+            transform: scale(1.2) translate(-20px, 20px);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 2.5rem;
+            transform: translateZ(30px);
+        }
+
+        .span-2x2 .card-content {
+            padding: 3.5rem;
+        }
+
+        .icon-wrapper {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(196, 167, 125, 0.08);
+            border: 1px solid rgba(196, 167, 125, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+            transition: all 0.5s var(--ease-out);
+            box-shadow: inset 0 0 20px rgba(196, 167, 125, 0.05);
+        }
+
+        .feature-card:hover .icon-wrapper {
+            transform: scale(1.15) rotate(-5deg);
+            background: rgba(196, 167, 125, 0.15);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(196, 167, 125, 0.1);
+            color: #fff;
+        }
+
+        .card-title {
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .span-2x2 .card-title {
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .span-2x2 .card-desc {
+            font-size: 1.15rem;
+            max-width: 65%;
+        }
+
+        .span-2x2 .card-art {
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            width: 350px;
+            height: 350px;
+            pointer-events: none;
+        }
+
+        .biosphere {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bio-core {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px var(--accent-glow);
+            animation: pulseCore 4s infinite alternate;
+        }
+
+        .bio-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.08);
+            animation: spin linear infinite;
+        }
+
+        .bio-ring-1 {
+            width: 140px;
+            height: 140px;
+            animation-duration: 15s;
+        }
+
+        .bio-ring-2 {
+            width: 220px;
+            height: 220px;
+            animation-duration: 25s;
+            animation-direction: reverse;
+            border-style: solid;
+            border-color: rgba(196, 167, 125, 0.15);
+        }
+
+        .bio-ring-3 {
+            width: 300px;
+            height: 300px;
+            animation-duration: 35s;
+        }
+
+        .bio-node {
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+        }
+
+        .bio-ring-2 .bio-node {
+            top: 50%;
+            left: -6px;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--accent-gold);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .span-1x2 .card-content {
+            justify-content: space-between;
+        }
+
+        .flowing-strands {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 12px;
+            height: 180px;
+            padding-bottom: 10px;
+        }
+
+        .strand {
+            width: 8px;
+            height: var(--h);
+            background: linear-gradient(to top, rgba(196, 167, 125, 0.05), rgba(196, 167, 125, 0.7));
+            border-radius: 10px;
+            transform-origin: bottom;
+            animation: flowWave 3s ease-in-out infinite alternate;
+            animation-delay: var(--delay);
+        }
+
+        .span-1x1 .card-content {
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .ripples {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ripple {
+            position: absolute;
+            border: 1px solid var(--accent-gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: rippleOut 4s cubic-bezier(0.2, 0.8, 0.3, 1) infinite;
+        }
+
+        .ripple-2 {
+            animation-delay: 1.3s;
+        }
+
+        .ripple-3 {
+            animation-delay: 2.6s;
+        }
+
+        .shield-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .grid-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        .grid-dot:nth-child(even) {
+            animation-delay: 0.3s;
+        }
+
+        .grid-dot:nth-child(5) {
+            background: var(--accent-gold);
+            transform: scale(1.5);
+            box-shadow: 0 0 10px var(--accent-glow);
+            animation: none;
+        }
+
+        .span-2x1 .card-content {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .span-2x1.reverse .card-content {
+            flex-direction: row-reverse;
+        }
+
+        .span-2x1 .text-box {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .chart-box {
+            flex: 1;
+            height: 100px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .chart-path {
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: drawChart 4s ease-out infinite;
+        }
+
+        .chart-fill {
+            opacity: 0;
+            animation: fadeFill 4s ease-out infinite;
+        }
+
+        .chart-dot {
+            opacity: 0;
+            animation: popDot 4s ease-out infinite;
+        }
+
+        .marquee-box {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scrollMarquee 15s linear infinite;
+        }
+
+        .marquee-track.reverse {
+            animation-direction: reverse;
+            animation-duration: 20s;
+        }
+
+        .marquee-group {
+            display: flex;
+            gap: 12px;
+            padding-right: 12px;
+        }
+
+        .pill {
+            padding: 6px 16px;
+            background: rgba(196, 167, 125, 0.08);
+            border: 1px solid rgba(196, 167, 125, 0.2);
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+        }
+
+        .pill.alt {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        @keyframes pulseCore {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes flowWave {
+            0% {
+                transform: scaleY(0.4);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rippleOut {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+                border-width: 2px;
+            }
+
+            100% {
+                width: 120px;
+                height: 120px;
+                opacity: 0;
+                border-width: 0px;
+            }
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes drawChart {
+            0% {
+                stroke-dashoffset: 500;
+            }
+
+            40%,
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes fadeFill {
+
+            0%,
+            10% {
+                opacity: 0;
+            }
+
+            40%,
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes popDot {
+
+            0%,
+            35% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            40%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes scrollMarquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        .delay-5 {
+            transition-delay: 0.5s;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: minmax(280px, auto);
+            }
+
+            .span-2x2 {
+                grid-column: span 2;
+            }
+
+            .span-1x2 {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+
+            .span-2x1 {
+                grid-column: span 2;
+            }
+
+            .span-2x2 .card-art {
+                opacity: 0.3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-section {
+                padding: 6rem 1.5rem;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .span-2x2,
+            .span-1x2,
+            .span-1x1,
+            .span-2x1 {
+                grid-column: span 1;
+                grid-row: auto;
+                min-height: 280px;
+            }
+
+            .span-2x1 .card-content,
+            .span-2x1.reverse .card-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2rem;
+            }
+
+            .span-2x1 .text-box {
+                max-width: 100%;
+            }
+
+            .chart-box,
+            .marquee-box {
+                width: 100%;
+                height: 120px;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .span-2x2 .card-desc {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="environment-wrapper">
+        <div class="bg-image"></div>
+        <div class="bg-overlay"></div>
+        <div class="noise"></div><canvas id="particle-canvas"></canvas>
+    </div>
+    <div class="spacer">Scroll Down to Discover</div>
+    <section class="features-section" id="features">
+        <div class="container">
+            <header class="section-header">
+                <div class="badge">Ecosystem Architecture</div>
+                <h2 class="title">Breathe Life Into<br><i>Your Workflow</i></h2>
+                <p class="subtitle">Experience a digital environment inspired by the natural world. Stripped of
+                    artificial noise, our architecture adapts organically to the rhythm of your ideas.</p>
+            </header>
+            <div class="bento-grid">
+                <div class="feature-card span-2x2 reveal">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div class="icon-wrapper"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <path d="M12 8v4" />
+                                <path d="M12 16h.01" />
+                            </svg></div>
+                        <div style="max-width:80%;position:relative;z-index:10;">
+                            <h3 class="card-title">Symbiotic Integration</h3>
+                            <p class="card-desc">Every module functions together in absolute harmony. Data flows
+                                seamlessly without rigid barriers, forming a living network of tools that evolve
+                                alongside your natural growth.</p>
+                        </div>
+                        <div class="card-art biosphere">
+                            <div class="bio-core"></div>
+                            <div class="bio-ring bio-ring-1">
+                                <div class="bio-node"></div>
+                            </div>
+                            <div class="bio-ring bio-ring-2">
+                                <div class="bio-node"></div>
+                            </div>
+                            <div class="bio-ring bio-ring-3">
+                                <div class="bio-node"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card span-1x2 reveal delay-1">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div>
+                            <div class="icon-wrapper"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                                </svg></div>
+                            <h3 class="card-title">Fluid State</h3>
+                            <p class="card-desc">Like water shaping stone, the interface effortlessly morphs to fit your
+                                specific operational needs.</p>
+                        </div>
+                        <div class="flowing-strands">
+                            <div class="strand" style="--delay:0s;--h:50px;"></div>
+                            <div class="strand" style="--delay:0.4s;--h:120px;"></div>
+                            <div class="strand" style="--delay:0.2s;--h:80px;"></div>
+                            <div class="strand" style="--delay:0.6s;--h:140px;"></div>
+                            <div class="strand" style="--delay:0.3s;--h:70px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card span-1x1 reveal delay-2">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div class="ripples">
+                            <div class="ripple"></div>
+                            <div class="ripple ripple-2"></div>
+                            <div class="ripple ripple-3"></div>
+                        </div>
+                        <h3 class="card-title" style="font-size:1.4rem;">Pure Focus</h3>
+                        <p class="card-desc" style="font-size:0.9rem;">Zero artificial noise. Only the essential remains
+                            to guide you into unbroken rhythm.</p>
+                    </div>
+                </div>
+                <div class="feature-card span-1x1 reveal delay-3">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div class="icon-wrapper" style="margin-bottom:1rem;width:40px;height:40px;"><svg width="20"
+                                height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg></div>
+                        <h3 class="card-title" style="font-size:1.4rem;">Deep Roots</h3>
+                        <p class="card-desc" style="font-size:0.9rem;">Impenetrable stability that withstands peak
+                            storms without a tremor.</p>
+                        <div class="shield-grid">
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                            <div class="grid-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card span-2x1 reveal delay-4">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div class="text-box">
+                            <div class="icon-wrapper"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M18 9l-5 5-4-4-4 4" />
+                                </svg></div>
+                            <h3 class="card-title">Living Analytics</h3>
+                            <p class="card-desc">Watch your growth unfold in real-time through metrics that feel alive.
+                            </p>
+                        </div>
+                        <div class="chart-box"><svg viewBox="0 0 300 100" class="sparkline" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="glowGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#c4a77d" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#c4a77d" stop-opacity="0" />
+                                    </linearGradient>
+                                </defs>
+                                <path class="chart-fill"
+                                    d="M0,100 L0,60 Q37,40 75,55 T150,30 T225,45 T300,20 L300,100 Z"
+                                    fill="url(#glowGradient)" />
+                                <path class="chart-path" d="M0,60 Q37,40 75,55 T150,30 T225,45 T300,20" fill="none"
+                                    stroke="#c4a77d" stroke-width="2" />
+                                <circle class="chart-dot" cx="300" cy="20" r="4" fill="#fff" />
+                            </svg></div>
+                    </div>
+                </div>
+                <div class="feature-card span-2x1 reverse reveal delay-5">
+                    <div class="card-flare"></div>
+                    <div class="mouse-spotlight"></div>
+                    <div class="mouse-border"></div>
+                    <div class="card-content">
+                        <div class="text-box">
+                            <h3 class="card-title">Natural Intuition</h3>
+                            <p class="card-desc">Gestures and transitions as smooth as a natural breeze.</p>
+                        </div>
+                        <div class="marquee-box">
+                            <div class="marquee-track">
+                                <div class="marquee-group">
+                                    <div class="pill">Organic Growth</div>
+                                    <div class="pill">Balance</div>
+                                    <div class="pill alt">Clarity</div>
+                                </div>
+                                <div class="marquee-group">
+                                    <div class="pill">Organic Growth</div>
+                                    <div class="pill">Balance</div>
+                                    <div class="pill alt">Clarity</div>
+                                </div>
+                            </div>
+                            <div class="marquee-track reverse">
+                                <div class="marquee-group">
+                                    <div class="pill alt">Performance</div>
+                                    <div class="pill alt">Security</div>
+                                    <div class="pill">Elegance</div>
+                                </div>
+                                <div class="marquee-group">
+                                    <div class="pill alt">Performance</div>
+                                    <div class="pill alt">Security</div>
+                                    <div class="pill">Elegance</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="spacer">End of Features</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bgImage = document.querySelector('.bg-image');
+            let scrollY = window.scrollY;
+            window.addEventListener('scroll', () => { scrollY = window.scrollY; requestAnimationFrame(() => { if (bgImage) bgImage.style.transform = `translateY(${scrollY * 0.15}px) scale(1.05)`; }); }, { passive: true });
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => { const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; card.style.setProperty('--mouse-x', `${x}px`); card.style.setProperty('--mouse-y', `${y}px`); if (window.innerWidth > 768) { const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -5; const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 5; card.style.transform = `perspective(1500px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`; } });
+                card.addEventListener('mouseenter', () => { card.style.transition = `transform 0.1s ease-out, border-color 0.4s ease, box-shadow 0.4s ease`; });
+                card.addEventListener('mouseleave', () => { card.style.transition = `transform 0.6s cubic-bezier(0.2,0.8,0.2,1), border-color 0.4s ease, box-shadow 0.4s ease`; card.style.transform = `perspective(1500px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)`; });
+            });
+            const revealObserver = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); observer.unobserve(entry.target); } }); }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d'); let particles = []; let width, height;
+            function initParticles() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; particles = []; const density = Math.floor((width * height) / 15000); for (let i = 0; i < density; i++) particles.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 1.5 + 0.5, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2 - 0.15, alpha: Math.random() * 0.4 + 0.1, phase: Math.random() * Math.PI * 2 }); }
+            function animateParticles() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.x += p.vx + Math.sin(p.phase) * 0.1; p.y += p.vy; p.phase += 0.01; if (p.x < -10) p.x = width + 10; if (p.x > width + 10) p.x = -10; if (p.y < -10) p.y = height + 10; if (p.y > height + 10) p.y = -10; ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,167,125,${p.alpha})`; ctx.fill(); }); requestAnimationFrame(animateParticles); }
+            window.addEventListener('resize', initParticles); initParticles(); animateParticles();
+        });
+    </script>
+</body>
+
+</html>

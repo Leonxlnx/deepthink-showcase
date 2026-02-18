@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Organic Features</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Outfit:wght@200;300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #060907;
+            --text-main: #EFECE6;
+            --text-muted: #8A9A90;
+            --accent-sand: #D4C4A8;
+            --accent-sage: #7A8E82;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --card-hover: rgba(212, 196, 168, 0.12);
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: rgba(212, 196, 168, 0.2);
+            color: #fff;
+        }
+
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            width: 110%;
+            height: 110%;
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2560&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.25) contrast(1.15) saturate(0.8);
+            will-change: transform;
+        }
+
+        .bg-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 10%, var(--bg-deep) 100%), linear-gradient(to bottom, transparent 60%, var(--bg-deep) 100%);
+        }
+
+        .noise {
+            position: absolute;
+            inset: 0;
+            opacity: 0.035;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        #canvas-dust {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hero-spacer {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-spacer h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 300;
+        }
+
+        .hero-spacer p {
+            color: var(--text-muted);
+            margin-top: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .scroll-indicator {
+            margin-top: 3rem;
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, var(--accent-sand), transparent);
+            animation: scrollDown 2s infinite;
+        }
+
+        @keyframes scrollDown {
+            0% {
+                transform: scaleY(0);
+                transform-origin: top;
+            }
+
+            50% {
+                transform: scaleY(1);
+                transform-origin: top;
+            }
+
+            50.1% {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+
+            100% {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+        }
+
+        .features {
+            position: relative;
+            padding: 6rem 2rem 10rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.2rem;
+            background: rgba(212, 196, 168, 0.05);
+            border: 1px solid rgba(212, 196, 168, 0.2);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent-sand);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h2 {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h2 i {
+            color: var(--accent-sage);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 340px;
+            gap: 1.5rem;
+        }
+
+        .card {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            transform-style: preserve-3d;
+            cursor: default;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.4s ease;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:nth-child(1) {
+            transition-delay: 0.0s;
+        }
+
+        .card:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+
+        .card:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .card:nth-child(4) {
+            transition-delay: 0.3s;
+        }
+
+        .card:nth-child(5) {
+            transition-delay: 0.4s;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-hover), transparent 40%);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            border-color: rgba(212, 196, 168, 0.25);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-sand);
+            margin-bottom: auto;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease, background 0.4s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card h3 {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .c-large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .c-wide {
+            grid-column: span 2;
+        }
+
+        .c-square {
+            grid-column: span 1;
+        }
+
+        .c-full {
+            grid-column: span 4;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3rem 4rem;
+        }
+
+        .c-large h3 {
+            font-size: 3rem;
+        }
+
+        .c-large p {
+            font-size: 1.1rem;
+            max-width: 85%;
+        }
+
+        .network-visual {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .blob {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle at center, rgba(122, 142, 130, 0.2), transparent 70%);
+            animation: pulseBlob 8s alternate infinite ease-in-out;
+            filter: blur(20px);
+        }
+
+        @keyframes pulseBlob {
+            100% {
+                transform: scale(1.2) translate(-20px, 20px);
+                opacity: 0.5;
+            }
+        }
+
+        .branch-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .branch-path {
+            fill: none;
+            stroke: var(--accent-sand);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover .branch-path {
+            stroke-dashoffset: 0;
+        }
+
+        .branch-node {
+            fill: #fff;
+            opacity: 0;
+            transform: scale(0);
+            transform-origin: center;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .card:hover .branch-node {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .wave-box {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0.4;
+            mask-image: linear-gradient(to top, black, transparent);
+            -webkit-mask-image: linear-gradient(to top, black, transparent);
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%237A8E82'/%3E%3C/svg%3E");
+            background-size: 50% 100%;
+            animation: wave 10s linear infinite;
+            opacity: 0.3;
+        }
+
+        .wave:nth-child(2) {
+            bottom: -15px;
+            animation: wave 15s linear infinite reverse;
+            opacity: 0.4;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .compass-ring {
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            width: 100px;
+            height: 100px;
+            border: 1px dashed rgba(212, 196, 168, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            animation: spinRing 20s linear infinite;
+        }
+
+        @keyframes spinRing {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .compass-needle {
+            position: absolute;
+            width: 2px;
+            height: 70px;
+            background: linear-gradient(to bottom, var(--accent-sand) 50%, transparent 50%);
+            border-radius: 2px;
+            transform: rotate(45deg);
+            transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .card:hover .compass-needle {
+            transform: rotate(405deg);
+        }
+
+        .orb {
+            position: absolute;
+            right: 3rem;
+            top: 3rem;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.02));
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            animation: float 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .c-full {
+            overflow: hidden;
+        }
+
+        .c-full-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2400&auto=format&fit=crop') center/cover;
+            opacity: 0.1;
+            mix-blend-mode: luminosity;
+            filter: grayscale(100%);
+            transition: opacity 1s ease, transform 1.5s ease, filter 1s ease;
+        }
+
+        .card:hover .c-full-bg {
+            opacity: 0.25;
+            filter: grayscale(0%);
+            transform: scale(1.03);
+        }
+
+        .c-full .card-content {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .c-full-text {
+            max-width: 450px;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 4rem;
+            z-index: 2;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-num {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            color: var(--accent-sand);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .stat-num span {
+            font-size: 1.5rem;
+            margin-left: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .deco-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, transparent, var(--accent-sand), transparent);
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 3;
+        }
+
+        .card:hover .deco-line {
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .bento {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: auto;
+            }
+
+            .c-full {
+                grid-column: span 2;
+            }
+
+            .c-full .card-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 3rem;
+            }
+
+            .c-large,
+            .c-wide {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .bento {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                grid-column: span 1 !important;
+                grid-row: span 1 !important;
+                min-height: 300px;
+                padding: 2rem;
+            }
+
+            .header h2 {
+                font-size: 2.5rem;
+            }
+
+            .stat-num {
+                font-size: 3rem;
+            }
+
+            .stats-container {
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .c-large h3 {
+                font-size: 2.5rem;
+            }
+
+            .c-large p {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-container">
+        <div class="bg-image" id="bg-image"></div>
+        <div class="bg-vignette"></div>
+        <div class="noise"></div><canvas id="canvas-dust"></canvas>
+    </div>
+    <div class="hero-spacer">
+        <h1>Breathe in the digital.</h1>
+        <p>A new paradigm of interaction</p>
+        <div class="scroll-indicator"></div>
+    </div>
+    <section class="features" id="features">
+        <div class="header" id="header-reveal">
+            <div class="badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                </svg> Organic Framework</div>
+            <h2>Cultivate your vision.<br><i>Naturally refined.</i></h2>
+            <p>Experience an ecosystem built without artificial noise. We stripped away the neon to deliver pure,
+                intentional craftsmanship that adapts intuitively to your natural workflow.</p>
+        </div>
+        <div class="bento">
+            <div class="card c-large">
+                <div class="network-visual">
+                    <div class="blob"></div><svg class="branch-svg" viewBox="0 0 200 200" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path class="branch-path" d="M180 200 C150 140 100 120 40 40" />
+                        <path class="branch-path" d="M120 160 C90 120 50 100 20 120" style="transition-delay:0.2s;" />
+                        <path class="branch-path" d="M100 110 C140 80 160 50 150 20" style="transition-delay:0.4s;" />
+                        <circle class="branch-node" cx="40" cy="40" r="4" style="transition-delay:1.6s;" />
+                        <circle class="branch-node" cx="20" cy="120" r="3" style="transition-delay:1.8s;" />
+                        <circle class="branch-node" cx="150" cy="20" r="5" style="transition-delay:2.0s;" />
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22V10" />
+                            <path d="M12 16l-4-4" />
+                            <path d="M12 12l4-4" />
+                            <path d="M12 10V4c0-1.1-.9-2-2-2S8 2.9 8 4s.9 2 2 2h2z" />
+                        </svg></div>
+                    <h3>Symbiotic Growth</h3>
+                    <p>Our algorithms expand seamlessly, ensuring resource allocation goes exactly where it's needed
+                        organically.</p>
+                </div>
+            </div>
+            <div class="card c-wide">
+                <div class="wave-box">
+                    <div class="wave"></div>
+                    <div class="wave"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.6 2 5.2 2 2.5 0 2.5-2 5.2-2 1.3 0 1.9.5 2.5 1" />
+                            <path
+                                d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.6 2 5.2 2 2.5 0 2.5-2 5.2-2 1.3 0 1.9.5 2.5 1" />
+                            <path
+                                d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.6 2 5.2 2 2.5 0 2.5-2 5.2-2 1.3 0 1.9.5 2.5 1" />
+                        </svg></div>
+                    <h3>Fluid Dynamics</h3>
+                    <p>Remove friction from your daily operations. Data processes flow into one another effortlessly.
+                    </p>
+                </div>
+            </div>
+            <div class="card c-square">
+                <div class="compass-ring">
+                    <div class="compass-needle"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                        </svg></div>
+                    <h3>True Precision</h3>
+                    <p>Navigate complex datasets with pinpoint accuracy and unwavering direction.</p>
+                </div>
+            </div>
+            <div class="card c-square">
+                <div class="orb"></div>
+                <div class="card-content">
+                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                        </svg></div>
+                    <h3>Crystal Clarity</h3>
+                    <p>Distill overwhelming technical noise into clear, beautiful, actionable insights.</p>
+                </div>
+            </div>
+            <div class="card c-full">
+                <div class="c-full-bg"></div>
+                <div class="deco-line"></div>
+                <div class="card-content c-full-text">
+                    <div class="card-icon" style="margin-bottom:1.5rem;"><svg width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="M5 5l1.5 1.5" />
+                            <path d="M17.5 17.5L19 19" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="M5 19l1.5-1.5" />
+                            <path d="M17.5 6.5L19 5" />
+                            <circle cx="12" cy="12" r="4" />
+                        </svg></div>
+                    <h3>Sustainable Design</h3>
+                    <p>Built for the long haul. Our architecture minimizes computational waste.</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-num" data-target="99.9">0<span>%</span></div>
+                        <div class="stat-label">Uptime Harmony</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num" data-target="100">0<span>+</span></div>
+                        <div class="stat-label">Organic Modules</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-num" data-target="0.2">0<span>s</span></div>
+                        <div class="stat-label">Micro-Render</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="hero-spacer" style="height:40vh;"></div>
+    <script>
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => { const rect = card.getBoundingClientRect(); card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`); card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`); if (window.innerWidth > 1024) { const cX = rect.width / 2, cY = rect.height / 2; card.style.transform = `perspective(1000px) rotateX(${((e.clientY - rect.top - cY) / cY) * -3}deg) rotateY(${((e.clientX - rect.left - cX) / cX) * 3}deg) translateY(-5px)`; card.style.transition = 'border-color 0.4s ease'; } });
+            card.addEventListener('mouseleave', () => { card.style.transition = 'transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.4s ease'; card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)'; });
+            card.addEventListener('mouseenter', () => { card.style.transition = 'transform 0.1s ease-out, border-color 0.4s ease'; });
+        });
+        const obs = new IntersectionObserver((entries, o) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); const stats = e.target.querySelectorAll('.stat-num'); stats.forEach(s => { if (!s.classList.contains('counted')) { const t = parseFloat(s.getAttribute('data-target')); animateValue(s, 0, t, 2500); s.classList.add('counted'); } }); o.unobserve(e.target); } }); }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+        obs.observe(document.querySelector('.header')); cards.forEach(c => obs.observe(c));
+        function animateValue(obj, start, end, dur) { let ts = null; const sp = obj.querySelector('span') ? obj.querySelector('span').outerHTML : ''; const step = (t) => { if (!ts) ts = t; const p = Math.min((t - ts) / dur, 1); const e = 1 - Math.pow(1 - p, 4); let v = start + (end - start) * e; obj.innerHTML = (end % 1 !== 0 ? v.toFixed(1) : Math.floor(v)) + sp; if (p < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+        const bgImage = document.getElementById('bg-image'); window.addEventListener('scroll', () => { requestAnimationFrame(() => { bgImage.style.transform = `translateY(${window.scrollY * 0.15}px)`; }); });
+        const canvas = document.getElementById('canvas-dust'), ctx = canvas.getContext('2d'); let particles = []; function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.addEventListener('resize', resizeCanvas); resizeCanvas();
+        class Particle { constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 0.5; this.speedY = -(Math.random() * 0.4 + 0.1); this.speedX = (Math.random() - 0.5) * 0.4; this.opacity = Math.random() * 0.5 + 0.1; this.color = Math.random() > 0.5 ? '212,196,168' : '239,236,230'; this.pulseSpeed = Math.random() * 0.02 + 0.01; this.pulse = 0; } update() { this.y += this.speedY; this.x += this.speedX; this.pulse += this.pulseSpeed; if (this.y < -10) { this.y = canvas.height + 10; this.x = Math.random() * canvas.width; } } draw() { const o = this.opacity + Math.sin(this.pulse) * 0.2; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(${this.color},${Math.max(0, o)})`; ctx.fill(); } }
+        for (let i = 0; i < 60; i++)particles.push(new Particle()); function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateCanvas); } animateCanvas();
+    </script>
+</body>
+
+</html>
