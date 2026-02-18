@@ -4,25 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepThink Showcase — Premium UI Collection</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
+    <title>DeepThink Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #030712;
-            --surface: rgba(15, 23, 42, 0.5);
-            --surface-hover: rgba(15, 23, 42, 0.8);
-            --border: rgba(255, 255, 255, 0.06);
-            --border-hover: rgba(56, 189, 248, 0.4);
-            --accent: #38bdf8;
-            --accent-dim: rgba(56, 189, 248, 0.15);
-            --teal: #2dd4bf;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --text-faint: #475569;
-        }
-
         *,
         *::before,
         *::after {
@@ -32,261 +16,110 @@
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
         }
 
-        /* ──── Ambient Background ──── */
-        .ambient {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .ambient-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.07;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .ambient-orb:nth-child(1) {
-            width: 600px;
-            height: 600px;
-            top: -10%;
-            left: 30%;
-            background: var(--accent);
-            animation-delay: 0s;
-        }
-
-        .ambient-orb:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            bottom: 10%;
-            right: 10%;
-            background: var(--teal);
-            animation-delay: -7s;
-        }
-
-        .ambient-orb:nth-child(3) {
-            width: 500px;
-            height: 500px;
-            top: 40%;
-            left: -5%;
-            background: #3b82f6;
-            animation-delay: -14s;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            33% {
-                transform: translate(30px, -40px) scale(1.05);
-            }
-
-            66% {
-                transform: translate(-20px, 20px) scale(0.95);
-            }
-        }
-
-        /* ──── Dot Grid ──── */
-        .dot-grid {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 32px 32px;
-            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 100%);
-            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 100%);
-        }
-
-        /* ──── Layout ──── */
-        .page {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero {
-            min-height: 55vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 6rem 2rem 3rem;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 16px;
-            border-radius: 100px;
-            background: var(--accent-dim);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--accent);
-            letter-spacing: 0.03em;
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.8s ease both;
-        }
-
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent);
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-        }
-
-        .hero-title {
-            font-size: clamp(2.8rem, 7vw, 5.5rem);
-            font-weight: 700;
-            line-height: 1.05;
-            letter-spacing: -0.04em;
-            background: linear-gradient(180deg, #ffffff 30%, #64748b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            max-width: 800px;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 0.8s 0.1s ease both;
-        }
-
-        .hero-sub {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            color: var(--text-muted);
-            line-height: 1.7;
-            max-width: 560px;
-            font-weight: 300;
-            animation: fadeInUp 0.8s 0.2s ease both;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ──── Showcase Grid ──── */
-        .showcase-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 2rem 6rem;
-        }
-
-        .section-header {
+        /* ── Nav ── */
+        nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 3rem;
+            border-bottom: 1px solid #1a1a1a;
         }
 
-        .section-label {
+        .nav-logo {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+
+        .nav-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            padding: 5rem 3rem 3rem;
+            max-width: 720px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: #777;
+            line-height: 1.7;
+            max-width: 520px;
+        }
+
+        /* ── Grid ── */
+        .grid-section {
+            padding: 2rem 3rem 5rem;
+        }
+
+        .grid-label {
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--text-faint);
-            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #555;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
-        .section-count {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text-faint);
-            padding: 4px 12px;
-            border: 1px solid var(--border);
-            border-radius: 100px;
-        }
-
-        .showcase-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.25rem;
         }
 
-        @media (max-width: 480px) {
-            .showcase-grid {
+        @media (max-width: 500px) {
+            .grid {
                 grid-template-columns: 1fr;
+            }
+
+            nav,
+            .hero,
+            .grid-section {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
             }
         }
 
-        /* ──── Showcase Card ──── */
-        .showcase-card {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            cursor: pointer;
+        /* ── Card ── */
+        .card {
+            display: block;
             text-decoration: none;
             color: inherit;
-            display: flex;
-            flex-direction: column;
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.25s;
         }
 
-        .showcase-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            z-index: 1;
-            background: radial-gradient(500px circle at var(--mx, -500px) var(--my, -500px), rgba(255, 255, 255, 0.06), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
+        .card:hover {
+            border-color: #333;
+            transform: translateY(-3px);
         }
 
-        .showcase-card:hover {
-            border-color: var(--border-hover);
-            transform: translateY(-6px);
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 40px -10px rgba(56, 189, 248, 0.08);
-        }
-
-        .showcase-card:hover::before {
-            opacity: 1;
-        }
-
-        /* Preview Frame */
         .card-preview {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 10;
+            aspect-ratio: 16 / 9.5;
             background: #000;
             overflow: hidden;
         }
@@ -300,237 +133,125 @@
             pointer-events: none;
         }
 
-        .preview-overlay {
+        .card-preview-overlay {
             position: absolute;
             inset: 0;
-            z-index: 2;
-            background: linear-gradient(to top, rgba(3, 7, 18, 0.95) 0%, rgba(3, 7, 18, 0) 50%);
-            transition: background 0.4s;
+            background: linear-gradient(to top, #111 0%, transparent 40%);
         }
 
-        .showcase-card:hover .preview-overlay {
-            background: linear-gradient(to top, rgba(3, 7, 18, 0.8) 0%, rgba(3, 7, 18, 0) 40%);
+        .card-body {
+            padding: 1.25rem 1.5rem 1.5rem;
         }
 
-        /* Card Info */
-        .card-info {
-            position: relative;
-            z-index: 3;
-            padding: 1.5rem 1.5rem 1.2rem;
-            margin-top: -3rem;
+        .card-number {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #555;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
         }
 
         .card-tags {
             display: flex;
             gap: 6px;
+            margin-top: 1rem;
             flex-wrap: wrap;
-            margin-bottom: 0.8rem;
         }
 
-        .card-tag {
+        .tag {
             font-size: 0.65rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
             padding: 4px 10px;
-            border-radius: 6px;
-            background: var(--accent-dim);
-            color: var(--accent);
-            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 100px;
+            background: #1a1a1a;
+            color: #888;
+            font-weight: 500;
+            border: 1px solid #222;
         }
 
-        .card-tag.teal {
-            background: rgba(45, 212, 191, 0.1);
-            color: var(--teal);
-            border-color: rgba(45, 212, 191, 0.15);
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-
-        .card-desc {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* Card Footer */
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem 1.5rem;
-            position: relative;
-            z-index: 3;
-        }
-
-        .card-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-faint);
-        }
-
-        .card-arrow {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .card-arrow svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--text-faint);
-            transition: stroke 0.3s, transform 0.3s;
-        }
-
-        .showcase-card:hover .card-arrow {
-            background: var(--accent-dim);
-            border-color: rgba(56, 189, 248, 0.3);
-        }
-
-        .showcase-card:hover .card-arrow svg {
-            stroke: var(--accent);
-            transform: translateX(2px);
-        }
-
-        /* ──── Footer ──── */
-        .site-footer {
-            text-align: center;
-            padding: 3rem 2rem 4rem;
-            border-top: 1px solid var(--border);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-brand {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-faint);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        .footer-sub {
+        /* ── Footer ── */
+        footer {
+            padding: 2.5rem 3rem;
+            border-top: 1px solid #1a1a1a;
             font-size: 0.75rem;
-            color: var(--text-faint);
-            margin-top: 0.5rem;
-            opacity: 0.6;
-        }
-
-        /* ──── Scroll Reveal ──── */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
+            color: #444;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="ambient">
-        <div class="ambient-orb"></div>
-        <div class="ambient-orb"></div>
-        <div class="ambient-orb"></div>
-    </div>
-    <div class="dot-grid"></div>
+    <nav>
+        <div class="nav-logo">DeepThink Showcase</div>
+        <div class="nav-count">2 Projects</div>
+    </nav>
 
-    <div class="page">
+    <section class="hero">
+        <h1>Showcase Collection</h1>
+        <p>A curated set of interactive UI experiments and creative web projects, each built as a standalone experience.
+        </p>
+    </section>
 
-        <!-- ──── Hero ──── -->
-        <section class="hero">
-            <div class="badge"><span class="badge-dot"></span> Curated Collection</div>
-            <h1 class="hero-title">DeepThink Showcase</h1>
-            <p class="hero-sub">A premium collection of handcrafted UI experiments, micro-animations, and interactive
-                design showcases.</p>
-        </section>
+    <section class="grid-section">
+        <div class="grid-label">All Projects</div>
+        <div class="grid">
 
-        <!-- ──── Showcase Grid ──── -->
-        <section class="showcase-section">
-            <div class="section-header">
-                <span class="section-label">All Showcases</span>
-                <span class="section-count">01</span>
-            </div>
-
-            <div class="showcase-grid">
-
-                <!-- Showcase #1 -->
-                <a href="premium-micro-animations-ui/" class="showcase-card reveal">
-                    <div class="card-preview">
-                        <iframe src="premium-micro-animations-ui/" loading="lazy" tabindex="-1"
-                            aria-hidden="true"></iframe>
-                        <div class="preview-overlay"></div>
+            <!-- #001 -->
+            <a href="premium-micro-animations-ui/" class="card">
+                <div class="card-preview">
+                    <iframe src="premium-micro-animations-ui/" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+                    <div class="card-preview-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <div class="card-number">#001</div>
+                    <div class="card-title">The Modern Stack</div>
+                    <p class="card-desc">Glass-morphism cards with live code editors, algorithm visualizers, CSS
+                        morphing, and animated data dashboards.</p>
+                    <div class="card-tags">
+                        <span class="tag">Micro-Animations</span>
+                        <span class="tag">Interactive UI</span>
+                        <span class="tag">CSS</span>
                     </div>
-                    <div class="card-info">
-                        <div class="card-tags">
-                            <span class="card-tag">Micro-Animations</span>
-                            <span class="card-tag teal">Interactive UI</span>
-                        </div>
-                        <h2 class="card-title">The Modern Stack</h2>
-                        <p class="card-desc">Premium glass-morphism cards with live code editors, algorithm visualizers,
-                            CSS morphing, and animated data dashboards.</p>
+                </div>
+            </a>
+
+            <!-- #002 -->
+            <a href="acoustic-studio-3d/" class="card">
+                <div class="card-preview">
+                    <iframe src="acoustic-studio-3d/" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+                    <div class="card-preview-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <div class="card-number">#002</div>
+                    <div class="card-title">Acoustic Studio 3D</div>
+                    <p class="card-desc">A 3D guitar rhythm game with realistic audio synthesis, free-play mode, and
+                        multiple difficulty tracks.</p>
+                    <div class="card-tags">
+                        <span class="tag">Three.js</span>
+                        <span class="tag">Web Audio</span>
+                        <span class="tag">3D</span>
                     </div>
-                    <div class="card-footer">
-                        <span class="card-meta">#001 — 4 Components</span>
-                        <div class="card-arrow">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-                </a>
+                </div>
+            </a>
 
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- ──── Footer ──── -->
-        <footer class="site-footer">
-            <div class="footer-brand">DeepThink Showcase</div>
-            <div class="footer-sub">Built with precision.</div>
-        </footer>
-
-    </div>
-
-    <script>
-        /* ── Spotlight hover on cards ── */
-        document.querySelectorAll('.showcase-card').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const r = card.getBoundingClientRect();
-                card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-                card.style.setProperty('--my', `${e.clientY - r.top}px`);
-            });
-        });
-
-        /* ── Scroll reveal ── */
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    </script>
+    <footer>DeepThink Showcase</footer>
 
 </body>
 
