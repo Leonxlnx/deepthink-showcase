@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Modern Stack - Premium UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Premium Dark Slate & Sky Blue Palette (No Purple, No Neon) */
+            --bg-main: #020617; /* Slate 950 */
+            --card-bg: rgba(15, 23, 42, 0.4); /* Slate 900 with subtle transparency */
+            --card-visual: #000000;
+            
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.35); /* Sky 400 */
+            
+            /* High-end Accents */
+            --blue-primary: #3b82f6;
+            --sky-blue: #38bdf8;
+            --teal-accent: #2dd4bf;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-faint: #475569;
+        }
+
+        /* RESET & BASE */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 5rem 1.5rem;
+            position: relative;
+        }
+
+        /* --- PREMIUM BACKGROUND GLOW --- */
+        .bg-glow {
+            position: fixed; top: -20vh; left: 50%; transform: translateX(-50%);
+            width: 70vw; height: 60vh; border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
+            z-index: -1; pointer-events: none; filter: blur(80px);
+        }
+
+        .container { max-width: 1080px; width: 100%; position: relative; z-index: 10; }
+
+        /* --- HEADER --- */
+        .header { text-align: center; margin-bottom: 4rem; }
+        .header-title {
+            font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 600; line-height: 1.1;
+            letter-spacing: -0.04em; margin: 0;
+            background: linear-gradient(180deg, #FFFFFF 0%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- EPIC GLASS CARDS --- */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; perspective: 1200px; }
+        @media(max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border-soft);
+            border-radius: 20px; padding: 10px; display: flex; flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.05);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            transform-style: preserve-3d; position: relative;
+        }
+        
+        /* 3D Spotlight Hover */
+        .card::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            background: radial-gradient(400px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none; z-index: 1;
+        }
+        .card:hover { border-color: var(--border-hover); transform: translateY(-4px); }
+        .card:hover::before { opacity: 1; }
+
+        .card-visual {
+            background: var(--card-visual); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px; height: 280px; margin-bottom: 1.2rem;
+            position: relative; overflow: hidden; display: flex; flex-direction: column; z-index: 2;
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .card-content { padding: 0 0.8rem 0.8rem; z-index: 2; position: relative; }
+        .card-content h3 { font-size: 1.15rem; font-weight: 500; margin-bottom: 0.4rem; color: #fff; letter-spacing: -0.01em;}
+        .card-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* =========================================
+           CARD 1: Code Editor
+           ========================================= */
+        .c1-wrapper { padding: 1.5rem; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
+        .editor {
+            flex: 1; background: #080808; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+            display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .editor-head { display: flex; gap: 8px; padding: 0.8rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; background: rgba(255,255,255,0.02); }
+        .mac-dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.8; }
+        .mac-dot:nth-child(1) { background: #ef4444; } .mac-dot:nth-child(2) { background: #eab308; } .mac-dot:nth-child(3) { background: #10b981; }
+        .editor-title { position: absolute; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-faint); }
+
+        .editor-body { padding: 1.2rem; font-family: var(--font-mono); font-size: 0.8rem; display: flex; color: #e2e8f0; line-height: 1.7; }
+        .line-nums { color: var(--text-faint); padding-right: 1.2rem; border-right: 1px solid rgba(255,255,255,0.05); margin-right: 1.2rem; text-align: right; user-select: none;}
+        
+        /* Premium Syntax Highlighting */
+        .kw { color: var(--blue-primary); } .fn { color: var(--sky-blue); } .str { color: var(--teal-accent); } .op { color: #94a3b8; }
+        .cursor-blink::after { content: ''; display: inline-block; width: 6px; height: 14px; background: var(--sky-blue); vertical-align: middle; margin-left: 2px; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .lang-tabs { display: flex; justify-content: center; gap: 0.5rem; }
+        .lang-tab { padding: 0.4rem 1rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); transition: all 0.3s; border: 1px solid transparent; }
+        .lang-tab.active { background: rgba(56, 189, 248, 0.1); color: var(--sky-blue); border-color: rgba(56, 189, 248, 0.2); }
+
+        /* =========================================
+           CARD 2: Array Explorer (Math Fixed)
+           ========================================= */
+        .c2-wrapper { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; position: relative; }
+        .c2-header { position: absolute; top: 1.5rem; left: 1.5rem; right: 1.5rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+        .c2-status { transition: color 0.3s; font-weight: 500;}
+        
+        .array-track { display: flex; gap: 8px; position: relative; margin-top: 1.5rem; width: fit-content; }
+        .array-box {
+            width: 44px; height: 44px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-mono); font-size: 1rem; color: #94a3b8; transition: all 0.3s; z-index: 1;
+        }
+        
+        /* ABSOLUTELY FIXED POSITION SCANNER (Computed via JS) */
+        .array-scanner {
+            position: absolute; top: 0; left: 0; width: 44px; height: 44px;
+            border: 2px solid var(--sky-blue); border-radius: 8px; z-index: 2; opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s, background 0.3s, opacity 0.3s, box-shadow 0.3s;
+            pointer-events: none;
+        }
+        .array-scanner.found { 
+            border-color: var(--teal-accent); background: rgba(45, 212, 191, 0.15); 
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.2); transform: scale(1.15) !important; 
+        }
+
+        /* =========================================
+           CARD 3: Split View UI
+           ========================================= */
+        .c3-layout { display: flex; height: 100%; width: 100%; }
+        .c3-code {
+            flex: 1.2; border-right: 1px solid rgba(255,255,255,0.08); padding: 1.5rem; background: rgba(0,0,0,0.5);
+            font-family: var(--font-mono); font-size: 0.75rem; display: flex; flex-direction: column; justify-content: center;
+        }
+        .c3-line { display: flex; align-items: center; gap: 0.5rem; margin: 4px 0; padding: 6px 8px; border-radius: 6px; border-left: 2px solid transparent; transition: 0.3s; color: #64748b;}
+        .c3-line.active { background: rgba(56, 189, 248, 0.08); border-left-color: var(--sky-blue); color: #e2e8f0; }
+        .c3-key { color: var(--text-muted); width: 100px; }
+        .c3-val { color: var(--sky-blue); position: relative;}
+        .c3-val.typing::after { content: '|'; position: absolute; right: -6px; top: 0; color: var(--sky-blue); animation: blink 0.8s infinite; }
+        
+        .c3-preview { flex: 0.8; display: flex; align-items: center; justify-content: center; background: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 16px 16px; position: relative;}
+        
+        .c3-btn {
+            padding: 0.7rem 1.4rem; background: transparent; border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 0px; color: #94a3b8; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); cursor: default;
+        }
+
+        /* =========================================
+           CARD 4: Data Analytics (100% BUG FREE)
+           ========================================= */
+        .c4-wrapper { display: flex; flex-direction: column; height: 100%; padding: 1.5rem; position: relative; }
+        
+        .ds-header { display: flex; justify-content: space-between; align-items: flex-start; z-index: 10; flex-shrink: 0; position: relative;}
+        .ds-label { font-size: 0.65rem; color: var(--sky-blue); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px; }
+        .ds-value { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;}
+        
+        .ds-dropdown { position: relative; }
+        .ds-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+            padding: 6px 10px; font-size: 0.75rem; color: #fff; display: flex; align-items: center; gap: 6px;
+        }
+        .ds-menu {
+            position: absolute; top: calc(100% + 4px); right: 0; background: #0f172a; border: 1px solid var(--card-border);
+            border-radius: 6px; padding: 4px; width: 120px; opacity: 0; pointer-events: none; transform: translateY(-5px); 
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .ds-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .ds-item { padding: 6px 8px; font-size: 0.75rem; color: #94a3b8; border-radius: 4px; transition: 0.2s; }
+        .ds-item.active { background: rgba(56, 189, 248, 0.15); color: var(--sky-blue); }
+
+        /* FESTES FLEX-LAYOUT LÖST DEN ÜBERLAPPUNGS-BUG! */
+        .ds-chart { 
+            flex: 1; display: flex; align-items: flex-end; gap: 4px; position: relative; z-index: 1; margin-top: 2rem;
+        }
+        
+        .ds-bar {
+            flex: 1; background: linear-gradient(to top, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.6));
+            border-top: 2px solid var(--sky-blue); border-radius: 4px 4px 0 0;
+            height: 0%; /* Wird durch sauberes JS in Prozent berechnet */
+            transition: height 0.7s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s;
+        }
+
+        /* Mauszeiger nutzt Prozent (%)-Koordinaten. Damit ist er auf jeder Fenstergröße perfekt Responsiv. */
+        .fake-cursor {
+            position: absolute; width: 22px; height: 22px; z-index: 100; pointer-events: none;
+            transition: top 0.7s cubic-bezier(0.25, 1, 0.5, 1), left 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.15s;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); top: 80%; left: 80%;
+        }
+        .cursor-icon {
+            width: 100%; height: 100%; fill: #000; stroke: #fff; stroke-width: 1.5; transform-origin: top left; transition: transform 0.15s;
+        }
+        .fake-cursor.clicking .cursor-icon { transform: scale(0.85); }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="header-title">The Modern Stack.</h1>
+        </header>
+
+        <main class="grid">
+            
+            <div class="card">
+                <div class="card-visual">
+                    <div class="c1-wrapper">
+                        <div class="editor">
+                            <div class="editor-head">
+                                <div class="mac-dot"></div><div class="mac-dot"></div><div class="mac-dot"></div>
+                                <div class="editor-title" id="c1-title">api.ts</div>
+                            </div>
+                            <div class="editor-body">
+                                <div class="line-nums">1<br>2<br>3<br>4</div>
+                                <div><span id="c1-code"></span><span class="cursor-blink"></span></div>
+                            </div>
+                        </div>
+                        <div class="lang-tabs">
+                            <div class="lang-tab active" id="tab-0">TypeScript</div>
+                            <div class="lang-tab" id="tab-1">Python</div>
+                            <div class="lang-tab" id="tab-2">Go</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>Backend Architecture</h3>
+                    <p>Clean syntax, strict typing. Build scalable APIs with modern server-side languages.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-visual">
+                    <div class="c2-wrapper">
+                        <div class="c2-header">
+                            <span>array.indexOf()</span>
+                            <span id="c2-status" style="color: var(--text-muted)">Searching...</span>
+                        </div>
+                        <div class="array-track" id="c2-track">
+                            <div class="array-scanner" id="c2-scanner"></div>
+                            </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>Data Structures & Algorithms</h3>
+                    <p>Optimized algorithms and memory management. Visually track how the machine executes logic.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-visual">
+                    <div class="c3-layout">
+                        <div class="c3-code">
+                            <div style="color: #64748b; margin-bottom: 8px;">.button {</div>
+                            <div class="c3-line" id="c3-l1">
+                                <span class="c3-key">background:</span>&nbsp;<span class="c3-val" id="c3-v1">transparent</span>;
+                            </div>
+                            <div class="c3-line" id="c3-l2">
+                                <span class="c3-key">border-radius:</span>&nbsp;<span class="c3-val" id="c3-v2">0px</span>;
+                            </div>
+                            <div class="c3-line" id="c3-l3">
+                                <span class="c3-key">box-shadow:</span>&nbsp;<span class="c3-val" id="c3-v3">none</span>;
+                            </div>
+                            <div style="color: #64748b; margin-top: 8px;">}</div>
+                        </div>
+                        <div class="c3-preview">
+                            <button class="c3-btn" id="c3-btn">Deploy App</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>Frontend Development</h3>
+                    <p>Pixel-perfect UI construction. Responsive, dynamic and beautifully styled components.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-visual">
+                    <div class="c4-wrapper">
+                        
+                        <div class="fake-cursor" id="c4-cursor">
+                            <svg class="cursor-icon" viewBox="0 0 24 24">
+                                <path d="M5.5 3.21V20.8C5.5 21.46 6.27 21.82 6.77 21.4L11.43 17.34C11.69 17.11 12.03 16.99 12.38 16.99H18.75C19.43 16.99 19.8 16.2 19.36 15.68L6.85 2.5C6.44 2.03 5.5 2.32 5.5 3.21Z"/>
+                            </svg>
+                        </div>
+                        
+                        <div class="ds-header">
+                            <div>
+                                <div class="ds-label">Monthly Revenue</div>
+                                <div class="ds-value">$<span id="c4-val">12,450</span></div>
+                            </div>
+                            <div class="ds-dropdown">
+                                <div class="ds-btn" id="c4-drop-btn">
+                                    <span id="c4-month">January</span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                </div>
+                                <div class="ds-menu" id="c4-menu">
+                                    <div class="ds-item active">January</div>
+                                    <div class="ds-item">February</div>
+                                    <div class="ds-item">March</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ds-chart" id="c4-chart">
+                            </div>
+                        
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h3>Data Analytics</h3>
+                    <p>Process big data, generate insights, and build live interactive dashboards.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        /* --- 3D Spotlight Hover Effect --- */
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                
+                const cx = rect.width / 2;
+                const cy = rect.height / 2;
+                const rotX = ((y - cy) / cy) * -2;
+                const rotY = ((x - cx) / cx) * 2;
+                card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        /* =========================================
+           CARD 1: Code Editor (Typing Anim)
+           ========================================= */
+        async function runCard1() {
+            const codeEl = document.getElementById('c1-code');
+            const titleEl = document.getElementById('c1-title');
+            const tabs = [document.getElementById('tab-0'), document.getElementById('tab-1'), document.getElementById('tab-2')];
+            
+            const snippets = [
+                { title: 'api.ts', t: [
+                    { t: 'export const ', c: 'kw' }, { t: 'fetchData ', c: 'fn' }, { t: '= ', c: 'op' }, { t: 'async ', c: 'kw' }, { t: '() => {\n  ', c: 'op' },
+                    { t: 'const ', c: 'kw' }, { t: 'res = ', c: 'op' }, { t: 'await ', c: 'kw' }, { t: 'fetch', c: 'fn' }, { t: '(', c: 'op' }, { t: '"/api/data"', c: 'str' }, { t: ');\n  ', c: 'op' },
+                    { t: 'return ', c: 'kw' }, { t: 'res.json();\n}', c: 'op' }
+                ]},
+                { title: 'main.py', t: [
+                    { t: 'def ', c: 'kw' }, { t: 'get_data', c: 'fn' }, { t: '():\n    ', c: 'op' },
+                    { t: 'res = requests.get(', c: 'op' }, { t: '"/api/data"', c: 'str' }, { t: ')\n    ', c: 'op' },
+                    { t: 'return ', c: 'kw' }, { t: 'res.json()', c: 'fn' }
+                ]},
+                { title: 'main.go', t: [
+                    { t: 'func ', c: 'kw' }, { t: 'main', c: 'fn' }, { t: '() {\n  ', c: 'op' },
+                    { t: 'res, _ := ', c: 'op' }, { t: 'http.Get(', c: 'fn' }, { t: '"/api/data"', c: 'str' }, { t: ')\n  ', c: 'op' },
+                    { t: 'return ', c: 'kw' }, { t: 'res\n}', c: 'op' }
+                ]}
+            ];
+
+            let current = 0;
+            while(true) {
+                tabs.forEach((t, i) => i === current ? t.classList.add('active') : t.classList.remove('active'));
+                titleEl.textContent = snippets[current].title;
+                
+                while(codeEl.textContent.length > 0) {
+                    codeEl.lastChild.textContent = codeEl.lastChild.textContent.slice(0, -1);
+                    if(codeEl.lastChild.textContent === '') codeEl.removeChild(codeEl.lastChild);
+                    await sleep(4);
+                }
+                await sleep(300);
+
+                for(let token of snippets[current].t) {
+                    let span = document.createElement('span');
+                    if(token.c) span.className = token.c;
+                    codeEl.appendChild(span);
+                    for(let char of token.t) {
+                        span.textContent += char;
+                        await sleep(15 + Math.random() * 20);
+                    }
+                }
+                await sleep(3000);
+                current = (current + 1) % snippets.length;
+            }
+        }
+
+        /* =========================================
+           CARD 2: Array Search (Math Fixed)
+           ========================================= */
+        async function runCard2() {
+            const track = document.getElementById('c2-track');
+            const scanner = document.getElementById('c2-scanner');
+            const status = document.getElementById('c2-status');
+            const values = [12, 8, 20, 6, 5, 42];
+            const boxes = [];
+            
+            // Boxen sicher VOR dem absoluten Scanner platzieren
+            values.forEach(v => {
+                let b = document.createElement('div');
+                b.className = 'array-box'; b.textContent = v;
+                track.insertBefore(b, scanner);
+                boxes.push(b);
+            });
+            
+            while(true) {
+                status.textContent = "Searching for 42...";
+                status.style.color = "var(--text-muted)";
+                scanner.style.opacity = '0';
+                scanner.classList.remove('found');
+                
+                boxes.forEach(b => { 
+                    b.style.opacity = '1'; 
+                    b.style.borderColor = 'rgba(255,255,255,0.1)'; 
+                    b.style.color = '#94a3b8'; 
+                    b.style.background = 'rgba(255,255,255,0.03)'; 
+                });
+                
+                // Scanner Transform Reset
+                scanner.style.transform = `translateX(0px) scale(1)`;
+                
+                await sleep(1000);
+                scanner.style.opacity = '1';
+                
+                for(let i=0; i<values.length; i++) {
+                    // Mathematisch kugelsicher: Index * (Box-Breite 44 + Gap 8)
+                    scanner.style.transform = `translateX(${i * 52}px) scale(1)`;
+                    
+                    boxes[i].style.borderColor = 'var(--sky-blue)';
+                    boxes[i].style.color = '#fff';
+                    
+                    await sleep(450);
+                    
+                    if (values[i] === 42) {
+                        scanner.classList.add('found');
+                        status.textContent = "Found Target!";
+                        status.style.color = "var(--teal-accent)";
+                        boxes[i].style.background = 'rgba(45, 212, 191, 0.15)';
+                        boxes[i].style.borderColor = 'var(--teal-accent)';
+                        
+                        // Restliche abdunkeln
+                        boxes.forEach((b, k) => { if(k!==i) b.style.opacity = '0.3'; });
+                        break;
+                    } else {
+                        boxes[i].style.borderColor = 'rgba(255,255,255,0.1)';
+                        boxes[i].style.color = '#94a3b8';
+                    }
+                }
+                await sleep(3000);
+            }
+        }
+
+        /* =========================================
+           CARD 3: CSS Morph (Live Preview)
+           ========================================= */
+        async function runCard3() {
+            const btn = document.getElementById('c3-btn');
+            const lines = [
+                { l: document.getElementById('c3-l1'), v: document.getElementById('c3-v1'), text: 'var(--blue-500)', css: { background: 'var(--blue-500)', border: '1px solid var(--blue-500)', color: '#fff' } },
+                { l: document.getElementById('c3-l2'), v: document.getElementById('c3-v2'), text: '8px', css: { borderRadius: '8px' } },
+                { l: document.getElementById('c3-l3'), v: document.getElementById('c3-v3'), text: '0 8px 25px rgba(..)', css: { boxShadow: '0 8px 25px rgba(59, 130, 246, 0.4)' } } 
+            ];
+            
+            async function typeText(el, text) {
+                el.textContent = '';
+                el.classList.add('typing');
+                for(let char of text) {
+                    el.textContent += char;
+                    await sleep(35);
+                }
+                el.classList.remove('typing');
+            }
+            
+            while(true) {
+                // Reset State (Wireframe Look)
+                btn.style.cssText = '';
+                lines[0].v.textContent = 'transparent';
+                lines[1].v.textContent = '0px';
+                lines[2].v.textContent = 'none';
+                lines.forEach(line => line.l.classList.remove('active'));
+                
+                await sleep(1500);
+                
+                for(let line of lines) {
+                    line.l.classList.add('active');
+                    await sleep(200);
+                    
+                    await typeText(line.v, line.text);
+                    Object.assign(btn.style, line.css);
+                    
+                    await sleep(800);
+                    line.l.classList.remove('active');
+                }
+                
+                // Elegante Micro-Interaction beim Abschluss
+                btn.style.transform = 'scale(1.05)';
+                await sleep(200);
+                btn.style.transform = 'scale(1)';
+                
+                await sleep(3000);
+            }
+        }
+
+        /* =========================================
+           CARD 4: Data Analytics (Responsive %-Maus & Fixed Layout)
+           ========================================= */
+        async function runCard4() {
+            const cursor = document.getElementById('c4-cursor');
+            const menu = document.getElementById('c4-menu');
+            const valEl = document.getElementById('c4-val');
+            const monthEl = document.getElementById('c4-month');
+            const chart = document.getElementById('c4-chart');
+            const items = menu.querySelectorAll('.ds-item');
+            
+            // Generiere Bars dynamisch
+            const bars = [];
+            for(let i=0; i<14; i++) {
+                let b = document.createElement('div');
+                b.className = 'ds-bar';
+                chart.appendChild(b);
+                bars.push(b);
+            }
+            
+            const datasets = [
+                { label: "January", val: 12450, data: [30, 45, 60, 40, 75, 85, 60, 40, 30, 50, 70, 80, 50, 45] },
+                { label: "February", val: 18600, data: [50, 60, 75, 90, 100, 80, 65, 55, 60, 85, 95, 75, 65, 60] },
+                { label: "March", val: 14200, data: [70, 65, 55, 40, 30, 40, 50, 45, 30, 45, 55, 40, 30, 20] }
+            ];
+            
+            let currentIdx = 0;
+            
+            function updateData(idx) {
+                const d = datasets[idx];
+                monthEl.textContent = d.label;
+                items.forEach((item, i) => i === idx ? item.classList.add('active') : item.classList.remove('active'));
+                
+                // Smooth Numbers Counter
+                let currentVal = parseInt(valEl.textContent.replace(/,/g, '')) || 0;
+                let targetVal = d.val;
+                let startTs = null;
+                function updateCounter(time) {
+                    if (!startTs) startTs = time;
+                    let prog = Math.min((time - startTs) / 800, 1);
+                    valEl.textContent = Math.floor(currentVal + (targetVal - currentVal) * prog).toLocaleString('en-US');
+                    if(prog < 1) requestAnimationFrame(updateCounter);
+                }
+                requestAnimationFrame(updateCounter);
+                
+                // Animierte Balkenhöhe (% basierend auf Container - zu 100% sicher gegen Bugs)
+                bars.forEach((b, i) => {
+                    b.style.height = `${d.data[i]}%`;
+                    // Optisches Highlighting
+                    if(d.data[i] >= 80) {
+                        b.style.background = 'linear-gradient(to top, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.85))';
+                    } else {
+                        b.style.background = 'linear-gradient(to top, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.6))';
+                    }
+                });
+            }
+            
+            // Prozent-basierte Steuerung (Nie wieder fehlerhafte Offset-Koordinaten!)
+            async function moveCursor(pctLeft, pctTop) {
+                cursor.style.left = `${pctLeft}%`;
+                cursor.style.top = `${pctTop}%`;
+                await sleep(700);
+            }
+            
+            async function clickCursor() {
+                cursor.classList.add('clicking');
+                await sleep(150);
+                cursor.classList.remove('clicking');
+                await sleep(150);
+            }
+            
+            // Initial Start State
+            updateData(0);
+            await moveCursor(80, 80);
+            
+            while(true) {
+                await sleep(1500);
+                
+                // Move to Dropdown (Oben Rechts)
+                await moveCursor(85, 12);
+                await clickCursor();
+                
+                menu.classList.add('open');
+                await sleep(400);
+                
+                currentIdx = (currentIdx + 1) % datasets.length;
+                
+                // Move to Item (Tiefer basierend auf Index)
+                const targetY = 25 + (currentIdx * 12);
+                await moveCursor(85, targetY);
+                await clickCursor();
+                
+                menu.classList.remove('open');
+                updateData(currentIdx);
+                await sleep(600);
+                
+                // Sweep elegant über das Diagramm
+                await moveCursor(20, 65);
+                await sleep(200);
+                await moveCursor(75, 75);
+                
+                // Ausruhen
+                await moveCursor(85, 85);
+            }
+        }
+
+        // Initialize All Scripts
+        window.addEventListener('DOMContentLoaded', () => {
+            runCard1();
+            runCard2();
+            runCard3();
+            // Startet minimal verzögert, damit der Browser das CSS 100% geparst hat für korrekte Chart-Höhen
+            setTimeout(runCard4, 150);
+        });
+
+    </script>
+</body>
+</html>
