@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Digital Ecosystem | About Us & Features</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. NATURAL COLOR PALETTE & CSS RESET
+           ========================================================================== */
+        :root {
+            --bg-base: #080908;
+            --text-primary: #EFECE5;
+            --text-secondary: #A0A29E;
+            --accent-sage: #9CB097;
+            --accent-sand: #D4C5B0;
+            --border-glass: rgba(239, 236, 229, 0.08);
+            --bg-glass: rgba(255, 255, 255, 0.02);
+            --bg-glass-hover: rgba(255, 255, 255, 0.05);
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Manrope', sans-serif;
+
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+            /* Replaced by custom cursor */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ==========================================================================
+           2. ATMOSPHERIC BACKGROUNDS & PARTICLES (Canvas & Crossfade)
+           ========================================================================== */
+        .global-bg {
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.05);
+            transition: opacity 1.5s ease-in-out;
+            filter: brightness(0.2) saturate(0.6);
+            will-change: opacity, transform;
+        }
+
+        .bg-layer.active {
+            opacity: 1;
+            animation: slowDrift 30s linear infinite alternate;
+        }
+
+        @keyframes slowDrift {
+            0% {
+                transform: scale(1.05) translate(0, 0);
+            }
+
+            100% {
+                transform: scale(1.1) translate(-2%, -1%);
+            }
+        }
+
+        /* Dynamic Spotlight tracked to mouse */
+        .spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 60vmax;
+            height: 60vmax;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(156, 176, 151, 0.06) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            z-index: -2;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        /* Organic Film Grain Overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.6;
+        }
+
+        /* ==========================================================================
+           3. CUSTOM MAGNETIC CURSOR
+           ========================================================================== */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            margin: -3px 0 0 -3px;
+            background: var(--accent-sand);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: opacity 0.3s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            border: 1px solid rgba(212, 197, 176, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo),
+                margin 0.4s var(--ease-out-expo), background 0.3s, border-color 0.3s, color 0.3s, backdrop-filter 0.3s;
+        }
+
+        /* ==========================================================================
+           4. LAYOUT & HERO HEADER (ABOUT US)
+           ========================================================================== */
+        .master-container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 6vh 4vw;
+            box-sizing: border-box;
+            max-width: 1920px;
+            margin: 0 auto;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 4rem;
+            margin-bottom: 4vh;
+            position: relative;
+        }
+
+        .header-left {
+            flex: 1.2;
+        }
+
+        .header-right {
+            flex: 1;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--accent-sage);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .eyebrow .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-sage);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .eyebrow .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid var(--accent-sage);
+            border-radius: 50%;
+            animation: pulse 2s infinite var(--ease-out-expo);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .main-title {
+            font-family: var(--font-serif);
+            font-size: clamp(3.2rem, 5.5vw, 6rem);
+            line-height: 1.05;
+            font-weight: 300;
+            color: var(--text-primary);
+        }
+
+        .main-title em {
+            font-style: italic;
+            color: var(--accent-sand);
+        }
+
+        .header-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 2rem;
+        }
+
+        /* Magnetic Hero Button */
+        .magnetic-wrap {
+            display: inline-block;
+            padding: 20px;
+            margin: -20px;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            background: transparent;
+            border: 1px solid rgba(239, 236, 229, 0.3);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .magnetic-wrap:hover .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-base);
+            border-color: var(--text-primary);
+        }
+
+        /* Spinning Text Badge */
+        .rotating-badge {
+            position: absolute;
+            right: 0;
+            top: -4vw;
+            width: 130px;
+            height: 130px;
+            animation: spin 20s linear infinite;
+            z-index: 10;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==========================================================================
+           5. 3D CINEMATIC MORPHING ACCORDION (THE FEATURES)
+           ========================================================================== */
+        .features-wrapper {
+            perspective: 2000px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .gallery-container {
+            display: flex;
+            gap: 1vw;
+            height: 58vh;
+            width: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s var(--ease-out-expo);
+        }
+
+        .feature-card {
+            flex: 1;
+            position: relative;
+            border-radius: 100px;
+            /* Pill shape initially */
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            overflow: hidden;
+            transition: flex 1s var(--ease-out-expo),
+                border-radius 1s var(--ease-out-expo),
+                background 0.8s, box-shadow 0.8s;
+            transform: translateZ(0);
+            /* Hardware accel */
+        }
+
+        /* Darkening gradient overlay */
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(8, 9, 8, 0.95) 0%, rgba(8, 9, 8, 0.4) 50%, transparent 100%);
+            z-index: 1;
+            pointer-events: none;
+            transition: background 0.8s;
+        }
+
+        /* Hover states for non-active cards */
+        .feature-card:not(.active):hover {
+            background: var(--bg-glass-hover);
+            border-color: rgba(212, 197, 176, 0.3);
+        }
+
+        .feature-card:not(.active):hover .card-bg {
+            filter: grayscale(50%) brightness(0.5);
+        }
+
+        /* Active/Expanded State */
+        .feature-card.active {
+            flex: 5.5;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(212, 197, 176, 0.3);
+            border-color: transparent;
+        }
+
+        .feature-card.active::after {
+            background: linear-gradient(to top, rgba(8, 9, 8, 0.98) 0%, rgba(8, 9, 8, 0.6) 40%, rgba(8, 9, 8, 0.1) 100%);
+        }
+
+        /* Inner Parallax Image */
+        .card-bg {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) brightness(0.35);
+            transition: filter 0.8s ease, transform 1s var(--ease-out-expo);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .feature-card.active .card-bg {
+            filter: grayscale(10%) brightness(0.7);
+            transform: scale(1.02);
+        }
+
+        /* --- COLLAPSED CONTENT --- */
+        .collapsed-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 3rem;
+            z-index: 2;
+            transition: opacity 0.4s ease 0.2s;
+            pointer-events: none;
+        }
+
+        .feature-card.active .collapsed-content {
+            opacity: 0;
+            transition-delay: 0s;
+        }
+
+        .collapsed-num {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--accent-sand);
+            margin-bottom: 1rem;
+        }
+
+        .collapsed-title {
+            writing-mode: vertical-rl;
+            transform: rotate(-180deg);
+            font-size: 0.85rem;
+            letter-spacing: 0.4em;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* --- EXPANDED CONTENT --- */
+        .expanded-content {
+            position: absolute;
+            inset: 0;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease 0s;
+        }
+
+        .feature-card.active .expanded-content {
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0.3s;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .expanded-num {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            color: var(--accent-sand);
+            line-height: 1;
+        }
+
+        /* Magnetic Icon in expanded card */
+        .magnetic-icon-wrap {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(239, 236, 229, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            transition: transform 0.8s var(--ease-out-expo), background 0.4s, color 0.4s;
+            pointer-events: none;
+        }
+
+        .feature-card.active .card-icon {
+            transform: rotate(45deg);
+        }
+
+        .magnetic-icon-wrap:hover .card-icon {
+            background: var(--text-primary);
+            color: var(--bg-base);
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-body {
+            max-width: 500px;
+        }
+
+        .expanded-title {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        /* Animated line drawing */
+        .line-anim {
+            width: 100%;
+            height: 1px;
+            background: rgba(239, 236, 229, 0.1);
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        .line-anim::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--accent-sand);
+            transition: width 1s var(--ease-out-expo) 0.6s;
+        }
+
+        .feature-card.active .line-anim::after {
+            width: 100%;
+        }
+
+        .expanded-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .micro-tags {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .micro-tags span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(212, 197, 176, 0.3);
+            border-radius: 50px;
+            color: var(--accent-sand);
+            background: rgba(255, 255, 255, 0.02);
+            transition: background 0.3s;
+        }
+
+        .micro-tags span:hover {
+            background: rgba(212, 197, 176, 0.15);
+        }
+
+        /* Staggered Micro-Animations for inner content */
+        .card-header,
+        .expanded-title,
+        .line-anim,
+        .expanded-desc,
+        .micro-tags {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.6s var(--ease-out-expo), opacity 0.6s ease;
+        }
+
+        .feature-card.active .card-header {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.3s;
+        }
+
+        .feature-card.active .expanded-title {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.4s;
+        }
+
+        .feature-card.active .line-anim {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.5s;
+        }
+
+        .feature-card.active .expanded-desc {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.6s;
+        }
+
+        .feature-card.active .micro-tags {
+            transform: translateY(0);
+            opacity: 1;
+            transition-delay: 0.7s;
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .header-section {
+                flex-direction: column;
+                gap: 2rem;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                max-width: 100%;
+            }
+
+            .gallery-container {
+                flex-direction: column;
+                height: auto;
+                gap: 1rem;
+            }
+
+            .feature-card {
+                height: 100px;
+                border-radius: 24px;
+                flex: none !important;
+            }
+
+            .feature-card.active {
+                height: 500px;
+                border-radius: 24px;
+            }
+
+            .collapsed-content {
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                padding: 0 2rem;
+                gap: 2rem;
+            }
+
+            .collapsed-title {
+                writing-mode: horizontal-tb;
+                transform: none;
+                margin: 0;
+            }
+
+            .collapsed-num {
+                margin: 0;
+            }
+
+            .expanded-content {
+                padding: 2rem;
+            }
+
+            .expanded-title {
+                font-size: 2.5rem;
+            }
+
+            .rotating-badge,
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <div class="spotlight" id="spotlight"></div>
+    <div class="global-bg">
+        <div class="bg-layer active"
+            style="background-image: url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=2560&auto=format&fit=crop');">
+        </div>
+        <div class="bg-layer"
+            style="background-image: url('https://images.unsplash.com/photo-1505820013142-f86a3439c5b2?q=80&w=2560&auto=format&fit=crop');">
+        </div>
+        <div class="bg-layer"
+            style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2560&auto=format&fit=crop');">
+        </div>
+        <div class="bg-layer"
+            style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop');">
+        </div>
+    </div>
+
+    <div class="noise-overlay"></div>
+    <canvas id="ambient-canvas"></canvas>
+
+    <main class="master-container">
+
+        <header class="header-section">
+            <div class="header-left">
+                <div class="eyebrow anim-in">
+                    <span class="pulse-dot"></span> Ecosystem Capabilities
+                </div>
+                <h1 class="main-title anim-in">Cultivating digital<br>habitats that <em>breathe.</em></h1>
+            </div>
+
+            <div class="header-right">
+                <p class="header-desc anim-in">
+                    We transcend standard rigid bento grids. By infusing high-end engineering with the fluid principles
+                    of nature, we architect digital ecosystems that adapt, scale, and resonate intuitively with your
+                    audience.
+                </p>
+                <div class="magnetic-wrap anim-in" id="main-btn-wrap">
+                    <button class="btn-primary">
+                        <span>Discover Philosophy</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="rotating-badge anim-in">
+                    <svg viewBox="0 0 100 100">
+                        <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                            fill="none" />
+                        <text font-family="'Manrope', sans-serif" font-size="9.5" font-weight="600" letter-spacing="3"
+                            fill="var(--accent-sage)">
+                            <textPath href="#circlePath">• ORGANIC DESIGN • ENDURING CODE</textPath>
+                        </text>
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <div class="features-wrapper">
+            <div class="gallery-container" id="gallery-container">
+
+                <article class="feature-card active" data-index="0">
+                    <div class="card-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1518640467707-6811f4a6ab73?q=80&w=1200&auto=format&fit=crop');">
+                    </div>
+
+                    <div class="collapsed-content">
+                        <span class="collapsed-num">01</span>
+                        <h2 class="collapsed-title">Adaptive Roots</h2>
+                    </div>
+
+                    <div class="expanded-content">
+                        <header class="card-header">
+                            <span class="expanded-num">01</span>
+                            <div class="magnetic-icon-wrap inner-mag">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <h3 class="expanded-title">Adaptive Roots</h3>
+                            <div class="line-anim"></div>
+                            <p class="expanded-desc">Engineered to scale organically. Modeled after mycelial networks,
+                                our backend infrastructures remain entirely invisible yet inherently resilient against
+                                any strain.</p>
+                            <div class="micro-tags">
+                                <span>Architecture</span>
+                                <span>Resilience</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="feature-card" data-index="1">
+                    <div class="card-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1505820013142-f86a3439c5b2?q=80&w=1200&auto=format&fit=crop');">
+                    </div>
+
+                    <div class="collapsed-content">
+                        <span class="collapsed-num">02</span>
+                        <h2 class="collapsed-title">Fluid Dynamics</h2>
+                    </div>
+
+                    <div class="expanded-content">
+                        <header class="card-header">
+                            <span class="expanded-num">02</span>
+                            <div class="magnetic-icon-wrap inner-mag">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M2 12h20M2 12c0 3 4 5 10 5s10-2 10-5M2 12c0-3 4-5 10-5s10 2 10 5" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <h3 class="expanded-title">Fluid Dynamics</h3>
+                            <div class="line-anim"></div>
+                            <p class="expanded-desc">We eliminate friction entirely. Interfaces designed with spatial
+                                awareness ensure that users navigate your ecosystem purely by natural intuition.</p>
+                            <div class="micro-tags">
+                                <span>UX / UI</span>
+                                <span>Motion</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="feature-card" data-index="2">
+                    <div class="card-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop');">
+                    </div>
+
+                    <div class="collapsed-content">
+                        <span class="collapsed-num">03</span>
+                        <h2 class="collapsed-title">Symbiotic Design</h2>
+                    </div>
+
+                    <div class="expanded-content">
+                        <header class="card-header">
+                            <span class="expanded-num">03</span>
+                            <div class="magnetic-icon-wrap inner-mag">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <polygon points="12 2 2 22 22 22 12 2" />
+                                        <polygon points="12 12 7 22 17 22 12 12" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <h3 class="expanded-title">Symbiotic Design</h3>
+                            <div class="line-anim"></div>
+                            <p class="expanded-desc">High-end aesthetics married to profound utility. Every
+                                micro-interaction serves a deliberate purpose, balancing raw beauty with engineered
+                                function.</p>
+                            <div class="micro-tags">
+                                <span>Aesthetics</span>
+                                <span>Interactivity</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="feature-card" data-index="3">
+                    <div class="card-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1200&auto=format&fit=crop');">
+                    </div>
+
+                    <div class="collapsed-content">
+                        <span class="collapsed-num">04</span>
+                        <h2 class="collapsed-title">Canopy Vision</h2>
+                    </div>
+
+                    <div class="expanded-content">
+                        <header class="card-header">
+                            <span class="expanded-num">04</span>
+                            <div class="magnetic-icon-wrap inner-mag">
+                                <div class="card-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <circle cx="12" cy="12" r="4" />
+                                        <line x1="12" y1="2" x2="12" y2="8" />
+                                        <line x1="12" y1="16" x2="12" y2="22" />
+                                        <line x1="2" y1="12" x2="8" y2="12" />
+                                        <line x1="16" y1="12" x2="22" y2="12" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-body">
+                            <h3 class="expanded-title">Canopy Vision</h3>
+                            <div class="line-anim"></div>
+                            <p class="expanded-desc">Strategic foresight from a higher vantage point. We anticipate the
+                                digital shifts of tomorrow to architect solutions that significantly outlive transient
+                                trends.</p>
+                            <div class="micro-tags">
+                                <span>Strategy</span>
+                                <span>Future-Proof</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. GSAP ENTRANCE ANIMATIONS ---
+            gsap.from('.anim-in', {
+                y: 40, opacity: 0, duration: 1.2,
+                stagger: 0.15, ease: 'power3.out', delay: 0.2
+            });
+            gsap.from('.feature-card', {
+                y: 60, opacity: 0, duration: 1.4,
+                stagger: 0.15, ease: 'expo.out', delay: 0.6
+            });
+
+            // --- 2. CUSTOM CURSOR & SPOTLIGHT LOGIC ---
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorRing = document.querySelector('.cursor-ring');
+            const spotlight = document.getElementById('spotlight');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+            const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+            if (isDesktop) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    // Instant follow for dot & spotlight
+                    cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+                    spotlight.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+                });
+
+                // Smooth follow for ring
+                function renderCursor() {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    cursorRing.style.transform = `translate(${ringX}px, ${ringY}px)`;
+                    requestAnimationFrame(renderCursor);
+                }
+                renderCursor();
+
+                // Cursor Hover Effects on Cards
+                const cards = document.querySelectorAll('.feature-card');
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', () => {
+                        cursorRing.style.width = '80px'; cursorRing.style.height = '80px';
+                        cursorRing.style.margin = '-40px 0 0 -40px';
+                        cursorRing.style.background = 'rgba(255, 255, 255, 0.05)';
+                        cursorRing.style.backdropFilter = 'blur(4px)';
+                        cursorRing.style.borderColor = 'transparent';
+                        cursorRing.style.color = 'var(--text-primary)';
+                        cursorRing.innerText = 'EXPLORE';
+                        cursorDot.style.opacity = '0';
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        cursorRing.style.width = '40px'; cursorRing.style.height = '40px';
+                        cursorRing.style.margin = '-20px 0 0 -20px';
+                        cursorRing.style.background = 'transparent';
+                        cursorRing.style.backdropFilter = 'none';
+                        cursorRing.style.borderColor = 'rgba(212, 197, 176, 0.4)';
+                        cursorRing.style.color = 'transparent';
+                        cursorRing.innerText = '';
+                        cursorDot.style.opacity = '1';
+                    });
+                });
+            }
+
+            // --- 3. MAGNETIC BUTTONS LOGIC ---
+            const magneticWraps = document.querySelectorAll('.magnetic-wrap, .inner-mag');
+            magneticWraps.forEach(wrap => {
+                const target = wrap.querySelector('.btn-primary, .card-icon');
+                if (!target) return;
+
+                wrap.addEventListener('mousemove', (e) => {
+                    if (!isDesktop) return;
+                    const rect = wrap.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+
+                    gsap.to(target, { x: x * 0.4, y: y * 0.4, duration: 0.4, ease: 'power2.out' });
+
+                    if (wrap.classList.contains('magnetic-wrap')) {
+                        cursorRing.style.width = '60px'; cursorRing.style.height = '60px';
+                        cursorRing.style.margin = '-30px 0 0 -30px';
+                        cursorRing.style.borderColor = 'var(--accent-sand)';
+                        cursorDot.style.opacity = '0';
+                    }
+                });
+
+                wrap.addEventListener('mouseleave', () => {
+                    if (!isDesktop) return;
+                    gsap.to(target, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+
+                    if (wrap.classList.contains('magnetic-wrap')) {
+                        cursorRing.style.width = '40px'; cursorRing.style.height = '40px';
+                        cursorRing.style.margin = '-20px 0 0 -20px';
+                        cursorRing.style.borderColor = 'rgba(212, 197, 176, 0.4)';
+                        cursorDot.style.opacity = '1';
+                    }
+                });
+            });
+
+            // --- 4. MORPHING ACCORDION & BACKGROUND CROSSFADE ---
+            const featureCards = document.querySelectorAll('.feature-card');
+            const bgLayers = document.querySelectorAll('.bg-layer');
+
+            featureCards.forEach((card, index) => {
+                const activateCard = () => {
+                    if (card.classList.contains('active')) return;
+
+                    // Reset all cards
+                    featureCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    // Crossfade backgrounds
+                    bgLayers.forEach(bg => bg.classList.remove('active'));
+                    if (bgLayers[index]) bgLayers[index].classList.add('active');
+                };
+
+                // Desktop Hover, Mobile Click
+                if (isDesktop) {
+                    card.addEventListener('mouseenter', activateCard);
+                } else {
+                    card.addEventListener('click', activateCard);
+                }
+            });
+
+            // --- 5. 3D PARALLAX ON MASTER CONTAINER ---
+            const galleryContainer = document.getElementById('gallery-container');
+            if (isDesktop) {
+                window.addEventListener('mousemove', (e) => {
+                    const xAxis = (window.innerWidth / 2 - e.pageX) / 100;
+                    const yAxis = (window.innerHeight / 2 - e.pageY) / 100;
+                    galleryContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+            }
+
+            // --- 6. CANVAS AMBIENT PARTICLES (FOREST SPORES) ---
+            const canvas = document.getElementById('ambient-canvas');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+
+            function resizeCanvas() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Create particles
+            const particles = Array.from({ length: window.innerWidth > 768 ? 60 : 30 }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: Math.random() * 1.5 + 0.5, // radius
+                vx: (Math.random() - 0.5) * 0.3, // drift x
+                vy: (Math.random() - 0.5) * 0.3 - 0.1, // drift y (slight upward trend)
+                baseAlpha: Math.random() * 0.4 + 0.1,
+                pulseSpeed: Math.random() * 0.02 + 0.01,
+                angle: Math.random() * Math.PI * 2
+            }));
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    // Move
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.angle += p.pulseSpeed;
+
+                    // Wrap around
+                    if (p.x < -10) p.x = w + 10;
+                    if (p.x > w + 10) p.x = -10;
+                    if (p.y < -10) p.y = h + 10;
+                    if (p.y > h + 10) p.y = -10;
+
+                    // Pulsing Opacity
+                    const alpha = p.baseAlpha + Math.sin(p.angle) * 0.15;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212, 197, 176, ${Math.max(0, alpha)})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Digital Ecosystem</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* =================================================================
+           1. ROOT VARIABLES & NATURAL EARTHY PALETTE
+           (Completely avoiding neon and purple gradients)
+           ================================================================= */
+        :root {
+            --bg-base: #EBE8E0;
+            /* Warm Stone / Sand */
+            --text-main: #232A25;
+            /* Deep Forest Slate */
+            --text-muted: #6B766D;
+            /* Muted Sage Gray */
+            --accent-clay: #B88E65;
+            /* Earthy Terracotta/Gold */
+
+            /* High-End Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 30px 60px rgba(35, 42, 37, 0.08);
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Outfit', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+            /* Contextual Custom Cursor Takes Over */
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =================================================================
+           2. AMBIENT BACKGROUNDS & CINEMATIC NOISE
+           ================================================================= */
+        .ambient-bg {
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110vw;
+            height: 110vh;
+            background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: blur(20px) brightness(1.1) sepia(0.15);
+            z-index: -3;
+        }
+
+        .ambient-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(235, 232, 224, 0.85) 0%, rgba(215, 212, 204, 0.95) 100%);
+            z-index: -2;
+        }
+
+        .noise-filter {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Soft Floating Glowing Orbs (Natural hues only) */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .orb-clay {
+            width: 55vw;
+            height: 55vw;
+            background: rgba(184, 142, 101, 0.15);
+            top: -10%;
+            left: -15%;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        .orb-sage {
+            width: 45vw;
+            height: 45vw;
+            background: rgba(122, 139, 122, 0.15);
+            bottom: -5%;
+            right: -10%;
+            animation: drift 25s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes drift {
+            to {
+                transform: translate(8vw, 6vh);
+            }
+        }
+
+        /* =================================================================
+           3. CUSTOM MAGNETIC CURSOR
+           ================================================================= */
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--text-muted);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-ring::after {
+            content: 'DRAG';
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Interactive Hover States */
+        body.hover-view .cursor-ring {
+            width: 75px;
+            height: 75px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            border-color: transparent;
+        }
+
+        body.hover-drag .cursor-ring {
+            width: 80px;
+            height: 80px;
+            background: rgba(184, 142, 101, 0.3);
+            backdrop-filter: blur(4px);
+            border-color: transparent;
+        }
+
+        body.hover-drag .cursor-ring::after {
+            opacity: 1;
+        }
+
+        body.hover-view .cursor-dot,
+        body.hover-drag .cursor-dot {
+            opacity: 0;
+        }
+
+        @media (max-width: 1024px) {
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* =================================================================
+           4. GLOBAL TYPOGRAPHY & HEADERS
+           ================================================================= */
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .eyebrow {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-clay);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 5vw, 5.5rem);
+            line-height: 1.05;
+            color: var(--text-main);
+            font-weight: 400;
+        }
+
+        /* =================================================================
+           5. FEATURES: THE SCROLL-REVEAL "FAN DECK" (No Bento Boxes)
+           ================================================================= */
+        .features-fan {
+            width: 100%;
+            position: relative;
+        }
+
+        .fan-container {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fan-header-wrap {
+            position: absolute;
+            top: 12%;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .fan-deck {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10vh;
+        }
+
+        .fan-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 330px;
+            height: 480px;
+            margin-top: -240px;
+            margin-left: -165px;
+            transform-origin: bottom center;
+            will-change: transform;
+        }
+
+        /* Glassmorphic Ultra-Detailed Card */
+        .fan-card {
+            width: 100%;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s, border-color 0.5s;
+        }
+
+        /* Micro-interactions & Parallax inside the Feature Card */
+        .fc-img {
+            height: 45%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .fc-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .fc-icon {
+            position: absolute;
+            top: calc(45% - 25px);
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-clay);
+            z-index: 5;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fc-body {
+            height: 55%;
+            padding: 35px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.1));
+        }
+
+        .fc-meta {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .fc-body h3 {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .fc-body p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: auto;
+        }
+
+        /* Animated Progress Fill */
+        .fc-progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(35, 42, 37, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .fc-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-clay);
+        }
+
+        /* Hover Mechanics */
+        .fan-card:hover {
+            transform: translateY(-20px) scale(1.02);
+            box-shadow: 0 45px 90px rgba(35, 42, 37, 0.15);
+            border-color: rgba(255, 255, 255, 1);
+            z-index: 20;
+        }
+
+        .fan-card:hover .fc-img img {
+            transform: scale(1.15);
+        }
+
+        .fan-card:hover .fc-icon {
+            transform: rotate(15deg) scale(1.15);
+            background: var(--text-main);
+            color: var(--bg-base);
+            border-color: transparent;
+        }
+
+        .fan-card:hover .fc-fill {
+            width: 100%;
+            transition: width 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* =================================================================
+           6. TESTIMONIALS: 3D VERTICAL FERRIS WHEEL & TEXT ENGINE
+           ================================================================= */
+        .testimonials {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 15vh 5vw;
+        }
+
+        .t-layout {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            align-items: center;
+            gap: 6vw;
+        }
+
+        /* Left Side: Drag-to-Spin 3D Wheel */
+        .t-left {
+            flex: 1;
+            height: 500px;
+            position: relative;
+        }
+
+        .t-wheel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+        }
+
+        .t-avatar {
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.7s;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .t-avatar img {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid transparent;
+            transition: all 0.5s;
+            z-index: 2;
+            position: relative;
+        }
+
+        .t-avatar.active img {
+            width: 100%;
+            height: 100%;
+            border-color: var(--glass-border);
+            box-shadow: 0 20px 40px rgba(184, 142, 101, 0.35);
+        }
+
+        /* SVG Auto-Play Progress Ring around Active Avatar */
+        .t-progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .t-avatar.active .t-progress-ring {
+            opacity: 1;
+        }
+
+        .t-progress-ring circle {
+            stroke-dasharray: 301;
+            stroke-dashoffset: 301;
+        }
+
+        /* Right Side: Split Text Animation */
+        .t-right {
+            flex: 1.5;
+            position: relative;
+            padding-right: 2vw;
+        }
+
+        .t-quote-icon {
+            font-family: var(--font-serif);
+            font-size: 7rem;
+            color: var(--accent-clay);
+            opacity: 0.25;
+            line-height: 0.5;
+            margin-bottom: 25px;
+        }
+
+        .t-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 3.5vw, 3.2rem);
+            line-height: 1.3;
+            color: var(--text-main);
+            font-style: italic;
+            min-height: 220px;
+            margin-bottom: 40px;
+        }
+
+        /* Word Split Utilities */
+        .word-wrap {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+            margin-right: 0.25em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform: translateY(40px);
+            opacity: 0;
+        }
+
+        .t-author {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-left: 2px solid var(--accent-clay);
+            padding-left: 20px;
+        }
+
+        .t-author h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .t-author span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* =================================================================
+           7. RESPONSIVE ADAPTATIONS
+           ================================================================= */
+        @media (max-width: 1024px) {
+            .fan-container {
+                height: auto;
+                padding: 15vh 0;
+            }
+
+            .fan-header-wrap {
+                position: relative;
+                top: auto;
+                margin-bottom: 5vh;
+            }
+
+            .fan-deck {
+                flex-direction: column;
+                height: auto;
+                margin-top: 0;
+                gap: 40px;
+            }
+
+            .fan-wrapper {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin: 0;
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .t-layout {
+                flex-direction: column;
+                gap: 10vw;
+                text-align: center;
+            }
+
+            .t-left {
+                height: 350px;
+            }
+
+            .t-right {
+                padding-right: 0;
+            }
+
+            .t-quote-icon {
+                margin: 0 auto 25px auto;
+            }
+
+            .t-author {
+                border-left: none;
+                padding-left: 0;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-bg"></div>
+    <div class="ambient-overlay"></div>
+    <div class="noise-filter"></div>
+    <div class="glow-orb orb-clay"></div>
+    <div class="glow-orb orb-sage"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <main>
+        <section class="features-fan" id="features">
+            <div class="fan-container">
+                <div class="fan-header-wrap">
+                    <div class="section-header">
+                        <span class="eyebrow gsap-fade">Natural Architecture</span>
+                        <h2 class="title gsap-fade">Organic Mechanics.</h2>
+                    </div>
+                </div>
+
+                <div class="fan-deck">
+                    <div class="fan-wrapper" id="wrap-0">
+                        <div class="fan-card interactable-view">
+                            <div class="fc-img"><img
+                                    src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop"
+                                    alt="Water Ripples" /></div>
+                            <div class="fc-icon"><i data-lucide="waves"></i></div>
+                            <div class="fc-body">
+                                <span class="fc-meta">01 // Fluidity</span>
+                                <h3>Seamless Sync</h3>
+                                <p>Data streams merge effortlessly, removing rigid barriers and matching your team's
+                                    natural cadence.</p>
+                                <div class="fc-progress">
+                                    <div class="fc-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fan-wrapper" id="wrap-1">
+                        <div class="fan-card interactable-view">
+                            <div class="fc-img"><img
+                                    src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=600&auto=format&fit=crop"
+                                    alt="Monstera Leaves" /></div>
+                            <div class="fc-icon"><i data-lucide="leaf"></i></div>
+                            <div class="fc-body">
+                                <span class="fc-meta">02 // Scalability</span>
+                                <h3>Organic Growth</h3>
+                                <p>Underlying infrastructure that branches out invisibly to support immense and complex
+                                    enterprise scale.</p>
+                                <div class="fc-progress">
+                                    <div class="fc-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fan-wrapper" id="wrap-2">
+                        <div class="fan-card interactable-view">
+                            <div class="fc-img"><img
+                                    src="https://images.unsplash.com/photo-1516803622262-4217730e2fbf?q=80&w=600&auto=format&fit=crop"
+                                    alt="Smooth Stone" /></div>
+                            <div class="fc-icon"><i data-lucide="shield-check"></i></div>
+                            <div class="fc-body">
+                                <span class="fc-meta">03 // Foundation</span>
+                                <h3>Deep Rooted</h3>
+                                <p>Impenetrable, timeless security protocols that protect your digital environment
+                                    naturally.</p>
+                                <div class="fc-progress">
+                                    <div class="fc-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fan-wrapper" id="wrap-3">
+                        <div class="fan-card interactable-view">
+                            <div class="fc-img"><img
+                                    src="https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=600&auto=format&fit=crop"
+                                    alt="Sunlight Canvas" /></div>
+                            <div class="fc-icon"><i data-lucide="sun"></i></div>
+                            <div class="fc-body">
+                                <span class="fc-meta">04 // Analytics</span>
+                                <h3>Clear Insights</h3>
+                                <p>Complex noise illuminated into crystal-clear visual analytics, bringing calm to the
+                                    chaos.</p>
+                                <div class="fc-progress">
+                                    <div class="fc-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials" id="testimonials">
+            <div class="t-layout">
+
+                <div class="t-left interactable-drag" id="t-wheel-container">
+                    <div class="t-wheel" id="t-wheel">
+                    </div>
+                </div>
+
+                <div class="t-right">
+                    <div class="t-quote-icon">“</div>
+                    <div class="t-quote" id="t-quote"></div>
+                    <div class="t-author">
+                        <h4 id="t-name"></h4>
+                        <span id="t-role"></span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Initialize minimalist Lucide icons
+        lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- 1. BUTTERY SMOOTH SCROLL (Lenis) --- */
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true
+            });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+
+            /* --- 2. MAGNETIC CUSTOM CURSOR --- */
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.querySelector('.cursor-ring');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+
+            if (window.matchMedia("(pointer: fine)").matches) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    dot.style.left = `${mouseX}px`; dot.style.top = `${mouseY}px`;
+                });
+
+                function renderCursor() {
+                    ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+                    ring.style.left = `${ringX}px`; ring.style.top = `${ringY}px`;
+                    requestAnimationFrame(renderCursor);
+                }
+                renderCursor();
+
+                // Contextual Hover States
+                document.querySelectorAll('.interactable-view').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hover-view'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hover-view'));
+                });
+                document.querySelectorAll('.interactable-drag').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hover-drag'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hover-drag'));
+                });
+            }
+
+            /* --- 3. GSAP SCROLL: THE FAN DECK --- */
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Header Fade
+            gsap.utils.toArray('.gsap-fade').forEach(el => {
+                gsap.from(el, {
+                    y: 30, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.2,
+                    scrollTrigger: { trigger: el, start: "top 85%" }
+                });
+            });
+
+            // Parallax Fan Logic (Desktop Only)
+            let mm = gsap.matchMedia();
+
+            mm.add("(min-width: 1025px)", () => {
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: ".fan-container",
+                        start: "top top",
+                        end: "+=180%", // Scroll depth
+                        scrub: 1.2, // Smooth scrubbing
+                        pin: true
+                    }
+                });
+
+                // Unfurling the cards beautifully
+                tl.to("#wrap-0", { xPercent: -125, yPercent: 25, rotation: -18 }, 0)
+                    .to("#wrap-1", { xPercent: -42, yPercent: 5, rotation: -6 }, 0)
+                    .to("#wrap-2", { xPercent: 42, yPercent: 5, rotation: 6 }, 0)
+                    .to("#wrap-3", { xPercent: 125, yPercent: 25, rotation: 18 }, 0);
+
+                // Add magnetic 3D Parallax on hover to cards
+                document.querySelectorAll('.fan-card').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const rotateX = (((e.clientY - rect.top) - rect.height / 2) / rect.height / 2) * -10;
+                        const rotateY = (((e.clientX - rect.left) - rect.width / 2) / rect.width / 2) * 10;
+                        card.style.transition = 'transform 0.1s, box-shadow 0.1s';
+                        card.style.transform = `translateY(-20px) scale(1.02) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s, border-color 0.5s';
+                        card.style.transform = '';
+                    });
+                });
+            });
+
+            // Mobile Stack Reveal
+            mm.add("(max-width: 1024px)", () => {
+                gsap.utils.toArray('.fan-wrapper').forEach(wrap => {
+                    gsap.from(wrap, {
+                        y: 60, opacity: 0, duration: 1, ease: "power3.out",
+                        scrollTrigger: { trigger: wrap, start: "top 85%" }
+                    });
+                });
+            });
+
+
+            /* --- 4. TESTIMONIALS: 3D VERTICAL FERRIS WHEEL --- */
+            const tData = [
+                {
+                    quote: "The organic architecture fundamentally changed how we interact with our digital tools. It's serene, powerful, and deeply human.",
+                    name: "Elena Rostova", role: "Creative Director",
+                    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop"
+                },
+                {
+                    quote: "A masterclass in restraint. By eliminating the generic bento grids, they've crafted an experience that feels like a quiet sanctuary.",
+                    name: "Marcus Vance", role: "Lead Architect",
+                    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+                },
+                {
+                    quote: "Every micro-interaction is purposeful. The fluid transitions and earthy palettes establish a level of professionalism we hadn't seen before.",
+                    name: "Sophia Lin", role: "Founder, Lumina",
+                    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                },
+                {
+                    quote: "It doesn't just look beautiful; it functions with incredible grace. The attention to detail elevates the entire platform.",
+                    name: "Julian Ford", role: "Systems Engineer",
+                    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+                },
+                {
+                    quote: "Finally, a UI that breathes. It escapes the sterile confines of modern web design for something truly timeless and inspiring.",
+                    name: "Amira Hassan", role: "Design Lead",
+                    img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=200&auto=format&fit=crop"
+                }
+            ];
+
+            const wheel = document.getElementById('t-wheel');
+            const total = tData.length;
+            const angleStep = 360 / total;
+            let activeIndex = 0;
+            let progressTween;
+            let textAnim;
+
+            // Generate Avatars
+            tData.forEach((t, i) => {
+                const av = document.createElement('div');
+                av.className = 't-avatar';
+                av.dataset.index = i;
+                av.innerHTML = `
+                    <svg class="t-progress-ring" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="48" fill="none" stroke="var(--accent-clay)" stroke-width="2" />
+                    </svg>
+                    <img src="${t.img}" alt="${t.name}">
+                `;
+                wheel.appendChild(av);
+            });
+            const avatars = document.querySelectorAll('.t-avatar');
+
+            // Split Text Utility
+            function splitText(element, text) {
+                element.innerHTML = '';
+                text.split(' ').forEach(word => {
+                    element.innerHTML += `<span class="word-wrap"><span class="word-inner">${word}</span></span> `;
+                });
+            }
+
+            // Core Wheel Math & Render
+            function renderWheel() {
+                avatars.forEach((av, i) => {
+                    let offset = i - activeIndex;
+                    if (offset > Math.floor(total / 2)) offset -= total;
+                    if (offset < -Math.floor(total / 2)) offset += total;
+
+                    const rad = (offset * angleStep) * Math.PI / 180;
+                    const radius = window.innerWidth > 1024 ? 180 : 130;
+
+                    const y = Math.sin(rad) * radius; // Vertical positioning
+                    const z = Math.cos(rad) * radius; // 3D Depth
+                    const scale = 0.5 + 0.5 * (Math.cos(rad) + 1) / 2; // Scale based on depth
+                    const opacity = 0.3 + 0.7 * (Math.cos(rad) + 1) / 2; // Fade based on depth
+
+                    av.style.transform = `translate3d(0, ${y}px, ${z}px) scale(${scale})`;
+                    av.style.zIndex = Math.round(z);
+                    av.style.opacity = opacity;
+
+                    if (offset === 0) av.classList.add('active');
+                    else av.classList.remove('active');
+                });
+            }
+
+            // Slide Activation & Text Stagger Logic
+            function activateSlide(index, isInit = false) {
+                activeIndex = index;
+                renderWheel();
+
+                const data = tData[index];
+                const quoteEl = document.getElementById('t-quote');
+
+                // Animate Text
+                if (isInit) {
+                    splitText(quoteEl, data.quote);
+                    gsap.to('.word-inner', { y: 0, opacity: 1, duration: 0.6, stagger: 0.015, ease: "power3.out" });
+                    document.getElementById('t-name').innerText = data.name;
+                    document.getElementById('t-role').innerText = data.role;
+                    gsap.to(['#t-name', '#t-role'], { y: 0, opacity: 1, duration: 0.6, stagger: 0.1 });
+                } else {
+                    if (textAnim) textAnim.kill();
+                    textAnim = gsap.to('.word-inner', {
+                        y: -30, opacity: 0, duration: 0.3, stagger: 0.01, ease: "power2.in",
+                        onComplete: () => {
+                            splitText(quoteEl, data.quote);
+                            gsap.to('.word-inner', { y: 0, opacity: 1, duration: 0.6, stagger: 0.015, ease: "power3.out" });
+
+                            document.getElementById('t-name').innerText = data.name;
+                            document.getElementById('t-role').innerText = data.role;
+                            gsap.fromTo(['#t-name', '#t-role'], { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1 });
+                        }
+                    });
+                }
+
+                // Animate SVG Progress Ring (Acts as auto-play timer)
+                if (progressTween) progressTween.kill();
+                gsap.set('.t-avatar.active .t-progress-ring circle', { strokeDashoffset: 301 });
+
+                progressTween = gsap.to(`.t-avatar[data-index="${index}"] .t-progress-ring circle`, {
+                    strokeDashoffset: 0, duration: 6, ease: "linear", // 6 seconds per slide
+                    onComplete: () => activateSlide((activeIndex + 1) % total)
+                });
+            }
+
+            // Initialize
+            activateSlide(0, true);
+
+            // Drag to Spin Interaction Logic
+            let isDragging = false;
+            let startY = 0;
+            const dragContainer = document.getElementById('t-wheel-container');
+
+            const startDrag = (y) => {
+                isDragging = true; startY = y;
+                if (progressTween) progressTween.pause(); // Pause auto-play
+            };
+            const stopDrag = () => {
+                if (isDragging) { isDragging = false; if (progressTween) progressTween.play(); }
+            };
+            const doDrag = (y) => {
+                if (!isDragging) return;
+                const diff = y - startY;
+                if (Math.abs(diff) > 40) { // Drag Threshold
+                    if (diff > 0) activateSlide((activeIndex - 1 + total) % total); // Swipe down
+                    else activateSlide((activeIndex + 1) % total); // Swipe up
+                    startY = y; // Reset for continuous dragging
+                }
+            };
+
+            // Mouse Events
+            dragContainer.addEventListener('mousedown', (e) => startDrag(e.clientY));
+            window.addEventListener('mouseup', stopDrag);
+            window.addEventListener('mousemove', (e) => doDrag(e.clientY));
+
+            // Touch Events
+            dragContainer.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientY), { passive: true });
+            window.addEventListener('touchend', stopDrag);
+            window.addEventListener('touchmove', (e) => doDrag(e.touches[0].clientY), { passive: true });
+
+            // Click Avatar directly
+            avatars.forEach(av => {
+                av.addEventListener('click', () => {
+                    const idx = parseInt(av.dataset.index);
+                    if (idx !== activeIndex) activateSlide(idx);
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

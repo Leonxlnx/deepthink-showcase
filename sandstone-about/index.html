@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Digital Ecosystem | About Us</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================
+           CSS VARIABLES & RESET
+           ========================================= */
+        :root {
+            --bg: #EAE6DF;
+            /* Warm Sand */
+            --text: #232522;
+            /* Deep Slate / Charcoal */
+            --text-muted: #646862;
+            /* Muted Moss */
+            --accent: #5B6B5E;
+            /* Sage Green */
+            --accent-light: #A8B1A2;
+            /* Soft Sage */
+            --white: #F9F8F6;
+            /* Alabaster */
+            --transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom cursor */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-light);
+            border-radius: 4px;
+        }
+
+        ::selection {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+
+        /* =========================================
+           ATMOSPHERIC LAYERS
+           ========================================= */
+        /* Tactile film grain */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            pointer-events: none;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Floating Light Orbs */
+        .ambient-orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 45vw;
+            height: 45vw;
+            background: #D5D9CD;
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 55vw;
+            height: 55vw;
+            background: #E8DCCB;
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(8vw, 8vh) scale(1.1);
+            }
+        }
+
+        /* =========================================
+           CUSTOM CURSOR
+           ========================================= */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(35, 37, 34, 0.5);
+            border-radius: 50%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Manrope', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: transparent;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .cursor-ring.explore {
+            width: 90px;
+            height: 90px;
+            background: rgba(35, 37, 34, 0.15);
+            border-color: transparent;
+            backdrop-filter: blur(6px);
+            color: var(--text);
+        }
+
+        /* =========================================
+           HERO & INTRO 
+           ========================================= */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10vw;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(4rem, 8vw, 8.5rem);
+            line-height: 0.95;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            color: var(--text);
+        }
+
+        .hero-title i {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        .hero-desc {
+            max-width: 550px;
+            font-size: clamp(1rem, 1.2vw, 1.25rem);
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-left: 10vw;
+        }
+
+        /* Spinning SVG Stamp */
+        .badge-wrapper {
+            position: absolute;
+            right: 8vw;
+            bottom: 10vh;
+            z-index: 10;
+        }
+
+        .spinning-badge {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinning-badge svg {
+            animation: spin 15s linear infinite;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 5vh;
+            left: 10vw;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .mouse-icon {
+            width: 20px;
+            height: 32px;
+            border: 1.5px solid var(--text-muted);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            padding-top: 6px;
+        }
+
+        .wheel {
+            width: 4px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            animation: scrollWheel 2s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(12px);
+                opacity: 0;
+            }
+        }
+
+        /* =========================================
+           FEATURES SECTION (THE RIVER)
+           ========================================= */
+        .features-section {
+            position: relative;
+            padding: 10vh 0 20vh;
+            z-index: 3;
+        }
+
+        /* SVG Line Drawing */
+        .svg-flow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .svg-flow path {
+            fill: none;
+            stroke: var(--accent-light);
+            stroke-width: 2px;
+        }
+
+        .features-grid {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5vw;
+            z-index: 1;
+        }
+
+        /* Layout & Positioning */
+        .f-left {
+            align-self: flex-start;
+            margin-left: 5vw;
+        }
+
+        .f-right {
+            align-self: flex-end;
+            margin-right: 5vw;
+        }
+
+        .f-center {
+            align-self: center;
+        }
+
+        .feat-node {
+            position: relative;
+            width: 40vw;
+            height: 48vw;
+            max-width: 550px;
+            max-height: 650px;
+            perspective: 1200px;
+            transition: opacity 0.6s var(--transition), filter 0.6s var(--transition), transform 0.6s var(--transition);
+        }
+
+        .f-center .feat-node {
+            width: 55vw;
+            height: 35vw;
+            max-width: 800px;
+            max-height: 500px;
+        }
+
+        /* Focus & Blur Magic */
+        .features-grid:has(.feat-node:hover) .parallax-wrap:not(:has(.feat-node:hover)) .feat-node {
+            opacity: 0.35;
+            filter: blur(10px) grayscale(60%);
+            transform: scale(0.95);
+        }
+
+        /* Card Inner & Organic Shapes */
+        .node-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out, border-radius var(--transition), box-shadow var(--transition);
+            overflow: hidden;
+            will-change: transform, border-radius;
+        }
+
+        .shape-1 .node-inner {
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        }
+
+        .shape-2 .node-inner {
+            border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+        }
+
+        .shape-3 .node-inner {
+            border-radius: 50% 50% 50% 50% / 60% 40% 70% 30%;
+        }
+
+        .shape-4 .node-inner {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        /* Hover Morph */
+        .feat-node:hover .node-inner {
+            border-radius: 24px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Media & Overlay */
+        .node-img {
+            position: absolute;
+            inset: -15%;
+            width: 130%;
+            height: 130%;
+            object-fit: cover;
+            z-index: 0;
+            transition: transform 0.2s ease-out;
+            will-change: transform;
+        }
+
+        .node-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(to top, rgba(30, 32, 29, 0.95) 0%, rgba(30, 32, 29, 0.3) 50%, transparent 100%);
+            opacity: 0.7;
+            transition: opacity var(--transition);
+        }
+
+        .feat-node:hover .node-overlay {
+            opacity: 0.95;
+        }
+
+        /* Typographic Content */
+        .node-content {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 3rem;
+            color: var(--white);
+            pointer-events: none;
+        }
+
+        .node-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: auto;
+        }
+
+        .node-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid rgba(249, 248, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            backdrop-filter: blur(8px);
+            transition: all var(--transition);
+        }
+
+        .feat-node:hover .node-icon {
+            background: var(--bg);
+            color: var(--text);
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        .node-tags {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all var(--transition);
+        }
+
+        .node-tags span {
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(249, 248, 246, 0.2);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(8px);
+        }
+
+        .feat-node:hover .node-tags {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .node-content h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            line-height: 1.1;
+            margin-bottom: 0.8rem;
+            font-weight: 400;
+            transform: translateY(20px);
+            opacity: 0.8;
+            transition: all var(--transition);
+        }
+
+        .node-content p {
+            font-size: 1.05rem;
+            color: rgba(249, 248, 246, 0.8);
+            max-width: 350px;
+            line-height: 1.6;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all var(--transition);
+            transition-delay: 0.1s;
+        }
+
+        .feat-node:hover .node-content h2 {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feat-node:hover .node-content p {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* =========================================
+           CTA FOOTER & UTILITIES
+           ========================================= */
+        .cta {
+            padding: 15vh 10vw;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .magnetic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            padding: 1.5rem 3.5rem;
+            border: 1px solid var(--text);
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.85rem;
+        }
+
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text);
+            border-radius: 50% 50% 0 0;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .magnetic-btn:hover::before {
+            top: 0;
+            border-radius: 0;
+        }
+
+        .magnetic-btn .btn-text {
+            position: relative;
+            z-index: 1;
+            transition: color 0.5s;
+        }
+
+        .magnetic-btn:hover .btn-text {
+            color: var(--bg);
+        }
+
+        /* Text & Scroll Reveals */
+        .reveal-wrap {
+            overflow: hidden;
+            display: inline-flex;
+            vertical-align: top;
+        }
+
+        .reveal-text {
+            display: inline-block;
+            transform: translateY(115%);
+            transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .reveal-wrap.delay-1 .reveal-text {
+            transition-delay: 0.15s;
+        }
+
+        .reveal-text.active {
+            transform: translateY(0);
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .fade-up.delay-1 {
+            transition-delay: 0.2s;
+        }
+
+        .fade-up.delay-2 {
+            transition-delay: 0.4s;
+        }
+
+        .fade-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           RESPONSIVE FALLBACKS
+           ========================================= */
+        @media (max-width: 900px) {
+            .hero-title {
+                font-size: clamp(3.5rem, 12vw, 5rem);
+            }
+
+            .hero-desc {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .badge-wrapper,
+            .svg-flow,
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .features-grid {
+                padding: 5vh 5vw;
+                gap: 8vh;
+            }
+
+            .f-left,
+            .f-right,
+            .f-center {
+                align-self: center !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+
+            .feat-node,
+            .f-center .feat-node {
+                width: 100% !important;
+                height: 120vw !important;
+                max-height: none !important;
+                max-width: none !important;
+            }
+
+            /* Disable isolation & morphing on mobile for clean scrolling */
+            .features-grid:has(.feat-node:hover) .parallax-wrap:not(:has(.feat-node:hover)) .feat-node {
+                opacity: 1;
+                filter: none;
+                transform: none;
+            }
+
+            .node-inner {
+                border-radius: 24px !important;
+            }
+
+            .node-content h2,
+            .node-content p,
+            .node-tags {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+    <div class="ambient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <main class="wrapper">
+
+        <header class="hero">
+            <div class="subtitle fade-up">Our Philosophy</div>
+
+            <h1 class="hero-title">
+                <div class="reveal-wrap"><span class="reveal-text">We craft digital</span></div><br>
+                <div class="reveal-wrap delay-1"><span class="reveal-text"><i>ecosystems.</i></span></div>
+            </h1>
+
+            <p class="hero-desc fade-up delay-1">
+                Stepping away from artificial constraints and rigid bento grids, we embrace natural algorithms to build
+                fluid, adaptable environments that breathe life into the modern web.
+            </p>
+
+            <div class="badge-wrapper fade-up delay-2">
+                <div class="spinning-badge magnetic">
+                    <svg viewBox="0 0 100 100">
+                        <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                            fill="transparent" />
+                        <text font-size="11" font-weight="600" letter-spacing="2.5" fill="var(--text)">
+                            <textPath href="#circlePath">NATURAL DESIGN • ORGANIC FLOW • </textPath>
+                        </text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="scroll-indicator fade-up delay-2">
+                <div class="mouse-icon">
+                    <div class="wheel"></div>
+                </div>
+                <span>Scroll to explore</span>
+            </div>
+        </header>
+
+        <section class="features-section">
+
+            <svg class="svg-flow" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M 50,0 C 20,15 80,35 50,50 C 20,65 80,85 50,100" />
+            </svg>
+
+            <div class="features-grid">
+
+                <div class="parallax-wrap f-left" data-speed="0.08">
+                    <div class="feat-node shape-1 hover-trigger">
+                        <div class="node-inner">
+                            <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1200&auto=format&fit=crop"
+                                alt="Fluid Morphologies" class="node-img">
+                            <div class="node-overlay"></div>
+
+                            <div class="node-content">
+                                <div class="node-top">
+                                    <div class="node-icon">01</div>
+                                    <div class="node-tags">
+                                        <span>Adaptable</span>
+                                        <span>Fluid</span>
+                                    </div>
+                                </div>
+                                <h2>Fluid Morphologies</h2>
+                                <p>Structures that adapt seamlessly to their environment, moving like water through
+                                    digital space rather than being trapped in standard box layouts.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parallax-wrap f-right" data-speed="0.04">
+                    <div class="feat-node shape-2 hover-trigger">
+                        <div class="node-inner">
+                            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop"
+                                alt="Sensory Depth" class="node-img">
+                            <div class="node-overlay"></div>
+
+                            <div class="node-content">
+                                <div class="node-top">
+                                    <div class="node-icon">02</div>
+                                    <div class="node-tags">
+                                        <span>Haptic</span>
+                                        <span>Immersive</span>
+                                    </div>
+                                </div>
+                                <h2>Sensory Depth</h2>
+                                <p>Interfaces you can literally feel. Every hover, click, and scroll is meticulously
+                                    crafted with physics-based momentum to provide true physical satisfaction.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parallax-wrap f-center" data-speed="0.1">
+                    <div class="feat-node shape-3 hover-trigger">
+                        <div class="node-inner">
+                            <img src="https://images.unsplash.com/photo-1444080748397-f442aa95c3e5?q=80&w=1200&auto=format&fit=crop"
+                                alt="Symbiotic Logic" class="node-img">
+                            <div class="node-overlay"></div>
+
+                            <div class="node-content">
+                                <div class="node-top">
+                                    <div class="node-icon">03</div>
+                                    <div class="node-tags">
+                                        <span>Holistic</span>
+                                        <span>Connected</span>
+                                    </div>
+                                </div>
+                                <h2>Symbiotic Logic</h2>
+                                <p>We build code components that communicate organically, passing visual states
+                                    seamlessly to create a unified, deeply connected brand presence.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="parallax-wrap f-left" data-speed="0.06" style="margin-left: 15vw;">
+                    <div class="feat-node shape-4 hover-trigger">
+                        <div class="node-inner">
+                            <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop"
+                                alt="Living Pixels" class="node-img">
+                            <div class="node-overlay"></div>
+
+                            <div class="node-content">
+                                <div class="node-top">
+                                    <div class="node-icon">04</div>
+                                    <div class="node-tags">
+                                        <span>Performance</span>
+                                        <span>Endurance</span>
+                                    </div>
+                                </div>
+                                <h2>Living Pixels</h2>
+                                <p>Clean, sustainable, and highly optimized frontend architectures that perform
+                                    beautifully while respecting memory and device resources.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2 class="hero-title fade-up">Ready to cultivate <br><i>your presence?</i></h2>
+            <div class="fade-up delay-1">
+                <a href="#" class="magnetic-btn magnetic">
+                    <span class="btn-text">Initiate Growth</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const isDesktop = window.matchMedia("(min-width: 900px)").matches;
+
+            // 1. Custom Smooth Blend Cursor
+            if (isDesktop) {
+                const dot = document.querySelector('.cursor-dot');
+                const ring = document.querySelector('.cursor-ring');
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let ringX = mouseX, ringY = mouseY;
+
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    dot.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0)`;
+                });
+
+                function animateCursor() {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    ring.style.transform = `translate3d(calc(${ringX}px - 50%), calc(${ringY}px - 50%), 0)`;
+                    requestAnimationFrame(animateCursor);
+                }
+                animateCursor();
+
+                // Cursor Hover Magic for Features
+                document.querySelectorAll('.hover-trigger').forEach(trigger => {
+                    trigger.addEventListener('mouseenter', () => {
+                        ring.classList.add('explore');
+                        ring.textContent = 'EXPLORE';
+                    });
+                    trigger.addEventListener('mouseleave', () => {
+                        ring.classList.remove('explore');
+                        ring.textContent = '';
+                    });
+                });
+            }
+
+            // 2. Magnetic Buttons & Badges
+            if (isDesktop) {
+                document.querySelectorAll('.magnetic').forEach(elem => {
+                    elem.addEventListener('mousemove', (e) => {
+                        const rect = elem.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2;
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        elem.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    });
+                    elem.addEventListener('mouseleave', () => {
+                        elem.style.transform = `translate(0, 0)`;
+                        elem.style.transition = `transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)`;
+                    });
+                    elem.addEventListener('mouseenter', () => elem.style.transition = 'none');
+                });
+            }
+
+            // 3. 3D Tilt & Image Parallax on Hover
+            if (isDesktop) {
+                document.querySelectorAll('.feat-node').forEach(node => {
+                    const inner = node.querySelector('.node-inner');
+                    const img = node.querySelector('.node-img');
+
+                    node.addEventListener('mousemove', (e) => {
+                        const rect = node.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+
+                        const rotateX = ((y - centerY) / centerY) * -10;
+                        const rotateY = ((x - centerX) / centerX) * 10;
+
+                        // Push inwards slightly while tilting
+                        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.96)`;
+                        // Move image opposite for true window effect
+                        img.style.transform = `translate(${(centerX - x) * 0.06}px, ${(centerY - y) * 0.06}px) scale(1.15)`;
+                    });
+
+                    node.addEventListener('mouseleave', () => {
+                        inner.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+                        img.style.transform = 'translate(0,0) scale(1.15)';
+                    });
+                });
+            }
+
+            // 4. Scroll Driven Events: SVG Draw & Vertical Parallax
+            const svgPath = document.querySelector('.svg-flow path');
+            let pathLength = 0;
+
+            if (svgPath && isDesktop) {
+                pathLength = svgPath.getTotalLength();
+                svgPath.style.strokeDasharray = pathLength;
+                svgPath.style.strokeDashoffset = pathLength;
+            }
+
+            window.addEventListener('scroll', () => {
+                const windowHeight = window.innerHeight;
+
+                // Vertical Image Parallax
+                document.querySelectorAll('.parallax-wrap').forEach(el => {
+                    const speed = el.getAttribute('data-speed');
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        const offset = (windowHeight / 2) - (rect.top + rect.height / 2);
+                        el.style.transform = `translateY(${offset * speed}px)`;
+                    }
+                });
+
+                // SVG Path Drawing based on section progress
+                if (svgPath && isDesktop) {
+                    const section = document.querySelector('.features-section');
+                    const rect = section.getBoundingClientRect();
+                    let progress = (windowHeight - rect.top) / (rect.height + windowHeight);
+                    progress = Math.max(0, Math.min(1, progress));
+                    svgPath.style.strokeDashoffset = pathLength - (pathLength * progress);
+                }
+            });
+
+            // 5. Intersection Observer for Text Reveals
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Trigger inner reveals
+                        const reveals = entry.target.querySelectorAll('.reveal-text');
+                        reveals.forEach(rev => rev.classList.add('active'));
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('.fade-up, .reveal-wrap').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Symphony | Digital Ecosystem</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & AESTHETIC SYSTEM (Earth & Glass)
+           ========================================================================== */
+        :root {
+            --bg-base: #070807;
+            /* Deepest Forest Night */
+            --text-main: #E2E5DE;
+            /* Bone White */
+            --text-dim: #8B9289;
+            /* Muted Moss */
+            --accent-sage: #93A389;
+            /* Soft Sage Green */
+            --accent-gold: #C9A66B;
+            /* Warm Sand / Raw Gold */
+
+            --glass-bg: rgba(226, 229, 222, 0.03);
+            --glass-border: rgba(226, 229, 222, 0.08);
+
+            --font-display: 'Cormorant Garamond', serif;
+            --font-sans: 'Inter', sans-serif;
+
+            --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================================================
+           2. AMBIENT ENVIRONMENT (Background, Canvas, Custom Cursor)
+           ========================================================================== */
+        .ambient-bg {
+            position: fixed;
+            inset: -5%;
+            background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2600&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.15) sepia(0.3) hue-rotate(15deg);
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        .ambient-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #070807 100%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+            opacity: 0.04;
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        canvas#fireflies {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Fluid Custom Cursor */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(147, 163, 137, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s var(--ease-fluid), height 0.4s var(--ease-fluid), background 0.4s, border-color 0.4s;
+        }
+
+        .cursor-ring.active {
+            width: 70px;
+            height: 70px;
+            background: rgba(147, 163, 137, 0.08);
+            border-color: rgba(147, 163, 137, 0.8);
+            backdrop-filter: blur(2px);
+        }
+
+        body:has(.interactive:hover) .cursor-dot {
+            opacity: 0;
+        }
+
+        @media (pointer: coarse) {
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* ==========================================================================
+           3. HERO INTRODUCTION
+           ========================================================================== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(4rem, 8vw, 7rem);
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-sub {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-size: 0.9rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.5;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--text-main), transparent);
+            animation: flowDown 2s infinite;
+        }
+
+        @keyframes flowDown {
+            0% {
+                transform: scaleY(0);
+                transform-origin: top;
+            }
+
+            50% {
+                transform: scaleY(1);
+                transform-origin: top;
+            }
+
+            50.1% {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+
+            100% {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+        }
+
+        /* ==========================================================================
+           4. FEATURES: THE FLUID ORGANIC ACCORDION
+           ========================================================================== */
+        .features {
+            padding: 10vh 5vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .eyebrow {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent-sage);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .accordion-container {
+            display: flex;
+            gap: 1.5rem;
+            height: 70vh;
+            max-height: 800px;
+            width: 100%;
+        }
+
+        .acc-card {
+            flex: 1;
+            border-radius: 100px;
+            position: relative;
+            overflow: hidden;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transition: flex 0.8s var(--ease-fluid), border-radius 0.8s var(--ease-fluid);
+        }
+
+        .acc-card:hover {
+            flex: 4;
+            border-radius: 24px;
+        }
+
+        .acc-bg {
+            position: absolute;
+            inset: -10%;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(80%) brightness(0.4);
+            transition: transform 1s var(--ease-fluid), filter 1s var(--ease-fluid);
+            pointer-events: none;
+        }
+
+        .acc-card:hover .acc-bg {
+            transform: scale(1.05);
+            filter: grayscale(0%) brightness(0.7);
+        }
+
+        .acc-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(7, 8, 7, 0.95) 0%, rgba(7, 8, 7, 0.1) 70%);
+            pointer-events: none;
+        }
+
+        /* Collapsed View */
+        .acc-collapsed {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            writing-mode: vertical-rl;
+            white-space: nowrap;
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            transition: opacity 0.4s;
+        }
+
+        .acc-card:hover .acc-collapsed {
+            opacity: 0;
+        }
+
+        /* Expanded Content */
+        .acc-expanded {
+            position: absolute;
+            inset: 0;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s var(--ease-fluid) 0.1s;
+            pointer-events: none;
+            /* Crucial: allows hover to persist until active */
+        }
+
+        .acc-card:hover .acc-expanded {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .acc-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .magnetic-wrap {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-sage);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent-sage);
+            transition: background 0.4s, color 0.4s;
+        }
+
+        .magnetic-wrap:hover {
+            background: var(--accent-sage);
+            color: var(--bg-base);
+        }
+
+        .acc-num {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        .acc-bottom h3 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .acc-bottom p {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--accent-gold);
+            width: 0;
+            transition: width 1s var(--ease-fluid) 0.3s;
+        }
+
+        .acc-card:hover .stat-fill {
+            width: var(--w);
+        }
+
+        /* ==========================================================================
+           5. TESTIMONIALS: 3D ORBITAL DRAG WHEEL
+           ========================================================================== */
+        .testimonials {
+            min-height: 100vh;
+            padding: 0 5vw;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Left Side: Split Typography */
+        .t-left {
+            width: 50%;
+            position: relative;
+            z-index: 2;
+            padding-right: 2rem;
+        }
+
+        .quote-icon-lg {
+            font-family: var(--font-display);
+            font-size: 8rem;
+            color: var(--accent-sage);
+            opacity: 0.15;
+            line-height: 0;
+            margin-bottom: 1rem;
+            user-select: none;
+        }
+
+        .quote-text {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            color: var(--text-main);
+            font-style: italic;
+            line-height: 1.3;
+            min-height: 220px;
+            margin-bottom: 2rem;
+        }
+
+        .quote-text .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(15px) rotate(2deg);
+        }
+
+        .quote-author {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--accent-gold);
+        }
+
+        .quote-role {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
+            margin-top: 0.3rem;
+        }
+
+        /* Right Side: 3D Wheel */
+        .t-right {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 600px;
+            height: 600px;
+            margin-right: -200px;
+            z-index: 1;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .wheel {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px dashed rgba(147, 163, 137, 0.25);
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: rgba(226, 229, 222, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 229, 222, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            pointer-events: none;
+        }
+
+        .avatar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            margin-top: -40px;
+            margin-left: -40px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(226, 229, 222, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            will-change: transform, filter, opacity;
+            cursor: grab;
+        }
+
+        .avatar:active {
+            cursor: grabbing;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .accordion-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .acc-card {
+                height: 130px;
+                flex: none;
+                border-radius: 40px;
+            }
+
+            .acc-card:hover {
+                height: 420px;
+            }
+
+            .acc-collapsed {
+                writing-mode: horizontal-tb;
+                transform: translate(-50%, -50%);
+                bottom: auto;
+                top: 50%;
+            }
+
+            .testimonials {
+                flex-direction: column;
+                justify-content: center;
+                padding-top: 10vh;
+            }
+
+            .t-left {
+                width: 100%;
+                padding-right: 0;
+                text-align: center;
+                margin-bottom: 5rem;
+            }
+
+            .t-right {
+                position: relative;
+                transform: none;
+                top: auto;
+                right: auto;
+                margin: 0 auto;
+                width: 350px;
+                height: 350px;
+            }
+
+            .quote-text {
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="ambient-bg" id="parallax-bg"></div>
+    <div class="ambient-gradient"></div>
+    <div class="noise-overlay"></div>
+    <canvas id="fireflies"></canvas>
+
+    <header class="hero">
+        <h1 class="gsap-hero">Digital Nature.</h1>
+        <p class="hero-sub gsap-hero">Symbiotic Architecture</p>
+        <div class="scroll-indicator gsap-hero">
+            <div class="scroll-line"></div>
+        </div>
+    </header>
+
+    <section class="features" id="features">
+        <div class="section-header gsap-fade">
+            <span class="eyebrow">The Ecosystem</span>
+            <h2 class="section-title">Fluid Dynamics</h2>
+        </div>
+
+        <div class="accordion-container">
+            <div class="acc-card interactive gsap-card">
+                <div class="acc-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1000&auto=format&fit=crop');">
+                </div>
+                <div class="acc-overlay"></div>
+                <div class="acc-collapsed">01 / Symbiosis</div>
+                <div class="acc-expanded">
+                    <div class="acc-top">
+                        <div class="magnetic-wrap"><i class="ph ph-intersect"></i></div>
+                        <span class="acc-num">01</span>
+                    </div>
+                    <div class="acc-bottom">
+                        <h3>Symbiotic Integration</h3>
+                        <p>Our infrastructure weaves into your ecosystem naturally, eliminating friction and creating a
+                            seamless operational experience.</p>
+                        <div
+                            style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 8px;">
+                            Adaptability</div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="--w: 98%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-card interactive gsap-card">
+                <div class="acc-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop');">
+                </div>
+                <div class="acc-overlay"></div>
+                <div class="acc-collapsed">02 / Roots</div>
+                <div class="acc-expanded">
+                    <div class="acc-top">
+                        <div class="magnetic-wrap"><i class="ph ph-shield-check"></i></div>
+                        <span class="acc-num">02</span>
+                    </div>
+                    <div class="acc-bottom">
+                        <h3>Rooted Security</h3>
+                        <p>Built upon a bedrock of unbreakable stability. We embed profound defensive structures deep
+                            into the soil of your data.</p>
+                        <div
+                            style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 8px;">
+                            Resilience</div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="--w: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-card interactive gsap-card">
+                <div class="acc-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1505322022379-7c3353ee6291?q=80&w=1000&auto=format&fit=crop');">
+                </div>
+                <div class="acc-overlay"></div>
+                <div class="acc-collapsed">03 / Ethereal</div>
+                <div class="acc-expanded">
+                    <div class="acc-top">
+                        <div class="magnetic-wrap"><i class="ph ph-wind"></i></div>
+                        <span class="acc-num">03</span>
+                    </div>
+                    <div class="acc-bottom">
+                        <h3>Ethereal Space</h3>
+                        <p>Embracing the void. Clean, asymmetrical layouts and intentional whitespace allow your content
+                            to breathe effortlessly.</p>
+                        <div
+                            style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 8px;">
+                            Clarity</div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="--w: 94%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acc-card interactive gsap-card">
+                <div class="acc-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1000&auto=format&fit=crop');">
+                </div>
+                <div class="acc-overlay"></div>
+                <div class="acc-collapsed">04 / Evolution</div>
+                <div class="acc-expanded">
+                    <div class="acc-top">
+                        <div class="magnetic-wrap"><i class="ph ph-leaf"></i></div>
+                        <span class="acc-num">04</span>
+                    </div>
+                    <div class="acc-bottom">
+                        <h3>Organic Evolution</h3>
+                        <p>Systems that learn, adapt, and evolve. Intelligent algorithms that anticipate structural
+                            shifts before they occur.</p>
+                        <div
+                            style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 8px;">
+                            Intelligence</div>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="--w: 97%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <div class="t-left gsap-t-left">
+            <div class="quote-icon-lg">“</div>
+            <div class="quote-text" id="quote-text"></div>
+            <div class="quote-author" id="quote-author"></div>
+            <div class="quote-role" id="quote-role"></div>
+        </div>
+        <div class="t-right gsap-t-right">
+            <div class="wheel-wrapper interactive" id="wheel-wrapper">
+                <div class="wheel" id="wheel">
+                </div>
+                <div class="wheel-center">Orbit &<br>Echoes</div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ==========================================================================
+               1. SMOOTH SCROLL (Lenis)
+               ========================================================================== */
+            const lenis = new Lenis({ duration: 1.2, smooth: true });
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            /* ==========================================================================
+               2. CUSTOM FLUID CURSOR
+               ========================================================================== */
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorRing = document.querySelector('.cursor-ring');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+
+            window.addEventListener('mousemove', e => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+            });
+
+            function renderCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.transform = `translate(${ringX}px, ${ringY}px)`;
+                requestAnimationFrame(renderCursor);
+            }
+            renderCursor();
+
+            document.querySelectorAll('.interactive').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorRing.classList.add('active'));
+                el.addEventListener('mouseleave', () => cursorRing.classList.remove('active'));
+            });
+
+            /* ==========================================================================
+               3. MAGNETIC MICRO-INTERACTIONS
+               ========================================================================== */
+            document.querySelectorAll('.magnetic-wrap').forEach(el => {
+                el.addEventListener('mousemove', e => {
+                    const rect = el.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(el, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: 'power2.out' });
+                    gsap.to(el.children[0], { x: x * 0.2, y: y * 0.2, duration: 0.3, ease: 'power2.out' });
+                });
+                el.addEventListener('mouseleave', () => {
+                    gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
+                    gsap.to(el.children[0], { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
+                });
+            });
+
+            /* ==========================================================================
+               4. AMBIENT FIREFLIES CANVAS
+               ========================================================================== */
+            const canvas = document.getElementById('fireflies');
+            const ctx = canvas.getContext('2d');
+            let cw, ch; const particles = [];
+
+            function resizeCanvas() {
+                cw = canvas.width = window.innerWidth;
+                ch = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * cw, y: Math.random() * ch,
+                    r: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
+                    alpha: Math.random() * 0.4 + 0.1
+                });
+            }
+
+            function drawFireflies() {
+                ctx.clearRect(0, 0, cw, ch);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0) p.x = cw; if (p.x > cw) p.x = 0;
+                    if (p.y < 0) p.y = ch; if (p.y > ch) p.y = 0;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(147, 163, 137, ${p.alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(drawFireflies);
+            }
+            drawFireflies();
+
+            /* ==========================================================================
+               5. GSAP SCROLL ANIMATIONS
+               ========================================================================== */
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Parallax BG
+            gsap.to('#parallax-bg', {
+                yPercent: 15, ease: "none",
+                scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: true }
+            });
+
+            // Entrances
+            gsap.from('.gsap-hero', { y: 30, opacity: 0, duration: 1.5, stagger: 0.2, ease: "power3.out", delay: 0.2 });
+            gsap.from('.gsap-fade', { y: 40, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: '#features', start: "top 80%" } });
+            gsap.from('.gsap-card', { y: 60, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out", scrollTrigger: { trigger: '.accordion-container', start: "top 80%" } });
+            gsap.from('.gsap-t-left', { x: -50, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: '#testimonials', start: "top 75%" } });
+            gsap.from('.gsap-t-right', { scale: 0.9, opacity: 0, duration: 1.5, ease: "expo.out", scrollTrigger: { trigger: '#testimonials', start: "top 75%" } });
+
+            /* ==========================================================================
+               6. 3D ORBITAL DRAG WHEEL & SPLIT TEXT LOGIC
+               ========================================================================== */
+            const testimonialsData = [
+                { quote: "The organic aesthetic and seamless micro-interactions completely transformed how our team works. It feels utterly alive.", name: "Elena Rostova", role: "Creative Director", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200" },
+                { quote: "It operates with a calm intelligence. You don't realize how chaotic your old systems were until you step into this clarity.", name: "Marcus Thorne", role: "Lead Architect", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200" },
+                { quote: "A masterclass in restraint and elegance. They completely avoided generic trends, resulting in something timeless and beautiful.", name: "Sophia Lin", role: "Brand Strategist", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200" },
+                { quote: "Absolutely spellbinding. The intuitive design, subtle glass textures, and organic animations make it a sheer joy to navigate.", name: "Julian Hayes", role: "Digital Artist", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200" },
+                { quote: "An incredibly organic experience. The interface doesn't just respond to input, it breathes and adapts alongside natural workflow.", name: "Amara Dubois", role: "Editor in Chief", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200" },
+                { quote: "Every panel morphs like unfolding leaves. Visually stunning, structurally flawless, and an absolute joy to use daily.", name: "David Chu", role: "UX Visionary", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200" }
+            ];
+
+            const wheel = document.getElementById('wheel');
+            const wrapper = document.getElementById('wheel-wrapper');
+            let radius = window.innerWidth < 992 ? 175 : 300;
+            let currentRot = 0;
+            let activeIndex = -1;
+
+            window.addEventListener('resize', () => {
+                radius = window.innerWidth < 992 ? 175 : 300;
+                applyRotation(currentRot);
+            });
+
+            // Generate Avatars
+            const avatars = testimonialsData.map((t, i) => {
+                const el = document.createElement('div');
+                el.className = 'avatar';
+                el.innerHTML = `<img src="${t.img}" alt="${t.name}">`;
+                wheel.appendChild(el);
+                return { el, angle: i * (360 / testimonialsData.length), index: i };
+            });
+
+            function splitText(text) {
+                return text.split(' ').map(w => `<span class="word">${w}&nbsp;</span>`).join('');
+            }
+
+            function updateQuote(index) {
+                if (index === activeIndex) return;
+                activeIndex = index;
+                const data = testimonialsData[index];
+                const qEl = document.getElementById('quote-text');
+                const aEl = document.getElementById('quote-author');
+                const rEl = document.getElementById('quote-role');
+
+                const oldWords = qEl.querySelectorAll('.word');
+                if (oldWords.length) {
+                    gsap.to(oldWords, { y: -15, opacity: 0, stagger: 0.015, duration: 0.3, onComplete: () => renderNewQuote(data, qEl, aEl, rEl) });
+                    gsap.to([aEl, rEl], { opacity: 0, x: 10, duration: 0.3 });
+                } else {
+                    renderNewQuote(data, qEl, aEl, rEl);
+                }
+            }
+
+            function renderNewQuote(data, qEl, aEl, rEl) {
+                qEl.innerHTML = splitText(data.quote);
+                aEl.innerText = data.name; rEl.innerText = data.role;
+                gsap.to(qEl.querySelectorAll('.word'), { y: 0, opacity: 1, stagger: 0.02, duration: 0.6, ease: 'power3.out' });
+                gsap.fromTo([aEl, rEl], { opacity: 0, x: -10 }, { opacity: 1, x: 0, stagger: 0.1, duration: 0.5, ease: 'power2.out', delay: 0.1 });
+            }
+
+            function applyRotation(rot) {
+                wheel.style.transform = `rotate(${rot}deg)`;
+                avatars.forEach(av => {
+                    let globalAngle = (rot + av.angle) % 360;
+                    if (globalAngle < 0) globalAngle += 360;
+                    let diff = globalAngle;
+                    if (diff > 180) diff -= 360;
+
+                    let absDiff = Math.abs(diff);
+                    let progress = Math.max(0, 1 - (absDiff / 60));
+
+                    let scale = 1 + (0.4 * progress);
+                    let opacity = 0.3 + (0.7 * progress);
+                    let filter = `grayscale(${100 - (100 * progress)}%)`;
+
+                    // Keep upright while orbiting
+                    av.el.style.transform = `rotate(${av.angle}deg) translate(-${radius}px) rotate(${-av.angle - rot}deg) scale(${scale})`;
+                    av.el.style.opacity = opacity;
+                    av.el.style.filter = filter;
+                    av.el.style.borderColor = progress > 0.9 ? 'rgba(201, 166, 107, 0.8)' : 'rgba(226, 229, 222, 0.3)';
+
+                    if (progress > 0.95 && activeIndex !== av.index) updateQuote(av.index);
+                });
+            }
+
+            function snapToNearest() {
+                let minDiff = 360; let targetRot = currentRot;
+                avatars.forEach(av => {
+                    let globalAngle = (currentRot + av.angle) % 360;
+                    if (globalAngle < 0) globalAngle += 360;
+                    let diff = globalAngle;
+                    if (diff > 180) diff -= 360;
+                    if (Math.abs(diff) < Math.abs(minDiff)) {
+                        minDiff = diff; targetRot = currentRot - diff;
+                    }
+                });
+                gsap.to({ val: currentRot }, {
+                    val: targetRot, duration: 0.6, ease: "power2.out",
+                    onUpdate: function () { currentRot = this.targets()[0].val; applyRotation(currentRot); }
+                });
+            }
+
+            // Drag Physics
+            let isDragging = false, lastY = 0, velocity = 0;
+            wrapper.addEventListener('pointerdown', e => {
+                isDragging = true; lastY = e.clientY; velocity = 0;
+                clearInterval(autoSpin);
+            });
+            window.addEventListener('pointermove', e => {
+                if (!isDragging) return;
+                const dy = e.clientY - lastY; velocity = dy;
+                currentRot += dy * 0.3; lastY = e.clientY;
+                applyRotation(currentRot);
+            });
+            window.addEventListener('pointerup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                requestAnimationFrame(applyInertia);
+                startAutoSpin();
+            });
+
+            function applyInertia() {
+                if (isDragging) return;
+                if (Math.abs(velocity) > 0.1) {
+                    currentRot += velocity * 0.3; velocity *= 0.92;
+                    applyRotation(currentRot); requestAnimationFrame(applyInertia);
+                } else {
+                    snapToNearest();
+                }
+            }
+
+            // Wheel scroll support
+            wrapper.addEventListener('wheel', e => {
+                e.preventDefault();
+                currentRot -= e.deltaY * 0.05; applyRotation(currentRot);
+                clearTimeout(window.wheelTimeout); clearInterval(autoSpin);
+                window.wheelTimeout = setTimeout(() => { snapToNearest(); startAutoSpin(); }, 150);
+            }, { passive: false });
+
+            // Autonomous Orbit
+            let autoSpin;
+            function startAutoSpin() {
+                clearInterval(autoSpin);
+                autoSpin = setInterval(() => {
+                    if (!isDragging) {
+                        let targetRot = currentRot + (360 / testimonialsData.length);
+                        gsap.to({ val: currentRot }, {
+                            val: targetRot, duration: 1.2, ease: "power2.inOut",
+                            onUpdate: function () { currentRot = this.targets()[0].val; applyRotation(currentRot); }
+                        });
+                    }
+                }, 4000);
+            }
+
+            // Init Orbit
+            applyRotation(0);
+            startAutoSpin();
+        });
+    </script>
+</body>
+
+</html>

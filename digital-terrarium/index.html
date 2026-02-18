@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Digital Ecosystem | Features & Testimonials</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <style>
+        /* =========================================
+           1. CORE & AESTHETIC VARIABLES
+           ========================================= */
+        :root {
+            /* Natural Earth Palette - NO NEON / NO PURPLE */
+            --bg-warm: #EAE6DF;
+            --text-dark: #2A2C26;
+            --text-muted: #6B7062;
+            --accent-sand: #9B8B74;
+            --accent-sage: #5C6B51;
+
+            --glass-bg: rgba(250, 248, 242, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.45);
+            --glass-hover: rgba(255, 255, 255, 0.8);
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Outfit', sans-serif;
+            --trans-morph: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Custom organic cursor */
+        }
+
+        body {
+            background-color: var(--bg-warm);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================
+           2. AMBIENT ENVIRONMENT (NATURAL BACKGROUND)
+           ========================================= */
+        .bg-image {
+            position: fixed;
+            top: -5vh;
+            left: -5vw;
+            width: 110vw;
+            height: 110vh;
+            /* High-quality abstract natural texture (sand/stone/water) */
+            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2560&auto=format&fit=crop') center/cover;
+            filter: brightness(0.9) contrast(1.05) saturate(0.6) sepia(0.2);
+            opacity: 0.15;
+            z-index: -2;
+            will-change: transform;
+        }
+
+        .noise-texture {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.08;
+            mix-blend-mode: multiply;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Typography Utilities */
+        .serif {
+            font-family: var(--font-serif);
+        }
+
+        .eyebrow {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--accent-sage);
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        h2 {
+            font-size: clamp(3.5rem, 6vw, 5.5rem);
+            line-height: 1.1;
+            font-weight: 400;
+        }
+
+        .word-wrap {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+        }
+
+        .word {
+            display: inline-block;
+            transform: translateY(120%);
+        }
+
+        /* Custom Physics Cursor */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(42, 44, 38, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: width 0.4s, height 0.4s, background 0.4s, border-color 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        body.cursor-hover .cursor-ring {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+            border-color: transparent;
+            color: var(--text-dark);
+        }
+
+        /* =========================================
+           3. FEATURES: ORGANIC MORPHING DROPLETS (ANTI-BENTO)
+           ========================================= */
+        .features-section {
+            padding: 15vh 5vw 10vh 5vw;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 12vh;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6vw;
+        }
+
+        .blob-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 550px;
+            position: relative;
+        }
+
+        /* Asymmetrical stagger */
+        .blob-wrapper:nth-child(even) {
+            margin-top: 20vh;
+        }
+
+        .parallax-wrap {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The Living Organic Shape */
+        .blob {
+            width: 360px;
+            height: 360px;
+            /* Complex border radius for natural look */
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+            transition: all var(--trans-morph);
+            animation: breathing 8s infinite alternate ease-in-out;
+            position: relative;
+            overflow: hidden;
+            will-change: border-radius, width, height;
+        }
+
+        /* Unique natural shapes & breathing speeds for each droplet */
+        .blob-wrapper:nth-child(2) .blob {
+            border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+            animation-direction: reverse;
+            animation-duration: 9s;
+        }
+
+        .blob-wrapper:nth-child(3) .blob {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-duration: 10s;
+        }
+
+        .blob-wrapper:nth-child(4) .blob {
+            border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%;
+            animation-direction: reverse;
+            animation-duration: 8.5s;
+        }
+
+        /* Morph Action on Hover */
+        .blob-wrapper:hover .blob {
+            animation-play-state: paused;
+            width: 480px;
+            height: 450px;
+            border-radius: 24px;
+            /* Morphs to a clean rectangle to read content */
+            background: var(--glass-hover);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Ambient Glow inside the droplet */
+        .blob::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6), transparent 60%);
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity var(--trans-morph);
+        }
+
+        .blob-wrapper:hover .blob::before {
+            opacity: 1;
+        }
+
+        /* Content Visible Initially */
+        .blob-visible {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            transition: all var(--trans-morph);
+        }
+
+        .blob-wrapper:hover .blob-visible {
+            top: 3rem;
+            left: 3rem;
+            transform: translate(0, 0) scale(0.85);
+            align-items: flex-start;
+        }
+
+        .f-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .f-icon svg {
+            width: 34px;
+            height: 34px;
+            color: var(--accent-sage);
+        }
+
+        .blob-visible h3 {
+            margin: 0;
+            text-align: center;
+            font-size: 2.4rem;
+            color: var(--text-dark);
+        }
+
+        .blob-wrapper:hover .blob-visible h3 {
+            text-align: left;
+        }
+
+        /* Content Hidden Initially (Reveals on Hover) */
+        .blob-hidden {
+            position: absolute;
+            top: 12rem;
+            left: 3rem;
+            width: calc(100% - 6rem);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--trans-morph);
+            pointer-events: none;
+        }
+
+        .blob-wrapper:hover .blob-hidden {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.15s;
+            pointer-events: auto;
+        }
+
+        .blob-hidden p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Micro-Animations (Data Bars & Trackers) */
+        .micro-stats {
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .stat-item {
+            margin-bottom: 1rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-sand);
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .stat-bar {
+            height: 2px;
+            background: rgba(42, 44, 38, 0.1);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .stat-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            background: var(--accent-sage);
+            transition: width 1.2s var(--trans-morph);
+        }
+
+        .blob-wrapper:hover .stat-bar::after {
+            width: var(--w);
+            transition-delay: 0.4s;
+        }
+
+        @keyframes breathing {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+        }
+
+        /* =========================================
+           4. TESTIMONIALS: 3D STACKING CINEMATIC
+           ========================================= */
+        .testi-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            margin-top: 5vh;
+            position: relative;
+        }
+
+        .testi-container {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .testi-left {
+            width: 35%;
+        }
+
+        .testi-left p {
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .testi-right {
+            width: 55%;
+            height: 70vh;
+            position: relative;
+            perspective: 1500px;
+        }
+
+        .t-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--glass-hover);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 4.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
+            transform-origin: top center;
+            will-change: transform, opacity;
+            overflow: hidden;
+        }
+
+        /* Darkening overlay for cards pushed into the background depth */
+        .t-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(42, 44, 38, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .t-quote-mark {
+            font-family: var(--font-serif);
+            font-size: 14rem;
+            color: var(--accent-sand);
+            opacity: 0.15;
+            position: absolute;
+            top: -4rem;
+            right: 2rem;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .t-quote {
+            font-size: 2.2rem;
+            line-height: 1.4;
+            color: var(--text-dark);
+            font-style: italic;
+            max-width: 95%;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .t-footer {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border-top: 1px solid rgba(42, 44, 38, 0.1);
+            padding-top: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .t-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .t-author h4 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .t-author span {
+            font-size: 0.85rem;
+            color: var(--accent-sage);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* SVG Signature Micro-animation */
+        .t-signature {
+            margin-left: auto;
+            width: 160px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 10vw;
+            }
+
+            .blob-wrapper:nth-child(even) {
+                margin-top: 0;
+            }
+
+            .blob {
+                width: 100%;
+                max-width: 360px;
+            }
+
+            .blob-wrapper:hover .blob {
+                width: 100%;
+                max-width: 380px;
+                height: 480px;
+            }
+
+            .testi-wrapper {
+                height: auto;
+                margin-top: 15vh;
+                margin-bottom: 10vh;
+                display: block;
+            }
+
+            .testi-container {
+                flex-direction: column;
+                gap: 5rem;
+            }
+
+            .testi-left,
+            .testi-right {
+                width: 100%;
+            }
+
+            .testi-right {
+                height: auto;
+                perspective: none;
+            }
+
+            .t-card {
+                position: relative;
+                height: auto;
+                margin-bottom: 2rem;
+                padding: 3rem;
+                transform: none !important;
+                opacity: 1 !important;
+            }
+
+            .t-overlay {
+                display: none;
+            }
+
+            .t-quote {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-image"></div>
+    <div class="noise-texture"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="features-section" id="features">
+        <div class="section-header">
+            <span class="eyebrow split-text">Digital Ecosystem</span>
+            <h2 class="serif split-text">Organic Capabilities</h2>
+        </div>
+
+        <div class="features-grid">
+
+            <div class="blob-wrapper hover-target">
+                <div class="parallax-wrap" data-speed="40">
+                    <div class="blob magnetic">
+                        <div class="blob-visible">
+                            <div class="f-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path class="draw-path"
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                                    <path class="draw-path" d="M12 2v20" />
+                                    <path class="draw-path" d="M12 12q4-4 8 0" />
+                                    <path class="draw-path" d="M4 12q4-4 8 0" />
+                                </svg>
+                            </div>
+                            <h3 class="serif">Natural Symmetry</h3>
+                        </div>
+                        <div class="blob-hidden">
+                            <p>Moving entirely beyond rigid bento boxes and static grids. We engineer fluid, living
+                                layouts that naturally adapt and breathe with your operational data.</p>
+                            <div class="micro-stats">
+                                <div class="stat-item"><span class="stat-label">Layout Adaptability</span>
+                                    <div class="stat-bar" style="--w: 95%"></div>
+                                </div>
+                                <div class="stat-item"><span class="stat-label">User Friction</span>
+                                    <div class="stat-bar" style="--w: 8%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blob-wrapper hover-target">
+                <div class="parallax-wrap" data-speed="-30">
+                    <div class="blob magnetic">
+                        <div class="blob-visible">
+                            <div class="f-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path class="draw-path" d="M2 12q5-5 10 0t10 0" />
+                                    <path class="draw-path" d="M2 18q5-5 10 0t10 0" />
+                                    <path class="draw-path" d="M2 6q5-5 10 0t10 0" />
+                                </svg>
+                            </div>
+                            <h3 class="serif">Kinetic Currents</h3>
+                        </div>
+                        <div class="blob-hidden">
+                            <p>Micro-interactions are engineered with the momentum, weight, and tranquil flow of river
+                                currents. Every movement feels inherently grounded in physics.</p>
+                            <div class="micro-stats">
+                                <div class="stat-item"><span class="stat-label">Momentum</span>
+                                    <div class="stat-bar" style="--w: 88%"></div>
+                                </div>
+                                <div class="stat-item"><span class="stat-label">Latency</span>
+                                    <div class="stat-bar" style="--w: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blob-wrapper hover-target">
+                <div class="parallax-wrap" data-speed="50">
+                    <div class="blob magnetic">
+                        <div class="blob-visible">
+                            <div class="f-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle class="draw-path" cx="18" cy="6" r="3" />
+                                    <circle class="draw-path" cx="6" cy="18" r="3" />
+                                    <circle class="draw-path" cx="18" cy="18" r="3" />
+                                    <path class="draw-path" d="M18 9v6" />
+                                    <path class="draw-path" d="M8.12 15.88l7.76-7.76" />
+                                </svg>
+                            </div>
+                            <h3 class="serif">Sensory Depth</h3>
+                        </div>
+                        <div class="blob-hidden">
+                            <p>We treat digital interfaces like physical materials. Leveraging pristine glassmorphism
+                                and subtle shadows to create tactile depth you can almost touch.</p>
+                            <div class="micro-stats">
+                                <div class="stat-item"><span class="stat-label">Tactility</span>
+                                    <div class="stat-bar" style="--w: 92%"></div>
+                                </div>
+                                <div class="stat-item"><span class="stat-label">Immersion</span>
+                                    <div class="stat-bar" style="--w: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blob-wrapper hover-target">
+                <div class="parallax-wrap" data-speed="-40">
+                    <div class="blob magnetic">
+                        <div class="blob-visible">
+                            <div class="f-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <polygon class="draw-path" points="12 2 2 7 12 12 22 7 12 2" />
+                                    <polyline class="draw-path" points="2 12 12 17 22 12" />
+                                    <polyline class="draw-path" points="2 17 12 22 22 17" />
+                                </svg>
+                            </div>
+                            <h3 class="serif">Quiet Architecture</h3>
+                        </div>
+                        <div class="blob-hidden">
+                            <p>Foundations built rock-solid, processing immense global network complexity silently below
+                                the surface, ensuring a completely serene user space.</p>
+                            <div class="micro-stats">
+                                <div class="stat-item"><span class="stat-label">Stability</span>
+                                    <div class="stat-bar" style="--w: 100%"></div>
+                                </div>
+                                <div class="stat-item"><span class="stat-label">Visual Noise</span>
+                                    <div class="stat-bar" style="--w: 4%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="testi-wrapper">
+        <div class="testi-container">
+            <div class="testi-left">
+                <span class="eyebrow split-text">Resonance</span>
+                <h2 class="serif split-text">Echoes of the Environment</h2>
+                <p class="reveal-text">Listen to visionary voices who have successfully transformed their digital chaos
+                    into pristine, logical harmony.</p>
+            </div>
+
+            <div class="testi-right">
+
+                <div class="t-card">
+                    <div class="t-overlay"></div>
+                    <div class="t-quote-mark">“</div>
+                    <p class="t-quote serif">The elegance is unmatched. It feels less like using software and more like
+                        interacting with a beautifully living organism that anticipates your thoughts.</p>
+                    <div class="t-footer">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop"
+                            class="t-avatar" alt="Avatar">
+                        <div class="t-author">
+                            <h4>Elena Rostova</h4>
+                            <span>Creative Director</span>
+                        </div>
+                        <svg viewBox="0 0 200 60" class="t-signature">
+                            <path class="sig-path" d="M10 40 Q 30 10, 50 50 T 90 20 T 130 50 T 180 30" fill="none"
+                                stroke="var(--accent-sand)" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="t-card">
+                    <div class="t-overlay"></div>
+                    <div class="t-quote-mark">“</div>
+                    <p class="t-quote serif">Stripping away the loud synthetics and embracing these earthy physics
+                        brought an immediate, profound sense of calm to our entire daily workflow.</p>
+                    <div class="t-footer">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop"
+                            class="t-avatar" alt="Avatar">
+                        <div class="t-author">
+                            <h4>Marcus Thorne</h4>
+                            <span>Lead Architect</span>
+                        </div>
+                        <svg viewBox="0 0 200 60" class="t-signature">
+                            <path class="sig-path" d="M20 50 Q 40 5, 70 40 T 120 15 T 160 55 T 190 25" fill="none"
+                                stroke="var(--accent-sand)" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="t-card">
+                    <div class="t-overlay"></div>
+                    <div class="t-quote-mark">“</div>
+                    <p class="t-quote serif">A masterpiece of digital engineering. Moving away from cluttered grids to
+                        this serene environment has boosted our studio's creativity tenfold.</p>
+                    <div class="t-footer">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop"
+                            class="t-avatar" alt="Avatar">
+                        <div class="t-author">
+                            <h4>Sophia Lin</h4>
+                            <span>Founder, Vora</span>
+                        </div>
+                        <svg viewBox="0 0 200 60" class="t-signature">
+                            <path class="sig-path" d="M15 35 Q 45 15, 65 50 T 100 20 T 150 45 T 185 35" fill="none"
+                                stroke="var(--accent-sand)" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="t-card">
+                    <div class="t-overlay"></div>
+                    <div class="t-quote-mark">“</div>
+                    <p class="t-quote serif">Every micro-interaction feels deeply intentional. It's rare to find a
+                        platform that breathes with you. The architecture is an absolute work of art.</p>
+                    <div class="t-footer">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop"
+                            class="t-avatar" alt="Avatar">
+                        <div class="t-author">
+                            <h4>Julian Vance</h4>
+                            <span>Director of Ops</span>
+                        </div>
+                        <svg viewBox="0 0 200 60" class="t-signature">
+                            <path class="sig-path" d="M10 25 Q 35 55, 80 20 T 130 50 T 170 15 T 190 40" fill="none"
+                                stroke="var(--accent-sand)" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div style="height: 15vh;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // 1. Initialize Lenis Smooth Scrolling for fluid physical feel
+            const lenis = new Lenis({
+                duration: 1.5,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+            });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+
+            // Sync GSAP ScrollTrigger with Lenis
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => lenis.raf(time * 1000));
+            gsap.ticker.lagSmoothing(0);
+
+            // 2. Custom Magnetic Cursor
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY, dotX = mouseX, dotY = mouseY;
+
+            window.addEventListener('mousemove', e => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            function animateCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                dotX += (mouseX - dotX) * 0.5;
+                dotY += (mouseY - dotY) * 0.5;
+
+                document.querySelector('.cursor-ring').style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+                document.querySelector('.cursor-dot').style.transform = `translate(calc(${dotX}px - 50%), calc(${dotY}px - 50%))`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover state logic
+            document.querySelectorAll('.hover-target').forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    document.body.classList.add('cursor-hover');
+                    document.querySelector('.cursor-ring').innerText = "Explore";
+                });
+                el.addEventListener('mouseleave', () => {
+                    document.body.classList.remove('cursor-hover');
+                    document.querySelector('.cursor-ring').innerText = "";
+                });
+            });
+
+            // 3. Blob Magnetic Hover Effect (Physics)
+            document.querySelectorAll('.magnetic').forEach(blob => {
+                blob.addEventListener('mousemove', (e) => {
+                    const rect = blob.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.08;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.08;
+                    gsap.to(blob, { x: x, y: y, duration: 0.5, ease: "power2.out" });
+                });
+                blob.addEventListener('mouseleave', () => {
+                    gsap.to(blob, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" });
+                });
+            });
+
+            // 4. Global Parallax Background
+            gsap.to('.bg-image', {
+                scale: 1.08, y: 60, ease: "none",
+                scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: true }
+            });
+
+            // 5. Blob Vertical Parallax on Scroll
+            gsap.utils.toArray('.parallax-wrap').forEach((wrap) => {
+                let speed = wrap.getAttribute('data-speed');
+                gsap.to(wrap, {
+                    y: speed, ease: "none",
+                    scrollTrigger: { trigger: wrap, start: "top bottom", end: "bottom top", scrub: true }
+                });
+            });
+
+            // 6. Typography Split & Reveal Animations
+            gsap.utils.toArray('.split-text').forEach(element => {
+                const words = element.innerText.split(' ');
+                element.innerHTML = '';
+                words.forEach(word => {
+                    const span = document.createElement('span');
+                    span.className = 'word-wrap';
+                    span.innerHTML = `<span class="word">${word}</span>&nbsp;`;
+                    element.appendChild(span);
+                });
+                gsap.from(element.querySelectorAll('.word'), {
+                    yPercent: 120, duration: 1.2, stagger: 0.05, ease: "power4.out",
+                    scrollTrigger: { trigger: element, start: "top 85%" }
+                });
+            });
+
+            gsap.utils.toArray('.reveal-text').forEach(text => {
+                gsap.from(text, {
+                    y: 30, opacity: 0, duration: 1.2, ease: "power3.out",
+                    scrollTrigger: { trigger: text, start: "top 85%" }
+                });
+            });
+
+            // 7. SVG Path Drawing Micro-animations
+            gsap.utils.toArray('.draw-path').forEach(path => {
+                let length = path.getTotalLength ? path.getTotalLength() : 100;
+                gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+
+                // Draw path when scrolling into view
+                gsap.to(path, {
+                    strokeDashoffset: 0, duration: 2, ease: "power2.out",
+                    scrollTrigger: { trigger: path, start: "top 85%" }
+                });
+            });
+
+            // 8. Cinematic 3D Stacking Testimonials Scroll Logic
+            let mm = gsap.matchMedia();
+            mm.add("(min-width: 1025px)", () => {
+                const tCards = gsap.utils.toArray('.t-card');
+                const tWrapper = document.querySelector('.testi-wrapper');
+
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: tWrapper,
+                        pin: true,
+                        start: "top top",
+                        end: "+=3000",
+                        scrub: 1,
+                    }
+                });
+
+                tCards.forEach((card, index) => {
+                    if (index === 0) return; // First card is native in place
+
+                    // Set incoming cards off-screen
+                    gsap.set(card, { y: window.innerHeight, scale: 0.9, opacity: 0 });
+
+                    // Animate incoming card up
+                    tl.to(card, { y: 0, scale: 1, opacity: 1, duration: 1, ease: "power2.out" }, index * 1);
+
+                    // Animate previous cards pushing back into 3D depth
+                    tCards.slice(0, index).forEach((prevCard, i) => {
+                        let depth = index - i;
+                        tl.to(prevCard, {
+                            scale: 1 - (depth * 0.05),
+                            y: -(depth * 45),
+                            duration: 1, ease: "power2.out"
+                        }, index * 1);
+
+                        // Darken the overlay for depth perception
+                        tl.to(prevCard.querySelector('.t-overlay'), {
+                            opacity: depth * 0.35, duration: 1, ease: "power2.out"
+                        }, index * 1);
+                    });
+
+                    // Trigger Signature draw for incoming cards
+                    tl.fromTo(card.querySelector('.sig-path'),
+                        { strokeDasharray: 400, strokeDashoffset: 400 },
+                        { strokeDashoffset: 0, duration: 1.2, ease: "power2.out" },
+                        index * 1 + 0.3
+                    );
+                });
+            });
+
+            // Draw signature for the very first card immediately on scroll
+            gsap.fromTo('.t-card:nth-child(1) .sig-path',
+                { strokeDasharray: 400, strokeDashoffset: 400 },
+                { strokeDashoffset: 0, duration: 2, ease: "power2.out", scrollTrigger: { trigger: ".testi-wrapper", start: "top 60%" } }
+            );
+        });
+    </script>
+</body>
+
+</html>

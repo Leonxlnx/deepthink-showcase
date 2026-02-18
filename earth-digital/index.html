@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Digital Ecosystems | About & Features</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <style>
+        /* ==========================================
+           ROOT & RESET (Natural Earth Palette)
+           ========================================== */
+        :root {
+            --bg: #0B0C0B;
+            /* Deep Forest / Charcoal */
+            --text: #EBE8E0;
+            /* Warm Bone White */
+            --accent: #6C7A68;
+            /* Sage Green */
+            --accent-dark: #1F241E;
+            /* Deep Sage */
+            --gold: #C2A278;
+            /* Earthy Sand/Gold */
+
+            --glass-bg: rgba(11, 12, 11, 0.4);
+            --glass-border: rgba(235, 232, 224, 0.08);
+            --glass-shine: rgba(235, 232, 224, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom cursor */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--gold);
+            color: var(--bg);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+        }
+
+        /* Ambient Noise & Structural Grid */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background-size: 100px 100px;
+            background-image: linear-gradient(to right, rgba(235, 232, 224, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(235, 232, 224, 0.02) 1px, transparent 1px);
+        }
+
+        /* ==========================================
+           CUSTOM CURSOR
+           ========================================== */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(194, 162, 120, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot.active {
+            width: 80px;
+            height: 80px;
+            background: var(--gold);
+            mix-blend-mode: normal;
+        }
+
+        .cursor-dot.active::after {
+            content: var(--cursor-text, "DRAG");
+            position: absolute;
+            color: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        /* ==========================================
+           ABOUT US (HERO)
+           ========================================== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5vw;
+        }
+
+        .hero-wrapper {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 650px;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-size: clamp(3.5rem, 6vw, 6.5rem);
+            line-height: 0.95;
+            margin-bottom: 2rem;
+            text-transform: lowercase;
+        }
+
+        .hero-title .word,
+        .hero-title .serif {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .hero-title .serif {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .hero-body {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(235, 232, 224, 0.7);
+            font-weight: 300;
+            margin-bottom: 3rem;
+            max-width: 480px;
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: transparent;
+            overflow: hidden;
+            transition: color 0.4s ease;
+        }
+
+        .magnetic-btn .fill {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gold);
+            border-radius: 50%;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+
+        .magnetic-btn:hover {
+            color: var(--bg);
+        }
+
+        .magnetic-btn:hover .fill {
+            bottom: 0;
+            border-radius: 0;
+        }
+
+        /* Morphing Visual Blob */
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .hero-img-mask {
+            width: 32vw;
+            height: 42vw;
+            overflow: hidden;
+            position: relative;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morphBlob 18s ease-in-out infinite alternate;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes morphBlob {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+
+            100% {
+                border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+            }
+        }
+
+        .hero-img {
+            width: 120%;
+            height: 120%;
+            object-fit: cover;
+            transform: scale(1.1);
+            filter: grayscale(20%);
+        }
+
+        /* Floating Rotating Badge */
+        .hero-badge {
+            position: absolute;
+            bottom: 5%;
+            left: -10%;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--accent-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rotating-text {
+            width: 100%;
+            height: 100%;
+            animation: rotate 12s linear infinite;
+        }
+
+        .rotating-text text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 11.5px;
+            letter-spacing: 2.8px;
+            fill: var(--gold);
+            font-weight: 500;
+        }
+
+        .badge-center {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 5vw;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        .mouse {
+            position: relative;
+            width: 20px;
+            height: 32px;
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+        }
+
+        .mouse::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 2px;
+            animation: scrollWheel 1.5s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, 10px);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================
+           ULTRA-CREATIVE HORIZONTAL FEATURES
+           ========================================== */
+        .features {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-sticky {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .features-title-wrap {
+            position: absolute;
+            top: 10vh;
+            left: 5vw;
+            z-index: 10;
+        }
+
+        .features-title {
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .features-subtitle {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+        }
+
+        .features-track {
+            display: flex;
+            align-items: center;
+            padding: 0 10vw;
+            gap: 12vw;
+            width: max-content;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Ambient SVG Weave */
+        .svg-container {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 600px;
+            transform: translateY(-50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .svg-container svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* The 'Anti-Bento' Feature Nodes */
+        .feature-card {
+            position: relative;
+            width: 400px;
+            height: 550px;
+            z-index: 2;
+            transform-style: preserve-3d;
+        }
+
+        .feature-card:nth-child(even) {
+            transform: translateY(12vh);
+        }
+
+        .feature-card:nth-child(odd) {
+            transform: translateY(-8vh);
+        }
+
+        /* Natural Mask Shapes */
+        .f-img-wrap {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            transition: border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .f-img {
+            width: 130%;
+            height: 130%;
+            object-fit: cover;
+            will-change: transform;
+            filter: grayscale(15%) brightness(0.8);
+        }
+
+        .shape-arch .f-img-wrap {
+            border-radius: 250px 250px 0 0;
+        }
+
+        .shape-pill .f-img-wrap {
+            border-radius: 250px;
+        }
+
+        .shape-leaf .f-img-wrap {
+            border-radius: 250px 0 250px 0;
+        }
+
+        .shape-drop .f-img-wrap {
+            border-radius: 0 250px 250px 250px;
+        }
+
+        .feature-card:hover .f-img-wrap {
+            border-radius: 120px;
+        }
+
+        /* Organic morph on hover */
+
+        /* 3D Glass Content Box */
+        .f-content {
+            position: absolute;
+            width: 340px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-shine);
+            border-left: 1px solid var(--glass-shine);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            padding: 2.5rem;
+            color: var(--text);
+            transform: translateZ(60px);
+            z-index: 5;
+        }
+
+        .feature-card:nth-child(even) .f-content {
+            top: -40px;
+            left: -40px;
+        }
+
+        .feature-card:nth-child(odd) .f-content {
+            bottom: -40px;
+            right: -40px;
+        }
+
+        .f-icon-wrap {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .f-icon-wrap svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .feature-card:hover .f-icon-wrap {
+            background: var(--gold);
+            color: var(--bg);
+            border-color: var(--gold);
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .f-title {
+            font-size: 2.2rem;
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .f-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(235, 232, 224, 0.65);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        /* Micro-Interaction Tags */
+        .f-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .f-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(235, 232, 224, 0.15);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .f-tag:hover {
+            background: var(--gold);
+            color: var(--bg);
+            border-color: var(--gold);
+        }
+
+        /* Responsive Mobile Stack */
+        @media (max-width: 900px) {
+            .hero-wrapper {
+                flex-direction: column;
+                text-align: center;
+                justify-content: center;
+                gap: 3rem;
+                margin-top: 10vh;
+            }
+
+            .hero-visual {
+                justify-content: center;
+            }
+
+            .hero-img-mask {
+                width: 70vw;
+                height: 80vw;
+            }
+
+            .hero-badge {
+                display: none;
+            }
+
+            .features-track {
+                flex-direction: column;
+                width: 100%;
+                height: auto;
+                padding: 25vh 5vw 10vh;
+                gap: 20vh;
+            }
+
+            .feature-card,
+            .feature-card:nth-child(even),
+            .feature-card:nth-child(odd) {
+                width: 100%;
+                height: auto;
+                transform: none !important;
+                aspect-ratio: 4/5;
+            }
+
+            .f-content,
+            .feature-card:nth-child(even) .f-content,
+            .feature-card:nth-child(odd) .f-content {
+                position: relative;
+                width: 90%;
+                margin: -80px auto 0;
+                bottom: auto;
+                right: auto;
+                left: auto;
+                top: auto;
+                transform: none;
+            }
+
+            .svg-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise-overlay"></div>
+    <div class="grid-bg"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <section class="about hero">
+                <div class="hero-wrapper">
+                    <div class="hero-content">
+                        <p class="eyebrow">About Us</p>
+                        <h1 class="hero-title">
+                            <span class="word">We</span> <span class="word">craft</span> <span
+                                class="word">digital</span><br>
+                            <span class="serif">environments</span><br>
+                            <span class="word">that</span> <span class="word">breathe.</span>
+                        </h1>
+                        <p class="hero-body">Moving away from rigid grids, boring bento boxes, and artificial
+                            constraints. We infuse the tranquility, adaptive perfection, and raw tactile beauty of
+                            nature into every pixel we place.</p>
+                        <button class="magnetic-btn magnetic-element" data-cursor="EXPLORE">
+                            <span style="z-index: 2; position: relative;">Discover Origin</span>
+                            <div class="fill"></div>
+                        </button>
+                    </div>
+
+                    <div class="hero-visual">
+                        <div class="hero-img-mask hover-trigger" data-cursor="VIEW">
+                            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2000&auto=format&fit=crop"
+                                alt="Organic Architecture" class="hero-img">
+                        </div>
+                        <div class="hero-badge magnetic-element" data-cursor="SPIN">
+                            <svg viewBox="0 0 100 100" class="rotating-text">
+                                <path id="circlePath" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                                    fill="transparent" />
+                                <text>
+                                    <textPath href="#circlePath" startOffset="0%">• ORGANIC • CREATIVE • DIGITAL
+                                    </textPath>
+                                </text>
+                            </svg>
+                            <div class="badge-center"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator">
+                    <div class="mouse"></div><span>Scroll to Features</span>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="features-sticky">
+                    <div class="features-title-wrap">
+                        <h2 class="features-title">Core Elements</h2>
+                        <span class="features-subtitle">The Ecosystem Traits</span>
+                    </div>
+
+                    <div class="features-track">
+                        <div class="svg-container">
+                            <svg viewBox="0 0 4000 600" preserveAspectRatio="none">
+                                <path class="draw-path"
+                                    d="M -100,300 C 400,600 800,0 1300,300 S 2200,0 2700,300 S 3600,0 4100,300"
+                                    fill="none" stroke="rgba(235,232,224,0.03)" stroke-width="2" />
+                                <path class="draw-path-active"
+                                    d="M -100,300 C 400,600 800,0 1300,300 S 2200,0 2700,300 S 3600,0 4100,300"
+                                    fill="none" stroke="var(--gold)" stroke-width="3" />
+                            </svg>
+                        </div>
+
+                        <div class="feature-card shape-arch magnetic-card hover-trigger" data-cursor="DRAG">
+                            <div class="f-img-wrap"><img class="f-img"
+                                    src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1000&auto=format&fit=crop"
+                                    alt="Sand texture"></div>
+                            <div class="f-content magnetic-content">
+                                <div class="f-icon-wrap">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <circle cx="12" cy="12" r="2" />
+                                        <line x1="12" y1="2" x2="12" y2="4" />
+                                        <line x1="12" y1="20" x2="12" y2="22" />
+                                        <line x1="2" y1="12" x2="4" y2="12" />
+                                        <line x1="20" y1="12" x2="22" y2="12" />
+                                    </svg>
+                                </div>
+                                <h3 class="f-title">Organic Strategy</h3>
+                                <p class="f-desc">Insights drawn from natural ecosystems. We observe behavioral
+                                    topography and user flow before placing a single pixel.</p>
+                                <div class="f-tags">
+                                    <span class="f-tag magnetic-element">Research</span>
+                                    <span class="f-tag magnetic-element">Topography</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card shape-pill magnetic-card hover-trigger" data-cursor="DRAG">
+                            <div class="f-img-wrap"><img class="f-img"
+                                    src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=1000&auto=format&fit=crop"
+                                    alt="Smooth desert dunes"></div>
+                            <div class="f-content magnetic-content">
+                                <div class="f-icon-wrap">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9Z" />
+                                    </svg>
+                                </div>
+                                <h3 class="f-title">Tactile Interface</h3>
+                                <p class="f-desc">Glass-like structures layered over natural textures. A beautifully
+                                    seamless, kinetic bridge between human and machine.</p>
+                                <div class="f-tags">
+                                    <span class="f-tag magnetic-element">Immersive</span>
+                                    <span class="f-tag magnetic-element">Kinetic</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card shape-leaf magnetic-card hover-trigger" data-cursor="DRAG">
+                            <div class="f-img-wrap"><img class="f-img"
+                                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop"
+                                    alt="Sleek architecture"></div>
+                            <div class="f-content magnetic-content">
+                                <div class="f-icon-wrap">
+                                    <svg viewBox="0 0 24 24">
+                                        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
+                                        <polyline points="12 22 12 12 22 8.5" />
+                                        <line x1="12" y1="12" x2="2" y2="8.5" />
+                                    </svg>
+                                </div>
+                                <h3 class="f-title">Deep Architecture</h3>
+                                <p class="f-desc">Clean, optimized structural roots. We build lightweight, headless
+                                    frameworks that eliminate friction and boost rendering speed.</p>
+                                <div class="f-tags">
+                                    <span class="f-tag magnetic-element">Performant</span>
+                                    <span class="f-tag magnetic-element">Headless</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-card shape-drop magnetic-card hover-trigger" data-cursor="DRAG">
+                            <div class="f-img-wrap"><img class="f-img"
+                                    src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1000&auto=format&fit=crop"
+                                    alt="Dark mood leaves"></div>
+                            <div class="f-content magnetic-content">
+                                <div class="f-icon-wrap">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.22-10.33l-5.3 5.3" />
+                                    </svg>
+                                </div>
+                                <h3 class="f-title">Evergreen Cycle</h3>
+                                <p class="f-desc">True art is never finished. Our ecosystems adapt to shifting climates,
+                                    ensuring your presence remains relevant and beautiful.</p>
+                                <div class="f-tags">
+                                    <span class="f-tag magnetic-element">Adaptive</span>
+                                    <span class="f-tag magnetic-element">Scalable</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="min-width: 10vw;"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // 1. INIT SMOOTH SCROLL (Lenis)
+        // ==========================================
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true
+        });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Disable custom cursor on touch devices for better UX
+        const isTouch = window.matchMedia("(hover: none)").matches;
+        if (isTouch) {
+            document.querySelector('.cursor-dot').style.display = 'none';
+            document.querySelector('.cursor-ring').style.display = 'none';
+            document.body.style.cursor = 'auto';
+        }
+
+        // ==========================================
+        // 2. CUSTOM CURSOR & MAGNETIC PHYSICS
+        // ==========================================
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorRing = document.querySelector('.cursor-ring');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
+
+        if (!isTouch) {
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+            });
+
+            const renderRing = () => {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+                requestAnimationFrame(renderRing);
+            };
+            renderRing();
+
+            // Hover Text updates
+            document.querySelectorAll('[data-cursor]').forEach(el => {
+                el.addEventListener('mouseenter', function () {
+                    const text = this.getAttribute('data-cursor');
+                    cursorDot.classList.add('active');
+                    cursorDot.style.setProperty('--cursor-text', `"${text}"`);
+                });
+                el.addEventListener('mouseleave', () => cursorDot.classList.remove('active'));
+            });
+
+            // Magnetic Elements
+            document.querySelectorAll('.magnetic-element').forEach(el => {
+                el.addEventListener('mousemove', function (e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    gsap.to(this, { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: "power2.out" });
+                });
+                el.addEventListener('mouseleave', function () {
+                    gsap.to(this, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+                });
+            });
+        }
+
+        // ==========================================
+        // 3. GSAP ANIMATIONS
+        // ==========================================
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Intro Text Reveal
+        const tl = gsap.timeline();
+        tl.from(".eyebrow", { y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 0.2 })
+            .from(".hero-title .word, .hero-title .serif", { y: 80, opacity: 0, duration: 1.2, stagger: 0.08, ease: "power4.out" }, "-=0.8")
+            .from(".hero-body", { y: 20, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.6")
+            .from(".hero-visual", { x: 40, opacity: 0, duration: 1.5, ease: "power3.out" }, "-=1.2");
+
+        // Subtle Parallax on Hero Image
+        gsap.to(".hero-img", {
+            yPercent: 15,
+            ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+        });
+
+        // MatchMedia for Desktop/Mobile logic
+        let mm = gsap.matchMedia();
+
+        // DESKTOP: Cinematic Horizontal Scroll & 3D Parallax
+        mm.add("(min-width: 901px)", () => {
+            const track = document.querySelector(".features-track");
+            const walk = track.scrollWidth - window.innerWidth;
+
+            const st = gsap.to(track, {
+                x: -walk,
+                ease: "none",
+                scrollTrigger: { trigger: ".features", pin: true, scrub: 1, start: "top top", end: () => "+=" + walk }
+            });
+
+            // Draw SVG Line
+            const pathActive = document.querySelector(".draw-path-active");
+            if (pathActive) {
+                const pathLength = pathActive.getTotalLength();
+                pathActive.style.strokeDasharray = pathLength;
+                pathActive.style.strokeDashoffset = pathLength;
+
+                gsap.to(pathActive, {
+                    strokeDashoffset: 0, ease: "none",
+                    scrollTrigger: { trigger: ".features", scrub: 1, start: "top top", end: () => "+=" + walk }
+                });
+            }
+
+            // Cards Parallax & 3D Hover Tilt
+            document.querySelectorAll(".magnetic-card").forEach(card => {
+                const img = card.querySelector(".f-img");
+                const content = card.querySelector(".magnetic-content");
+                const imgWrap = card.querySelector(".f-img-wrap");
+
+                // Parallax background image horizontally inside card
+                gsap.to(img, {
+                    xPercent: 30, ease: "none",
+                    scrollTrigger: { trigger: card, containerAnimation: st, start: "left right", end: "right left", scrub: true }
+                });
+
+                // Fade in Cards
+                gsap.from(card, {
+                    opacity: 0, y: 50, duration: 1, ease: "power3.out",
+                    scrollTrigger: { trigger: card, containerAnimation: st, start: "left 85%", toggleActions: "play none none reverse" }
+                });
+
+                // 3D Mouse Tilt Effect
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+
+                    gsap.to(card, { rotationY: x * 0.03, rotationX: -y * 0.03, transformPerspective: 1000, duration: 0.5, ease: "power2.out" });
+                    gsap.to(content, { x: x * 0.05, y: y * 0.05, duration: 0.5, ease: "power2.out" });
+                    gsap.to(imgWrap, { x: -x * 0.02, y: -y * 0.02, duration: 0.5, ease: "power2.out" });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to([card, content, imgWrap], { rotationY: 0, rotationX: 0, x: 0, y: 0, duration: 0.8, ease: "power2.out" });
+                });
+            });
+        });
+
+        // MOBILE: Standard Vertical Fade
+        mm.add("(max-width: 900px)", () => {
+            gsap.utils.toArray(".feature-card").forEach(card => {
+                gsap.from(card, {
+                    opacity: 0, y: 60, duration: 1, ease: "power3.out",
+                    scrollTrigger: { trigger: card, start: "top 85%", toggleActions: "play none none reverse" }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

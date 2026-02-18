@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Organic Engineering</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           CORE VARIABLES & THEME
+        ========================================== */
+        :root {
+            --bg-base: #060706;
+            /* Deep Forest / Stone Black */
+            --text-main: #EAE8E3;
+            /* Off-White Sand */
+            --text-muted: #8F948B;
+            /* Muted Mossy Gray */
+            --accent: #A3B19B;
+            /* Natural Sage Green */
+
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-hover: rgba(16, 18, 16, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-border-hover: rgba(163, 177, 155, 0.3);
+
+            --easing: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom cursor */
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================
+           ENVIRONMENTAL DEPTH & BACKGROUNDS
+        ========================================== */
+        .bg-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2500&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.12;
+            filter: grayscale(40%) brightness(0.6);
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.04;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28vw;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.015);
+            pointer-events: none;
+            z-index: -2;
+            white-space: nowrap;
+        }
+
+        /* ==========================================
+           CUSTOM MAGNETIC CURSOR
+        ========================================== */
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(163, 177, 155, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: transparent;
+        }
+
+        .cursor-ring.hover-view {
+            width: 75px;
+            height: 75px;
+            background: rgba(234, 232, 227, 0.1);
+            backdrop-filter: blur(4px);
+            border-color: transparent;
+            color: var(--text-main);
+        }
+
+        /* ==========================================
+           HERO: 'ABOUT US' INTRO
+        ========================================== */
+        .hero-intro {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10vw;
+            position: relative;
+            z-index: 10;
+        }
+
+        .eyebrow {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .line-wrap {
+            overflow: hidden;
+            display: block;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.5rem, 7vw, 7.5rem);
+            font-weight: 300;
+            line-height: 1.05;
+            margin-bottom: 30px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 540px;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 10vw;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mouse-icon {
+            width: 20px;
+            height: 32px;
+            border: 1px solid var(--text-muted);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .wheel {
+            width: 2px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 2px;
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollWheel 1.5s infinite;
+        }
+
+        @keyframes scrollWheel {
+            0% {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, 12px);
+                opacity: 0;
+            }
+        }
+
+        .scroll-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        /* Hero Entrance Animations */
+        .anim-up {
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 1.2s var(--easing), opacity 1.2s ease;
+        }
+
+        .loaded .anim-up {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* ==========================================
+           SCATTERED ORGANIC FEATURES CONSTELLATION
+        ========================================== */
+        .features-constellation {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px 5vw 200px;
+            gap: 150px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Global Dimming Focus Effect */
+        .features-constellation:hover .feature-wrap:not(:hover) .feature-shape {
+            opacity: 0.3;
+            filter: blur(4px) grayscale(60%);
+        }
+
+        /* Staggered Spatial Layout */
+        .feature-positioner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .fw-1 {
+            transform: translateY(0);
+            margin-right: auto;
+            width: 45%;
+        }
+
+        .fw-2 {
+            transform: translateY(200px);
+            margin-left: auto;
+            width: 45%;
+        }
+
+        .fw-3 {
+            transform: translateY(-50px);
+            margin-right: auto;
+            width: 45%;
+        }
+
+        .fw-4 {
+            transform: translateY(150px);
+            margin-left: auto;
+            width: 45%;
+        }
+
+        /* The Wrapper sets the maximum expansion bound to prevent layout jumping */
+        .feature-wrap {
+            width: 420px;
+            height: 540px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(80px);
+            transition: opacity 1s var(--easing), transform 1s var(--easing);
+        }
+
+        .feature-wrap.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- THE MORPHING SHAPE --- */
+        .feature-shape {
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateZ(0);
+        }
+
+        /* Primitive Idle Geometries */
+        .shape-arch {
+            width: 280px;
+            height: 380px;
+            border-radius: 140px 140px 12px 12px;
+        }
+
+        .shape-pill {
+            width: 340px;
+            height: 180px;
+            border-radius: 90px;
+        }
+
+        .shape-circle {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+        }
+
+        .shape-leaf {
+            width: 300px;
+            height: 300px;
+            border-radius: 150px 12px 150px 12px;
+        }
+
+        /* The Expansion & Morph to Card */
+        .feature-wrap:hover .feature-shape {
+            width: 420px;
+            height: 540px;
+            border-radius: 20px;
+            background: var(--glass-hover);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Idle Floating Label */
+        .f-label {
+            position: absolute;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 10;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .feature-wrap:hover .f-label {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        /* Visual Internals (Image & Overlay) */
+        .f-bg {
+            position: absolute;
+            inset: -15%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            filter: grayscale(100%) contrast(1.2);
+            transition: transform 1.2s var(--easing), opacity 0.8s, filter 0.8s;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .feature-wrap:hover .f-bg {
+            transform: scale(1);
+            opacity: 0.7;
+            filter: grayscale(0%) contrast(1.1);
+        }
+
+        .f-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(6, 7, 6, 0.98) 0%, rgba(6, 7, 6, 0.5) 45%, rgba(6, 7, 6, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .feature-wrap:hover .f-overlay {
+            opacity: 1;
+        }
+
+        /* --- DETAILED CARD CONTENT --- */
+        .f-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .feature-wrap:hover .f-content {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .f-item {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.6s var(--easing), opacity 0.6s ease;
+        }
+
+        .feature-wrap:hover .f-item-1 {
+            transition-delay: 0.1s;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-wrap:hover .f-item-2 {
+            transition-delay: 0.15s;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-wrap:hover .f-item-3 {
+            transition-delay: 0.2s;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-wrap:hover .f-item-4 {
+            transition-delay: 0.25s;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-wrap:hover .f-item-5 {
+            transition-delay: 0.3s;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .f-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .f-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+        }
+
+        .f-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .f-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .f-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+
+        .f-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--glass-border-hover), transparent);
+            margin: 15px 0;
+        }
+
+        .f-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* Animated Metrics */
+        .metric {
+            margin-bottom: 15px;
+        }
+
+        .m-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .m-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .m-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 1.2s var(--easing);
+        }
+
+        .feature-wrap:hover .m-fill {
+            width: var(--target);
+            transition-delay: 0.4s;
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: auto;
+            padding: 12px 28px;
+            width: max-content;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: 'Manrope', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: background 0.4s, border-color 0.4s, color 0.4s;
+        }
+
+        .magnetic-btn:hover {
+            background: var(--accent);
+            color: var(--bg-base);
+            border-color: var(--accent);
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .magnetic-btn:hover .btn-icon {
+            transform: translateX(5px);
+        }
+
+        /* ==========================================
+           MOBILE RESPONSIVENESS
+        ========================================== */
+        @media (max-width: 900px) {
+            .watermark {
+                display: none;
+            }
+
+            .hero-intro {
+                padding: 15vh 5vw 5vh;
+                min-height: auto;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .scroll-indicator {
+                position: relative;
+                left: 0;
+                bottom: 0;
+                margin-top: 40px;
+            }
+
+            .features-constellation {
+                flex-direction: column;
+                gap: 40px;
+                padding: 50px 5vw;
+            }
+
+            .feature-positioner {
+                width: 100%;
+                transform: none !important;
+                margin: 0 !important;
+            }
+
+            .feature-wrap {
+                width: 100%;
+                height: auto;
+                min-height: 540px;
+            }
+
+            .feature-shape {
+                width: 100% !important;
+                height: 540px !important;
+                border-radius: 20px !important;
+                background: var(--glass-hover);
+                border-color: var(--glass-border-hover);
+                transition: none !important;
+                transform: none !important;
+            }
+
+            /* Reveal everything natively for mobile */
+            .f-label {
+                display: none;
+            }
+
+            .f-content {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .f-item {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .f-bg {
+                opacity: 0.6;
+                filter: grayscale(0%);
+                transform: scale(1);
+            }
+
+            .f-overlay {
+                opacity: 1;
+            }
+
+            .m-fill {
+                width: var(--target);
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="watermark">NATURE</div>
+    <div class="bg-texture"></div>
+    <div class="noise-overlay"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="hero-intro">
+        <div class="hero-content">
+            <div class="line-wrap">
+                <div class="eyebrow anim-up delay-1">Who We Are</div>
+            </div>
+            <h1 class="hero-title">
+                <div class="line-wrap"><span class="anim-up delay-1" style="display:inline-block">We architect</span>
+                </div>
+                <div class="line-wrap"><span class="anim-up delay-2" style="display:inline-block"><em>naturally</em>
+                        perfect</span></div>
+                <div class="line-wrap"><span class="anim-up delay-3" style="display:inline-block">ecosystems.</span>
+                </div>
+            </h1>
+            <div class="line-wrap">
+                <p class="hero-desc anim-up delay-3">Stepping away from rigid grids and artificial constraints. We
+                    engineer fluid, living digital experiences that resonate with human nature and adapt seamlessly to
+                    your vision. Explore our anatomy below.</p>
+            </div>
+        </div>
+        <div class="scroll-indicator anim-up delay-3">
+            <div class="mouse-icon">
+                <div class="wheel"></div>
+            </div>
+            <span class="scroll-text">Scroll to Discover</span>
+        </div>
+    </section>
+
+    <section class="features-constellation">
+
+        <div class="feature-positioner fw-1">
+            <div class="feature-wrap">
+                <div class="feature-shape shape-arch">
+                    <div class="f-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="f-overlay"></div>
+                    <div class="f-label">01. Symbiosis</div>
+
+                    <div class="f-content">
+                        <div class="f-header f-item f-item-1">
+                            <div class="f-icon"><svg viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+                                    </path>
+                                </svg></div>
+                            <div class="f-number">01</div>
+                        </div>
+                        <h2 class="f-title f-item f-item-2" data-scramble="Symbiosis">Symbiosis</h2>
+                        <div class="f-divider f-item f-item-2"></div>
+                        <p class="f-desc f-item f-item-3">Fusing form and function into a living entity. Every digital
+                            interaction is engineered to feel natively intuitive, responding to user intent naturally.
+                        </p>
+
+                        <div class="f-metrics f-item f-item-4">
+                            <div class="metric">
+                                <div class="m-label"><span>Fluidity Index</span><span>95%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 95%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="m-label"><span>Organic Flow</span><span>92%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 92%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="f-item f-item-5">
+                            <button class="magnetic-btn">
+                                Explore Protocol <svg class="btn-icon" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-positioner fw-2">
+            <div class="feature-wrap">
+                <div class="feature-shape shape-pill">
+                    <div class="f-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1507090960745-b32f65d3113a?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="f-overlay"></div>
+                    <div class="f-label">02. Resilience</div>
+
+                    <div class="f-content">
+                        <div class="f-header f-item f-item-1">
+                            <div class="f-icon"><svg viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                </svg></div>
+                            <div class="f-number">02</div>
+                        </div>
+                        <h2 class="f-title f-item f-item-2" data-scramble="Resilience">Resilience</h2>
+                        <div class="f-divider f-item f-item-2"></div>
+                        <p class="f-desc f-item f-item-3">Built upon unyielding architectural foundations. Our code
+                            structure mirrors the enduring strength and permanence of geological rock formations.</p>
+
+                        <div class="f-metrics f-item f-item-4">
+                            <div class="metric">
+                                <div class="m-label"><span>Structural Integrity</span><span>98%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 98%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="m-label"><span>Load Distribution</span><span>90%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 90%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="f-item f-item-5">
+                            <button class="magnetic-btn">
+                                Explore Protocol <svg class="btn-icon" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-positioner fw-3">
+            <div class="feature-wrap">
+                <div class="feature-shape shape-circle">
+                    <div class="f-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="f-overlay"></div>
+                    <div class="f-label">03. Kinetics</div>
+
+                    <div class="f-content">
+                        <div class="f-header f-item f-item-1">
+                            <div class="f-icon"><svg viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5">
+                                    </path>
+                                </svg></div>
+                            <div class="f-number">03</div>
+                        </div>
+                        <h2 class="f-title f-item f-item-2" data-scramble="Kinetic Motion">Kinetic Motion</h2>
+                        <div class="f-divider f-item f-item-2"></div>
+                        <p class="f-desc f-item f-item-3">We orchestrate micro-animations driven entirely by real-world
+                            physics, guiding attention effortlessly through space without forced constraints.</p>
+
+                        <div class="f-metrics f-item f-item-4">
+                            <div class="metric">
+                                <div class="m-label"><span>Interaction Smoothness</span><span>96%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 96%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="m-label"><span>Spatial Depth</span><span>88%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 88%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="f-item f-item-5">
+                            <button class="magnetic-btn">
+                                Explore Protocol <svg class="btn-icon" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-positioner fw-4">
+            <div class="feature-wrap">
+                <div class="feature-shape shape-leaf">
+                    <div class="f-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="f-overlay"></div>
+                    <div class="f-label">04. Clarity</div>
+
+                    <div class="f-content">
+                        <div class="f-header f-item f-item-1">
+                            <div class="f-icon"><svg viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                    </path>
+                                </svg></div>
+                            <div class="f-number">04</div>
+                        </div>
+                        <h2 class="f-title f-item f-item-2" data-scramble="Pure Clarity">Pure Clarity</h2>
+                        <div class="f-divider f-item f-item-2"></div>
+                        <p class="f-desc f-item f-item-3">Stripping away digital noise and artificial neon to reveal
+                            pure value. Focused, breathable interfaces guided entirely by natural light and space.</p>
+
+                        <div class="f-metrics f-item f-item-4">
+                            <div class="metric">
+                                <div class="m-label"><span>Cognitive Ease</span><span>94%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 94%;"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="m-label"><span>Noise Reduction</span><span>99%</span></div>
+                                <div class="m-bar">
+                                    <div class="m-fill" style="--target: 99%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="f-item f-item-5">
+                            <button class="magnetic-btn">
+                                Explore Protocol <svg class="btn-icon" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Initial Page Load Reveal ---
+            setTimeout(() => document.body.classList.add('loaded'), 150);
+
+            const isDesktop = window.innerWidth > 900;
+
+            if (isDesktop) {
+                // --- 2. Custom Smooth Cursor ---
+                const dot = document.querySelector('.cursor-dot');
+                const ring = document.querySelector('.cursor-ring');
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let ringX = mouseX, ringY = mouseY;
+
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+                });
+
+                function renderCursor() {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+                    requestAnimationFrame(renderCursor);
+                }
+                requestAnimationFrame(renderCursor);
+
+                // --- 3. Interactive Feature Cards Logic ---
+                const wrappers = document.querySelectorAll('.feature-wrap');
+
+                wrappers.forEach(wrap => {
+                    const shape = wrap.querySelector('.feature-shape');
+                    const title = wrap.querySelector('.f-title');
+                    const originalText = title.getAttribute('data-scramble');
+                    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+                    // Hover states & Text Scramble
+                    wrap.addEventListener('mouseenter', () => {
+                        ring.classList.add('hover-view');
+                        ring.innerText = "EXPLORE";
+
+                        // Manage CSS transitions safely so it doesn't fight the JS 3D tilt
+                        shape.style.transition = "width 0.8s cubic-bezier(0.19, 1, 0.22, 1), height 0.8s cubic-bezier(0.19, 1, 0.22, 1), border-radius 0.8s cubic-bezier(0.19, 1, 0.22, 1), background 0.5s, box-shadow 0.8s";
+
+                        // Text Scramble Effect
+                        let iterations = 0;
+                        clearInterval(title.interval);
+                        title.interval = setInterval(() => {
+                            title.innerText = originalText.split("").map((char, index) => {
+                                if (char === " ") return " ";
+                                if (index < iterations) return originalText[index];
+                                return letters[Math.floor(Math.random() * 26)];
+                            }).join("");
+                            if (iterations >= originalText.length) clearInterval(title.interval);
+                            iterations += 1 / 2; // Speed of scramble
+                        }, 30);
+                    });
+
+                    wrap.addEventListener('mouseleave', () => {
+                        ring.classList.remove('hover-view');
+                        ring.innerText = "";
+
+                        shape.style.transition = "all 0.8s cubic-bezier(0.19, 1, 0.22, 1)";
+                        shape.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                    });
+
+                    // 3D Tilt Physics
+                    wrap.addEventListener('mousemove', (e) => {
+                        const rect = wrap.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+
+                        // Calculate tilt (Max 12 degrees)
+                        const rotateX = ((y - centerY) / centerY) * -12;
+                        const rotateY = ((x - centerX) / centerX) * 12;
+
+                        shape.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    });
+                });
+
+                // --- 4. Magnetic Buttons ---
+                document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                    btn.addEventListener('mousemove', function (e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2;
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    });
+                    btn.addEventListener('mouseleave', function () {
+                        this.style.transform = `translate(0px, 0px)`;
+                    });
+                });
+            }
+
+            // --- 5. Scroll Intersection Observer (Fades items in on scroll) ---
+            const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.feature-wrap').forEach(el => observer.observe(el));
+
+        });
+    </script>
+</body>
+
+</html>

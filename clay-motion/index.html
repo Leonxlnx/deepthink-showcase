@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Natural Ecosystems</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* =========================================================
+           1. CORE VARIABLES & NATURAL PALETTE 
+           (Zero Neon. Zero Purple. Strictly Earthy & Professional)
+           ========================================================= */
+        :root {
+            --bg-dark: #0A0A0A;
+            /* Deep Charcoal */
+            --text-light: #F0EFEB;
+            /* Warm Sand/Oat */
+            --text-muted: #8A8D8A;
+            /* Desaturated Sage */
+            --accent-clay: #B88A60;
+            /* Natural Earthen Clay */
+            --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: none !important;
+            /* Overridden by our custom physics cursor */
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            user-select: none;
+        }
+
+        /* Typography Utilities */
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .accent-color {
+            color: var(--accent-clay);
+        }
+
+        /* =========================================================
+           2. TACTILE TEXTURES & CURSOR
+           ========================================================= */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+        }
+
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-clay);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, opacity 0.3s;
+            opacity: 0;
+            /* Hidden until mousemove */
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(240, 239, 235, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.4s var(--ease-fluid), height 0.4s var(--ease-fluid), background 0.4s, border-color 0.4s, opacity 0.3s;
+            opacity: 0;
+        }
+
+        .cursor-text {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Cursor Morph States */
+        body.hover-panel .cursor-ring {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(6px);
+            border-color: transparent;
+        }
+
+        body.hover-panel .cursor-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
+        body.hover-panel .cursor-dot {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        body.hover-btn .cursor-ring {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        body.hover-btn .cursor-dot {
+            width: 45px;
+            height: 45px;
+            background: rgba(240, 239, 235, 0.15);
+            backdrop-filter: blur(2px);
+        }
+
+        /* =========================================================
+           3. ABOUT US HEADER
+           ========================================================= */
+        .about-header {
+            padding: 6vh 6vw 4vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            z-index: 10;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent-clay);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .subtitle::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--accent-clay);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: flex-end;
+            gap: 4rem;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 5.5vw, 6rem);
+            line-height: 1.05;
+            color: var(--text-light);
+            flex: 1.2;
+        }
+
+        .description {
+            flex: 0.8;
+            max-width: 450px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-weight: 300;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Utility for GSAP Text Reveal */
+        .line-wrap {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        .word {
+            display: inline-block;
+            transform: translateY(110%);
+            transform-origin: top left;
+        }
+
+        .reveal-fade {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(60px);
+        }
+
+        /* =========================================================
+           4. DYNAMIC SKEWED ACCORDION (FEATURES)
+           ========================================================= */
+        .features-section {
+            width: 100vw;
+            height: 65vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .accordion {
+            display: flex;
+            width: 106vw;
+            height: 100%;
+            transform: skewX(-7deg);
+            margin-left: -3vw;
+            gap: 6px;
+        }
+
+        .panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.8s var(--ease-fluid);
+            border-radius: 8px;
+        }
+
+        .panel:hover {
+            flex: 4;
+        }
+
+        /* Un-skewing the background to keep images perfectly straight */
+        .panel-bg-wrap {
+            position: absolute;
+            top: -10%;
+            left: -20%;
+            width: 140%;
+            height: 120%;
+            transform: skewX(7deg);
+            overflow: hidden;
+        }
+
+        .panel-bg {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(80%) brightness(0.4);
+            transform: scale(1.15);
+            transition: filter 0.8s var(--ease-fluid), transform 0.8s var(--ease-fluid);
+            will-change: transform, filter;
+        }
+
+        .panel:hover .panel-bg {
+            filter: grayscale(0%) brightness(0.75);
+            transform: scale(1);
+        }
+
+        /* Cinematic Gradient Overlay */
+        .panel-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.2) 50%, rgba(10, 10, 10, 0) 100%);
+            opacity: 0.7;
+            transition: opacity 0.8s;
+        }
+
+        .panel:hover .panel-overlay {
+            opacity: 0.95;
+        }
+
+        /* =========================================================
+           5. PANEL CONTENT & MICRO-ANIMATIONS
+           ========================================================= */
+        .panel-content {
+            position: absolute;
+            inset: 0;
+            transform: skewX(7deg);
+            /* Un-skew content */
+            pointer-events: none;
+            padding: 2.5vw 3.5vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .panel-content>* {
+            pointer-events: auto;
+        }
+
+        /* --- Collapsed Vertical State --- */
+        .collapsed-view {
+            position: absolute;
+            bottom: 3vw;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            transition: opacity 0.4s, transform 0.6s var(--ease-fluid);
+        }
+
+        .collapsed-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--accent-clay);
+        }
+
+        .collapsed-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        .panel:hover .collapsed-view {
+            opacity: 0;
+            transform: translate(-50%, -30px);
+            pointer-events: none;
+        }
+
+        /* --- Expanded Horizon State --- */
+        .expanded-view {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s var(--ease-fluid), transform 0.6s var(--ease-fluid);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+            padding-bottom: 2vh;
+        }
+
+        .panel:hover .expanded-view {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.15s;
+        }
+
+        .expanded-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .expanded-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-style: italic;
+            color: var(--accent-clay);
+            line-height: 0.8;
+            opacity: 0.9;
+        }
+
+        .expanded-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-light);
+            padding: 8px 16px;
+            border: 1px solid rgba(240, 239, 235, 0.2);
+            border-radius: 50px;
+            backdrop-filter: blur(4px);
+        }
+
+        .expanded-title {
+            font-size: clamp(2.2rem, 3.5vw, 4rem);
+            margin-bottom: 1rem;
+            color: #FFF;
+        }
+
+        .expanded-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 380px;
+            font-weight: 300;
+        }
+
+        /* Magnetic Button */
+        .magnetic-wrap {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 20px;
+            margin-left: -20px;
+        }
+
+        .magnetic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 1px solid rgba(240, 239, 235, 0.25);
+            background: transparent;
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, color 0.3s;
+        }
+
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text-light);
+            border-radius: 50%;
+            transition: top 0.5s var(--ease-fluid), border-radius 0.5s var(--ease-fluid);
+            z-index: -1;
+        }
+
+        .magnetic-btn:hover {
+            color: var(--bg-dark);
+            border-color: transparent;
+        }
+
+        .magnetic-btn:hover::before {
+            top: 0;
+            border-radius: 0;
+        }
+
+        /* Hardware Acceleration for 3D Tilt */
+        .content-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            will-change: transform;
+        }
+
+        /* =========================================================
+           6. MOBILE RESPONSIVENESS (Graceful Degradation)
+           ========================================================= */
+        @media (max-width: 950px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2rem;
+            }
+
+            .description {
+                max-width: 100%;
+            }
+
+            .features-section {
+                height: auto;
+                padding: 0 5vw 10vw;
+            }
+
+            .accordion {
+                flex-direction: column;
+                transform: skewX(0);
+                width: 100%;
+                margin: 0;
+                gap: 15px;
+            }
+
+            .panel {
+                min-height: 45vh;
+                border-radius: 16px;
+            }
+
+            .panel:hover {
+                flex: 1;
+            }
+
+            /* Disable flex grow on mobile */
+
+            .panel-bg-wrap,
+            .panel-content {
+                transform: skewX(0);
+                left: 0;
+                width: 100%;
+            }
+
+            .collapsed-view {
+                display: none;
+            }
+
+            .expanded-view {
+                opacity: 1;
+                transform: none;
+                pointer-events: auto;
+                justify-content: flex-end;
+                padding-bottom: 2rem;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise-overlay"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"><span class="cursor-text">VIEW</span></div>
+
+    <header class="about-header">
+        <div class="subtitle reveal-fade">About Our Philosophy</div>
+
+        <div class="header-content">
+            <h1 class="title">
+                <span class="line-wrap"><span class="word">We</span></span>
+                <span class="line-wrap"><span class="word">construct</span></span>
+                <span class="line-wrap"><span class="word">digital</span></span>
+                <span class="line-wrap"><span class="word serif italic accent-color">ecosystems,</span></span><br>
+                <span class="line-wrap"><span class="word">rejecting</span></span>
+                <span class="line-wrap"><span class="word">rigid</span></span>
+                <span class="line-wrap"><span class="word">constraints.</span></span>
+            </h1>
+
+            <p class="description reveal-fade">
+                Avoiding artificial trends and generic structures, we engineer highly tactile, organic digital
+                environments that live, breathe, and adapt gracefully to human interaction.
+            </p>
+        </div>
+    </header>
+
+    <section class="features-section reveal-up">
+        <div class="accordion">
+
+            <div class="panel hover-trigger">
+                <div class="panel-bg-wrap">
+                    <div class="panel-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2000&auto=format&fit=crop');">
+                    </div>
+                </div>
+                <div class="panel-overlay"></div>
+
+                <div class="panel-content">
+                    <div class="collapsed-view">
+                        <span class="collapsed-num">01</span>
+                        <span class="collapsed-text">Spatial Purity</span>
+                    </div>
+
+                    <div class="expanded-view content-3d">
+                        <div class="expanded-header">
+                            <span class="expanded-num">01</span>
+                            <span class="expanded-tag">Foundation</span>
+                        </div>
+                        <h2 class="expanded-title serif">Spatial Purity</h2>
+                        <p class="expanded-desc">We embrace architectural emptiness. By systematically removing visual
+                            noise, we allow true craftsmanship and essential forms to command the space.</p>
+
+                        <div class="magnetic-wrap btn-trigger">
+                            <button class="magnetic-btn">Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel hover-trigger">
+                <div class="panel-bg-wrap">
+                    <div class="panel-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1542224566-6e85f2e6772f?q=80&w=2000&auto=format&fit=crop');">
+                    </div>
+                </div>
+                <div class="panel-overlay"></div>
+
+                <div class="panel-content">
+                    <div class="collapsed-view">
+                        <span class="collapsed-num">02</span>
+                        <span class="collapsed-text">Kinetic Flow</span>
+                    </div>
+
+                    <div class="expanded-view content-3d">
+                        <div class="expanded-header">
+                            <span class="expanded-num">02</span>
+                            <span class="expanded-tag">Motion</span>
+                        </div>
+                        <h2 class="expanded-title serif">Organic Flow</h2>
+                        <p class="expanded-desc">Inspired by the erosion of rock and fluid dynamics, our motion design
+                            mimics natural trajectories, creating intuitive, frictionless user momentum.</p>
+
+                        <div class="magnetic-wrap btn-trigger">
+                            <button class="magnetic-btn">Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel hover-trigger">
+                <div class="panel-bg-wrap">
+                    <div class="panel-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee354?q=80&w=2000&auto=format&fit=crop');">
+                    </div>
+                </div>
+                <div class="panel-overlay"></div>
+
+                <div class="panel-content">
+                    <div class="collapsed-view">
+                        <span class="collapsed-num">03</span>
+                        <span class="collapsed-text">Tactility</span>
+                    </div>
+
+                    <div class="expanded-view content-3d">
+                        <div class="expanded-header">
+                            <span class="expanded-num">03</span>
+                            <span class="expanded-tag">Sensory</span>
+                        </div>
+                        <h2 class="expanded-title serif">Tactile Elegance</h2>
+                        <p class="expanded-desc">A masterpiece must feel right. We focus on microscopic details of
+                            texture, visual weight, and digital physics to create profound physical connections.</p>
+
+                        <div class="magnetic-wrap btn-trigger">
+                            <button class="magnetic-btn">Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel hover-trigger">
+                <div class="panel-bg-wrap">
+                    <div class="panel-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop');">
+                    </div>
+                </div>
+                <div class="panel-overlay"></div>
+
+                <div class="panel-content">
+                    <div class="collapsed-view">
+                        <span class="collapsed-num">04</span>
+                        <span class="collapsed-text">Endurance</span>
+                    </div>
+
+                    <div class="expanded-view content-3d">
+                        <div class="expanded-header">
+                            <span class="expanded-num">04</span>
+                            <span class="expanded-tag">Structure</span>
+                        </div>
+                        <h2 class="expanded-title serif">Enduring Legacy</h2>
+                        <p class="expanded-desc">Sustainability is built into the core. Rejecting disposable culture, we
+                            engineer robust, timeless digital structures mathematically built to outlast trends.</p>
+
+                        <div class="magnetic-wrap btn-trigger">
+                            <button class="magnetic-btn">Explore</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // --- 1. Entrance Animations (GSAP) ---
+            gsap.to('.word', {
+                y: 0,
+                duration: 1.2,
+                stagger: 0.05,
+                ease: "power4.out",
+                delay: 0.2
+            });
+
+            gsap.to('.reveal-fade', {
+                y: 0, opacity: 1, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.6
+            });
+
+            gsap.to('.reveal-up', {
+                y: 0, opacity: 1, duration: 1.5, ease: "power3.out", delay: 1
+            });
+
+            // --- 2. Custom Physics Cursor ---
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorRing = document.querySelector('.cursor-ring');
+
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+            let cursorVisible = false;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                // Show cursor natively only after first movement
+                if (!cursorVisible) {
+                    gsap.to([cursorDot, cursorRing], { opacity: 1, duration: 0.3 });
+                    cursorVisible = true;
+                }
+
+                // Dot follows instantly
+                gsap.set(cursorDot, { x: mouseX, y: mouseY });
+            });
+
+            // Ring follows with slight physics delay
+            gsap.ticker.add(() => {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                gsap.set(cursorRing, { x: ringX, y: ringY });
+            });
+
+            // --- 3. Hover Triggers for Cursor Morphing ---
+            document.querySelectorAll('.hover-trigger').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hover-panel'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hover-panel'));
+            });
+
+            document.querySelectorAll('.btn-trigger').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hover-btn'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hover-btn'));
+            });
+
+            // --- 4. Magnetic Button Physics ---
+            document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+                const btn = wrap.querySelector('.magnetic-btn');
+
+                wrap.addEventListener('mousemove', (e) => {
+                    const rect = wrap.getBoundingClientRect();
+                    // Calculate distance from center of the wrapper
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.35;
+                    gsap.to(btn, { x, y, duration: 0.3, ease: "power2.out" });
+                });
+
+                wrap.addEventListener('mouseleave', () => {
+                    // Snap back natively with elastic bounce
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.3)" });
+                });
+            });
+
+            // --- 5. 3D Parallax Tilt Effect on Panels ---
+            document.querySelectorAll('.panel').forEach(panel => {
+                const content3d = panel.querySelector('.content-3d');
+
+                panel.addEventListener('mousemove', (e) => {
+                    // Only apply tilt on desktop and when the panel is fully expanded (hovered)
+                    if (window.innerWidth > 950 && panel.matches(':hover')) {
+                        const rect = panel.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+
+                        // Map mouse position to elegant rotation bounds
+                        const rotateY = ((x - centerX) / centerX) * 6;
+                        const rotateX = ((y - centerY) / centerY) * -6;
+
+                        gsap.to(content3d, { rotateX, rotateY, duration: 0.6, ease: "power2.out" });
+                    }
+                });
+
+                panel.addEventListener('mouseleave', () => {
+                    // Reset smoothly
+                    gsap.to(content3d, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power2.out" });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

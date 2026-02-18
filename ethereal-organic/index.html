@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal | Organic Interfaces</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. ROOT VARIABLES & GLOBAL RESETS (Earthy, Sophisticated Palette)
+           ========================================================================== */
+        :root {
+            /* Deep, organic tones - Avoiding generic neons & purples entirely */
+            --bg-dark: #0A0C0B;
+            /* Deep obsidian / forest base */
+            --text-main: #F4F1EB;
+            /* Clean oat / warm pearl */
+            --text-muted: #A3A6A1;
+            /* Sage grey */
+            --accent: #C2A679;
+            /* Soft sandstone / muted gold */
+
+            --glass-bg: rgba(255, 255, 255, 0.025);
+            --glass-border: rgba(255, 255, 255, 0.08);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        a,
+        button,
+        .interactive {
+            cursor: none !important;
+            /* Replaced by custom cinematic cursor */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Cinematic Background Image & Organic Noise */
+        .bg-fixed {
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            /* High-end moody forest/nature aesthetic */
+            background-image: url('https://images.unsplash.com/photo-1542224566-6e85f2e6772f?q=80&w=2500&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            filter: brightness(0.25) contrast(1.1) grayscale(0.4);
+            will-change: transform;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ==========================================================================
+           2. CUSTOM KINEMATIC CURSOR
+           ========================================================================== */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: opacity 0.3s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(194, 166, 121, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+        }
+
+        body.hovering .cursor-ring {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(4px);
+            border-color: var(--accent);
+        }
+
+        body.hovering .cursor-dot {
+            opacity: 0;
+        }
+
+        /* ==========================================================================
+           3. TYPOGRAPHY & HEADER UTILITIES
+           ========================================================================== */
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sh-line {
+            width: 1px;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent, var(--accent));
+            margin-bottom: 2rem;
+            transform-origin: top;
+            transform: scaleY(0);
+        }
+
+        .sh-subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .sh-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.5rem, 6vw, 5.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .sh-desc {
+            color: var(--text-muted);
+            max-width: 550px;
+            line-height: 1.7;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* Text Splitter Utility */
+        .split-text .word {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+            margin-right: 0.3em;
+        }
+
+        .split-text .split-inner {
+            display: inline-block;
+            transform: translateY(110%);
+        }
+
+        /* ==========================================================================
+           4. FEATURES SECTION (The Suspended Archipelago - Zero Grid)
+           ========================================================================== */
+        #features {
+            padding-top: 15vh;
+            padding-bottom: 10vh;
+            position: relative;
+        }
+
+        .archipelago-container {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            height: 140vh;
+            margin: 0 auto;
+        }
+
+        /* SVG Energy Lines */
+        #archipelago-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .arch-line-base {
+            fill: none;
+            stroke: rgba(194, 166, 121, 0.12);
+            stroke-width: 1.5;
+        }
+
+        .arch-line-pulse {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 6px rgba(194, 166, 121, 0.5));
+        }
+
+        /* Archipelago Absolute Positioning */
+        .island-pos {
+            position: absolute;
+            z-index: 2;
+        }
+
+        .i-0 {
+            top: 5%;
+            left: 2%;
+            width: 320px;
+            height: 450px;
+        }
+
+        .i-1 {
+            top: 15%;
+            right: 2%;
+            width: 400px;
+            height: 280px;
+        }
+
+        .i-2 {
+            top: 60%;
+            left: 5%;
+            width: 450px;
+            height: 160px;
+        }
+
+        .i-3 {
+            top: 75%;
+            right: 8%;
+            width: 280px;
+            height: 280px;
+        }
+
+        .i-4 {
+            top: 40%;
+            left: 45%;
+            width: 340px;
+            height: 340px;
+        }
+
+        .reveal-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .float-wrapper {
+            width: 100%;
+            height: 100%;
+            animation: floatAnim 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatAnim {
+            from {
+                transform: translateY(-15px);
+            }
+
+            to {
+                transform: translateY(15px);
+            }
+        }
+
+        /* Glass Island Cards */
+        .a-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mouse Tracking Radial Spotlight */
+        .a-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(450px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(194, 166, 121, 0.12), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .a-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Organic Asymmetric Shapes */
+        .a-card.arch {
+            border-radius: 200px 200px 20px 20px;
+        }
+
+        .a-card.rect {
+            border-radius: 24px;
+        }
+
+        .a-card.pill {
+            border-radius: 100px;
+        }
+
+        .a-card.circle {
+            border-radius: 50%;
+        }
+
+        .a-card.leaf {
+            border-radius: 20px 150px 20px 150px;
+        }
+
+        /* Card Internals */
+        .card-inner {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            transform: translateZ(40px);
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out;
+        }
+
+        .pill .card-inner {
+            flex-direction: row;
+            align-items: center;
+            padding: 2rem 3.5rem;
+            gap: 2rem;
+            justify-content: flex-start;
+        }
+
+        .circle .card-inner {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .leaf .card-inner {
+            padding: 4rem;
+            justify-content: center;
+        }
+
+        .a-card i.ph-light {
+            font-size: 2.8rem;
+            color: var(--accent);
+            margin-bottom: auto;
+            opacity: 0.7;
+            transition: opacity 0.4s, transform 0.4s;
+        }
+
+        .pill i.ph-light {
+            margin-bottom: 0;
+            font-size: 3.5rem;
+        }
+
+        .circle i.ph-light {
+            margin-bottom: 1.5rem;
+        }
+
+        .a-card:hover i.ph-light {
+            opacity: 1;
+            transform: scale(1.1) translateZ(10px);
+        }
+
+        .a-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .a-card p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Magnetic Button */
+        .explore {
+            pointer-events: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-top: 1.5rem;
+            transition: opacity 0.4s, transform 0.4s;
+            opacity: 0;
+            transform: translateY(10px);
+            padding: 10px;
+            margin-left: -10px;
+            /* Expand hit area */
+        }
+
+        .a-card:hover .explore {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.1s;
+        }
+
+        /* ==========================================================================
+           5. TESTIMONIALS SECTION (The Orbital Lens Constellation)
+           ========================================================================== */
+        #testimonials {
+            padding-top: 10vh;
+            padding-bottom: 20vh;
+            position: relative;
+        }
+
+        .t-canvas {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            height: 80vh;
+            margin: 0 auto;
+        }
+
+        /* SVG Dynamic Connection Line */
+        #t-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .t-line-anim {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            opacity: 0.6;
+        }
+
+        /* Central Lens */
+        .t-lens {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 750px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 5rem;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .lens-quote-icon {
+            font-size: 3.5rem;
+            color: var(--accent);
+            opacity: 0.3;
+            margin-bottom: 2rem;
+        }
+
+        .t-lens-content {
+            width: 100%;
+        }
+
+        .t-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-style: italic;
+            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 2.5rem;
+        }
+
+        .t-author h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-bottom: 0.4rem;
+        }
+
+        .t-author span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Orbiting Avatar Nodes */
+        .t-nodes-wrapper {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .t-node {
+            position: absolute;
+            z-index: 15;
+            pointer-events: auto;
+        }
+
+        .t-node-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            filter: grayscale(1) blur(2px) brightness(0.6);
+            border: 1px solid var(--glass-border);
+            transition: all 0.5s var(--ease-out-expo);
+        }
+
+        .t-node-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        .t-node:hover .t-node-inner {
+            filter: grayscale(0) blur(0) brightness(1);
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .t-node.active .t-node-inner {
+            filter: grayscale(0) blur(0) brightness(1.1);
+            transform: scale(1.2);
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(194, 166, 121, 0.3);
+        }
+
+        /* Node Pulse Ring */
+        .t-node.active::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+            animation: pulseRing 2.5s infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE DEGRADATION
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .archipelago-container {
+                height: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+                padding: 0 5%;
+            }
+
+            .island-pos {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                min-height: 350px !important;
+            }
+
+            .a-card {
+                border-radius: 30px !important;
+            }
+
+            .pill {
+                flex-direction: column !important;
+            }
+
+            .pill .card-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #archipelago-lines,
+            #t-svg {
+                display: none !important;
+            }
+
+            .t-canvas {
+                height: auto;
+                padding: 0 5%;
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .t-lens {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                transform: none !important;
+                width: 100% !important;
+                padding: 3rem 2rem !important;
+            }
+
+            .t-nodes-wrapper {
+                position: relative;
+                inset: auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+                pointer-events: auto;
+                margin-top: 2rem;
+            }
+
+            .t-node {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                display: inline-block;
+                width: 60px !important;
+                height: 60px !important;
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            body,
+            a,
+            button,
+            .interactive {
+                cursor: auto !important;
+            }
+
+            .a-card:hover::before {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-fixed"></div>
+    <div class="noise-overlay"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <main>
+        <section id="features">
+            <div class="section-header">
+                <div class="sh-line"></div>
+                <span class="sh-subtitle">01. The Ecosystem</span>
+                <h2 class="sh-title split-text">Organic Architecture</h2>
+                <p class="sh-desc">Moving completely beyond rigid grids. Discover a fluid, suspended environment
+                    designed to breathe with your interactions and adapt naturally.</p>
+            </div>
+
+            <div class="archipelago-container" id="archipelago">
+                <svg id="archipelago-lines"></svg>
+
+                <div class="island-pos i-0 parallax" data-speed="0.8">
+                    <div class="reveal-wrapper">
+                        <div class="float-wrapper" style="animation-delay: 0s;">
+                            <div class="a-card arch interactive" data-node="0">
+                                <div class="card-inner">
+                                    <i class="ph-light ph-aperture"></i>
+                                    <h3>Organic Synchronicity</h3>
+                                    <p>Algorithms that breathe with your data, establishing natural rhythms without
+                                        forcing unnatural pathways.</p>
+                                    <div class="explore magnetic"><span>Discover</span> <i
+                                            class="ph-bold ph-arrow-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="island-pos i-1 parallax" data-speed="1.2">
+                    <div class="reveal-wrapper">
+                        <div class="float-wrapper" style="animation-delay: -2s;">
+                            <div class="a-card rect interactive" data-node="1">
+                                <div class="card-inner">
+                                    <i class="ph-light ph-leaf"></i>
+                                    <h3>Evolving Systems</h3>
+                                    <p>Digital environments that adapt and grow seamlessly alongside your scale, forming
+                                        a living canopy.</p>
+                                    <div class="explore magnetic"><span>Discover</span> <i
+                                            class="ph-bold ph-arrow-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="island-pos i-2 parallax" data-speed="0.6">
+                    <div class="reveal-wrapper">
+                        <div class="float-wrapper" style="animation-delay: -4s;">
+                            <div class="a-card pill interactive" data-node="2">
+                                <div class="card-inner">
+                                    <i class="ph-light ph-drop"></i>
+                                    <div>
+                                        <h3>Fluid Integration</h3>
+                                        <p>Unprecedented transparency and profound depth in processing complex
+                                            architectural data smoothly.</p>
+                                        <div class="explore magnetic"><span>Discover</span> <i
+                                                class="ph-bold ph-arrow-right"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="island-pos i-3 parallax" data-speed="1.5">
+                    <div class="reveal-wrapper">
+                        <div class="float-wrapper" style="animation-delay: -1s;">
+                            <div class="a-card circle interactive" data-node="3">
+                                <div class="card-inner">
+                                    <i class="ph-light ph-shield-check"></i>
+                                    <h3>Bedrock Trust</h3>
+                                    <p>Rooted deep in immovable cryptographic foundations ensuring absolute structural
+                                        stability.</p>
+                                    <div class="explore magnetic"><span>Discover</span> <i
+                                            class="ph-bold ph-arrow-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="island-pos i-4 parallax" data-speed="0.9">
+                    <div class="reveal-wrapper">
+                        <div class="float-wrapper" style="animation-delay: -3s;">
+                            <div class="a-card leaf interactive" data-node="4">
+                                <div class="card-inner">
+                                    <i class="ph-light ph-wind"></i>
+                                    <h3>Tactile Precision</h3>
+                                    <p>Every pixel and interaction serves an elemental purpose, perfectly engineered for
+                                        clarity.</p>
+                                    <div class="explore magnetic"><span>Discover</span> <i
+                                            class="ph-bold ph-arrow-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials">
+            <div class="section-header">
+                <div class="sh-line"></div>
+                <span class="sh-subtitle">02. The Resonance</span>
+                <h2 class="sh-title split-text">Echoes of Excellence</h2>
+                <p class="sh-desc">Listen to the voices of those who have embraced the quiet revolution of our organic
+                    design philosophy.</p>
+            </div>
+
+            <div class="t-canvas" id="t-canvas">
+                <svg id="t-svg">
+                    <path id="t-line-anim" class="t-line-anim"></path>
+                </svg>
+
+                <div class="t-lens">
+                    <i class="ph-fill ph-quotes lens-quote-icon"></i>
+                    <div class="t-lens-content">
+                        <p class="t-text" id="t-text">"Initializing resonance..."</p>
+                        <div class="t-author">
+                            <h4 id="t-name">-</h4>
+                            <span id="t-role">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-nodes-wrapper">
+                    <div class="t-node interactive" data-id="0" style="top: 10%; left: 15%; width: 80px; height: 80px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                    <div class="t-node interactive" data-id="1"
+                        style="top: 25%; right: 10%; width: 100px; height: 100px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                    <div class="t-node interactive" data-id="2" style="top: 60%; left: 5%; width: 70px; height: 70px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                    <div class="t-node interactive" data-id="3"
+                        style="top: 75%; right: 15%; width: 90px; height: 90px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                    <div class="t-node interactive" data-id="4" style="top: 85%; left: 35%; width: 85px; height: 85px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                    <div class="t-node interactive" data-id="5" style="top: 5%; right: 35%; width: 60px; height: 60px;">
+                        <div class="t-node-inner"><img
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80"
+                                alt="Avatar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- 1. Smooth Scrolling Setup (Lenis + GSAP) ---
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true
+            });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0, 0);
+
+            // --- 2. Custom Cinematic Cursor ---
+            const cDot = document.querySelector('.cursor-dot');
+            const cRing = document.querySelector('.cursor-ring');
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+            let rx = mx, ry = my;
+
+            document.addEventListener('mousemove', e => {
+                mx = e.clientX; my = e.clientY;
+                if (window.innerWidth > 1024) {
+                    cDot.style.transform = `translate(calc(${mx}px - 50%), calc(${my}px - 50%))`;
+                }
+            });
+
+            gsap.ticker.add(() => {
+                if (window.innerWidth > 1024) {
+                    rx += (mx - rx) * 0.15;
+                    ry += (my - ry) * 0.15;
+                    cRing.style.transform = `translate(calc(${rx}px - 50%), calc(${ry}px - 50%))`;
+                }
+            });
+
+            document.querySelectorAll('.interactive').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+
+            // --- 3. UI Reveals & Scroll Parallax ---
+            // Subtle Background Parallax
+            gsap.to('.bg-fixed', {
+                yPercent: 10, ease: 'none',
+                scrollTrigger: { trigger: 'body', start: 'top top', end: 'bottom bottom', scrub: true }
+            });
+
+            // Custom Text Splitter
+            const splitText = (el) => {
+                const text = el.innerText;
+                el.innerHTML = '';
+                text.split(' ').forEach(word => {
+                    const wrap = document.createElement('span'); wrap.className = 'word';
+                    const inner = document.createElement('span'); inner.className = 'split-inner';
+                    inner.innerHTML = word;
+                    wrap.appendChild(inner); el.appendChild(wrap);
+                });
+            };
+
+            document.querySelectorAll('.split-text').forEach(el => {
+                splitText(el);
+                gsap.to(el.querySelectorAll('.split-inner'), {
+                    y: '0%', duration: 1, stagger: 0.05, ease: 'power3.out',
+                    scrollTrigger: { trigger: el, start: 'top 85%' }
+                });
+            });
+
+            gsap.utils.toArray('.sh-line').forEach(line => {
+                gsap.to(line, { scaleY: 1, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: line, start: 'top 85%' } });
+            });
+
+            // Archipelago Parallax Scroll
+            if (window.innerWidth > 1024) {
+                gsap.utils.toArray('.parallax').forEach(el => {
+                    const speed = parseFloat(el.getAttribute('data-speed'));
+                    gsap.to(el, {
+                        y: () => -120 * speed, ease: 'none',
+                        scrollTrigger: { trigger: '#features', start: 'top bottom', end: 'bottom top', scrub: true }
+                    });
+                });
+            }
+
+            // Islands Reveal
+            gsap.utils.toArray('.reveal-wrapper').forEach(fw => {
+                gsap.from(fw, { opacity: 0, y: 100, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: fw, start: 'top 85%' } });
+            });
+
+            // --- 4. Micro-Interactions (3D Tilt & Magnetic) ---
+            document.querySelectorAll('.a-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    if (window.innerWidth < 1024) return;
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+
+                    // Spotlight
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+
+                    // 3D Tilt
+                    const centerX = rect.width / 2; const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    const transX = ((x - centerX) / centerX) * 8;
+                    const transY = ((y - centerY) / centerY) * 8;
+
+                    card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                    // Inner Parallax
+                    const inner = card.querySelector('.card-inner');
+                    if (inner) inner.style.transform = `translateZ(40px) translate3d(${transX * 0.5}px, ${transY * 0.5}px, 0)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1200px) rotateX(0deg) rotateY(0deg)`;
+                    const inner = card.querySelector('.card-inner');
+                    if (inner) inner.style.transform = `translateZ(40px) translate3d(0, 0, 0)`;
+                });
+            });
+
+            document.querySelectorAll('.magnetic').forEach(btn => {
+                btn.addEventListener('mousemove', e => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                    gsap.to(btn, { x, y, duration: 0.3, ease: 'power2.out' });
+                });
+                btn.addEventListener('mouseleave', () => {
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
+                });
+            });
+
+            // --- 5. Archipelago Dynamic SVG Energy Lines ---
+            const svgConnections = [[0, 4], [4, 1], [0, 2], [4, 2], [2, 3], [1, 3]];
+            const archContainer = document.getElementById('archipelago');
+            const svgLines = document.getElementById('archipelago-lines');
+            const islands = document.querySelectorAll('.a-card');
+
+            if (window.innerWidth > 1024) {
+                svgConnections.forEach(() => {
+                    const base = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    base.setAttribute('class', 'arch-line-base'); svgLines.appendChild(base);
+                    const pulse = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    pulse.setAttribute('class', 'arch-line-pulse'); svgLines.appendChild(pulse);
+                });
+
+                let pulseOffset = 0;
+                function renderArchipelagoLines() {
+                    const rect = archContainer.getBoundingClientRect();
+                    if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                        pulseOffset -= 2;
+                        const centers = Array.from(islands).map(card => {
+                            const cRect = card.getBoundingClientRect();
+                            return { x: cRect.left - rect.left + cRect.width / 2, y: cRect.top - rect.top + cRect.height / 2 };
+                        });
+
+                        const bases = document.querySelectorAll('.arch-line-base');
+                        const pulses = document.querySelectorAll('.arch-line-pulse');
+
+                        svgConnections.forEach((pair, idx) => {
+                            const p1 = centers[pair[0]]; const p2 = centers[pair[1]];
+                            const d = `M ${p1.x} ${p1.y} C ${p1.x + (p2.x - p1.x) / 2} ${p1.y}, ${p1.x + (p2.x - p1.x) / 2} ${p2.y}, ${p2.x} ${p2.y}`;
+                            if (bases[idx]) bases[idx].setAttribute('d', d);
+                            if (pulses[idx]) {
+                                pulses[idx].setAttribute('d', d);
+                                pulses[idx].style.strokeDasharray = '10 300';
+                                pulses[idx].style.strokeDashoffset = pulseOffset;
+                            }
+                        });
+                    }
+                    requestAnimationFrame(renderArchipelagoLines);
+                }
+                renderArchipelagoLines();
+            }
+
+            // --- 6. Testimonials Lens Engine ---
+            const testimonialsData = [
+                { quote: "It doesn't just look beautiful; it functions with an uncanny grace. The workflow feels entirely frictionless, almost like breathing.", name: "Clara Vance", role: "Creative Director" },
+                { quote: "They’ve managed to capture the essence of nature in a digital space. A stunning achievement in modern architectural engineering.", name: "Julian Thorne", role: "Lead Architect" },
+                { quote: "Every interaction is a masterclass in subtlety and intention. There is no excess, only absolute pure elegance.", name: "Maya Elian", role: "Product VP" },
+                { quote: "A profound shift from the rigid interfaces of yesterday. It feels alive, responsive, and deeply intuitive to human needs.", name: "Silas Reed", role: "Founder & CEO" },
+                { quote: "We completely abandoned our legacy systems the day we adopted this. The quiet power underneath the minimalism is staggering.", name: "Elena Rostova", role: "Lead Designer" },
+                { quote: "Unmatched clarity. It distills complex datasets into beautiful, tactile visual structures that anyone can understand instantly.", name: "Marcus Hale", role: "CTO, Vanguard" }
+            ];
+
+            // Entrances
+            gsap.from('.t-lens', { opacity: 0, scale: 0.95, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '#testimonials', start: 'top 70%' } });
+            gsap.utils.toArray('.t-node').forEach((node, i) => {
+                gsap.from(node, { opacity: 0, scale: 0, duration: 0.8, delay: i * 0.1, ease: 'back.out(1.5)', scrollTrigger: { trigger: '#testimonials', start: 'top 60%' } });
+            });
+
+            let activeTestimonial = 0;
+            const tLineParams = { progress: 0 };
+            let tLineTween;
+
+            function activateTestimonial(index) {
+                document.querySelectorAll('.t-node').forEach(n => n.classList.remove('active'));
+                const activeNode = document.querySelector(`.t-node[data-id="${index}"]`);
+                if (activeNode) activeNode.classList.add('active');
+
+                const lensContent = document.querySelector('.t-lens-content');
+                gsap.to(lensContent, {
+                    y: 20, opacity: 0, duration: 0.4, ease: 'power2.in',
+                    onComplete: () => {
+                        const data = testimonialsData[index];
+                        document.getElementById('t-text').innerText = `"${data.quote}"`;
+                        document.getElementById('t-name').innerText = data.name;
+                        document.getElementById('t-role').innerText = data.role;
+                        gsap.to(lensContent, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' });
+                    }
+                });
+
+                tLineParams.progress = 0;
+                if (tLineTween) tLineTween.kill();
+                tLineTween = gsap.to(tLineParams, { progress: 1, duration: 0.8, ease: 'power2.out' });
+            }
+
+            // Auto Rotate
+            let autoRotate = setInterval(() => {
+                activeTestimonial = (activeTestimonial + 1) % testimonialsData.length;
+                activateTestimonial(activeTestimonial);
+            }, 7000);
+
+            document.querySelectorAll('.t-node').forEach(node => {
+                node.addEventListener('click', () => {
+                    clearInterval(autoRotate);
+                    const id = parseInt(node.getAttribute('data-id'));
+                    if (id !== activeTestimonial) { activeTestimonial = id; activateTestimonial(activeTestimonial); }
+                });
+            });
+
+            // SVG Connection Rendering
+            function renderTestimonialLine() {
+                if (window.innerWidth > 1024) {
+                    const tCanvas = document.getElementById('t-canvas');
+                    const rect = tCanvas.getBoundingClientRect();
+
+                    if (rect.bottom > 0 && rect.top < window.innerHeight) {
+                        const lens = document.querySelector('.t-lens');
+                        const node = document.querySelector(`.t-node[data-id="${activeTestimonial}"]`);
+                        const path = document.getElementById('t-line-anim');
+
+                        if (lens && node && path) {
+                            const lRect = lens.getBoundingClientRect(); const nRect = node.getBoundingClientRect();
+                            const lx = lRect.left - rect.left + lRect.width / 2; const ly = lRect.top - rect.top + lRect.height / 2;
+                            const nx = nRect.left - rect.left + nRect.width / 2; const ny = nRect.top - rect.top + nRect.height / 2;
+
+                            const d = `M ${nx} ${ny} C ${nx + (lx - nx) / 2} ${ny}, ${nx + (lx - nx) / 2} ${ly}, ${lx} ${ly}`;
+                            path.setAttribute('d', d);
+
+                            const length = path.getTotalLength();
+                            path.style.strokeDasharray = length;
+                            path.style.strokeDashoffset = length * (1 - tLineParams.progress);
+                        }
+                    }
+                }
+                requestAnimationFrame(renderTestimonialLine);
+            }
+
+            // Initialization
+            activateTestimonial(0);
+            renderTestimonialLine();
+        });
+    </script>
+</body>
+
+</html>

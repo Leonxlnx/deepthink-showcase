@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Intelligence - Ecosystem</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* ==========================================================
+           1. CORE PALETTE & SETUP (Natural, Earthy, Clean)
+           ========================================================== */
+        :root {
+            --bg-base: #0a0c0b;       /* Deep earthy forest black */
+            --bg-end: #121614;        /* Slightly lighter for depth gradient */
+            --text-main: #f4f1ed;     /* Alabaster / warm white */
+            --text-muted: #959892;    /* Mossy grey */
+            --accent: #b5c4a1;        /* Pale Sage Green */
+            --glass-bg: rgba(244, 241, 237, 0.02);
+            --glass-border: rgba(244, 241, 237, 0.06);
+            --glass-hover: rgba(244, 241, 237, 0.05);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box; 
+            cursor: none; /* Custom fluid interaction cursor enabled */
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection { background: var(--accent); color: var(--bg-base); }
+
+        /* ==========================================================
+           2. AMBIENT ENVIRONMENT (Background & Noise)
+           ========================================================== */
+        .fixed-bg {
+            position: fixed; top: -5%; left: -5%; width: 110vw; height: 110vh;
+            background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop') center/cover;
+            filter: brightness(0.12) saturate(0.2) blur(12px);
+            z-index: -3;
+        }
+
+        .noise-overlay {
+            position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.06"/%3E%3C/svg%3E');
+        }
+
+        .ambient-orb {
+            position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(181, 196, 161, 0.05) 0%, transparent 60%);
+            filter: blur(70px); pointer-events: none; z-index: -2;
+            top: 0; left: 0; transform: translate(-50%, -50%);
+        }
+
+        /* ==========================================================
+           3. CUSTOM FLUID CURSOR
+           ========================================================== */
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%; pointer-events: none;
+            z-index: 10000; transform: translate(-50%, -50%);
+            transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(181, 196, 161, 0.5); border-radius: 50%; pointer-events: none;
+            z-index: 10000; transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s;
+        }
+        .cursor-ring.hover-active {
+            width: 80px; height: 80px; background: rgba(181, 196, 161, 0.05); 
+            border-color: transparent; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+        }
+        body:active .cursor-dot { transform: translate(-50%, -50%) scale(0.5); }
+
+        /* Typography Utilities */
+        .serif { font-family: 'Playfair Display', serif; }
+        .line-wrap { overflow: hidden; display: block; }
+        .line-inner { display: inline-block; transform: translateY(110%); }
+
+        /* ==========================================================
+           4. FEATURES: HORIZONTAL SCROLL (BUG FIXED)
+           ========================================================== */
+        .features-wrapper {
+            position: relative; width: 100vw; overflow: hidden; 
+            /* No hardcoded height! GSAP calculates PinSpacing perfectly now */
+        }
+        
+        .features-sticky {
+            height: 100vh; width: 100vw; overflow: hidden;
+            display: flex; align-items: center;
+        }
+
+        .features-track {
+            display: flex; align-items: center; gap: 6vw; 
+            padding: 0 15vw 0 10vw; /* 15vw at the end gives the scroll a smooth buffer zone! */
+            height: 100vh; width: max-content; will-change: transform;
+        }
+
+        .intro-slide { width: 35vw; padding-right: 5vw; flex-shrink: 0; }
+        .intro-slide h2 { font-size: 4.5vw; line-height: 1.1; margin-bottom: 2rem; font-weight: 400; }
+        .intro-slide i { color: var(--accent); font-style: italic; }
+        .intro-slide p { font-size: 1.2rem; color: var(--text-muted); max-width: 90%; line-height: 1.6; }
+
+        .scroll-indicator { 
+            display: flex; align-items: center; gap: 15px; margin-top: 3rem; 
+            color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; 
+        }
+        .mouse { width: 22px; height: 34px; border: 1px solid var(--accent); border-radius: 12px; position: relative; }
+        .wheel { width: 2px; height: 6px; background: var(--accent); border-radius: 2px; position: absolute; top: 6px; left: 50%; transform: translateX(-50%); animation: scrollMouse 1.5s infinite; }
+        
+        @keyframes scrollMouse {
+            0% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, 12px); opacity: 0; }
+        }
+
+        /* Feature Cards - Organic Morphing Micro-interaction */
+        .feature-card {
+            width: 32vw; height: 70vh; position: relative; overflow: hidden; flex-shrink: 0;
+            border-radius: var(--br, 2vw);
+            transition: border-radius 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s;
+            transform: translateZ(0); /* Hardware acceleration to prevent jitter */
+        }
+        
+        /* Initial Asymmetrical Shapes */
+        .shape-1 { --br: 30vw 2vw 30vw 2vw; }
+        .shape-2 { --br: 2vw 30vw 2vw 30vw; }
+        .shape-3 { --br: 30vw 30vw 2vw 2vw; }
+        .shape-4 { --br: 2vw 2vw 30vw 30vw; }
+
+        /* On Hover: Morph to clean rectangle */
+        .feature-card:hover { 
+            --br: 1.5vw !important; 
+            transform: translateY(-15px) scale(1.02); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .f-image {
+            position: absolute; top: 0; left: -15%; width: 130%; height: 100%; object-fit: cover;
+            filter: grayscale(60%) sepia(10%) brightness(0.6);
+            transition: filter 0.8s ease, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
+        }
+        .feature-card:hover .f-image { filter: grayscale(0%) sepia(0%) brightness(0.9); transform: scale(1.03); }
+
+        /* Glassmorphic Internal Content */
+        .f-content {
+            position: absolute; bottom: 2vw; left: 2vw; right: 2vw;
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 1vw; padding: 2.5rem;
+            transform: translateY(20px); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .feature-card:hover .f-content {
+            transform: translateY(0); opacity: 1; background: var(--glass-hover);
+        }
+
+        .f-icon {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(181, 196, 161, 0.1); border: 1px solid rgba(181, 196, 161, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent); margin-bottom: 1.5rem;
+            transition: transform 0.5s, background 0.5s, color 0.5s;
+        }
+        .feature-card:hover .f-icon { transform: scale(1.1) rotate(10deg); background: var(--accent); color: var(--bg-base); }
+        .f-content h3 { font-size: 2rem; margin: 0; font-weight: 400; color: #fff; }
+        
+        .f-desc {
+            max-height: 0; opacity: 0; margin-top: 0; color: var(--text-muted); line-height: 1.6; font-size: 1rem;
+            transition: max-height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease 0.1s, margin 0.4s;
+        }
+        .feature-card:hover .f-desc { max-height: 150px; opacity: 1; margin-top: 1rem; }
+
+        /* ==========================================================
+           5. TESTIMONIALS: DIAGONAL 3D PARALLAX FLOW
+           ========================================================== */
+        .testimonials-wrapper {
+            position: relative; padding: 20vh 0 20vh 0; z-index: 2; overflow: hidden;
+            background: linear-gradient(to bottom, transparent, var(--bg-end));
+        }
+
+        .t-header-wrap { text-align: center; margin-bottom: 15vh; position: relative; z-index: 10; }
+        .t-header-wrap h2 { font-size: 5vw; font-weight: 400; }
+        .t-subtitle { color: var(--accent); letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; display: block; }
+
+        /* Rotated Masonry Grid */
+        .t-grid {
+            display: flex; justify-content: center; gap: 2.5vw;
+            transform: rotate(-5deg) scale(1.1); width: 120vw; margin-left: -10vw;
+        }
+
+        .t-col { display: flex; flex-direction: column; gap: 2.5vw; width: 28vw; will-change: transform;}
+        .col-1 { margin-top: 10vh; }
+        .col-2 { margin-top: -15vh; }
+        .col-3 { margin-top: 20vh; }
+
+        /* Floating wrapper for organic breathing motion */
+        .t-card-wrap { animation: float 8s ease-in-out infinite; transform-style: preserve-3d; perspective: 1200px;}
+        .col-1 .t-card-wrap:nth-child(1) { animation-duration: 6s; }
+        .col-1 .t-card-wrap:nth-child(2) { animation-duration: 8s; animation-delay: 1s; }
+        .col-2 .t-card-wrap:nth-child(1) { animation-duration: 7s; animation-delay: 2s; }
+        .col-2 .t-card-wrap:nth-child(2) { animation-duration: 6.5s; animation-delay: 0.5s; }
+        .col-3 .t-card-wrap:nth-child(1) { animation-duration: 8s; animation-delay: 1.5s; }
+        .col-3 .t-card-wrap:nth-child(2) { animation-duration: 7.5s; animation-delay: 0.2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* 3D Glass Testimonial Card */
+        .t-card {
+            background: rgba(20, 24, 21, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 1.5vw;
+            padding: clamp(2rem, 3vw, 3.5rem); position: relative; overflow: hidden;
+            transform-style: preserve-3d; transition: border-color 0.4s;
+            will-change: transform;
+        }
+
+        /* 3D Content Depth */
+        .t-card > * { transform: translateZ(30px); position: relative; z-index: 2; pointer-events: none;}
+
+        /* Dynamic Mouse Ambient Glow */
+        .t-card::before { 
+            content: ''; position: absolute; top: var(--mouse-y, 50%); left: var(--mouse-x, 50%);
+            width: 35vw; height: 35vw; background: radial-gradient(circle, rgba(181, 196, 161, 0.12) 0%, transparent 60%);
+            transform: translate(-50%, -50%) translateZ(0); opacity: 0; transition: opacity 0.4s; pointer-events: none; z-index: 0;
+        }
+        .t-card:hover { border-color: rgba(181, 196, 161, 0.2); }
+        .t-card:hover::before { opacity: 1; }
+
+        .quote-mark {
+            position: absolute; top: -10px; left: 20px; font-family: 'Playfair Display', serif;
+            font-size: 8rem; color: rgba(181, 196, 161, 0.05); line-height: 1; transform: translateZ(0); z-index: 1; pointer-events: none;
+        }
+
+        .t-stars { color: var(--accent); margin-bottom: 1.5vw; display: flex; gap: 0.3vw; }
+        .t-stars svg { width: clamp(14px, 1.2vw, 18px); height: clamp(14px, 1.2vw, 18px); }
+        .t-quote { font-size: clamp(1.1rem, 1.4vw, 1.6rem); line-height: 1.6; margin-bottom: 2.5vw; color: var(--text-main); }
+        
+        .t-author { display: flex; align-items: center; gap: 1.2vw; border-top: 1px solid var(--glass-border); padding-top: 1.5vw; }
+        .t-avatar { width: clamp(45px, 4vw, 60px); height: clamp(45px, 4vw, 60px); border-radius: 50%; object-fit: cover; border: 1px solid rgba(181, 196, 161, 0.3); }
+        .t-name { font-size: clamp(0.9rem, 1vw, 1.1rem); font-weight: 600; margin-bottom: 2px; }
+        .t-role { font-size: clamp(0.75rem, 0.8vw, 0.9rem); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Buffer Footer - Gives parallax room to finish without hitting an abrupt scroll wall */
+        .footer-buffer {
+            height: 15vh; display: flex; align-items: center; justify-content: center;
+            background: var(--bg-end); position: relative; z-index: 10;
+            border-top: 1px solid rgba(255,255,255,0.02);
+            color: var(--text-muted); font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7;
+        }
+
+        /* ==========================================================
+           6. RESPONSIVE FALLBACKS
+           ========================================================== */
+        @media (max-width: 1024px) {
+            .features-wrapper { height: auto !important; padding: 10vh 5vw; overflow: hidden; }
+            .features-sticky { position: relative; height: auto; display: block; overflow: visible; }
+            .features-track { display: flex; flex-direction: column; width: 100%; height: auto; padding: 0; gap: 5vh; transform: none !important; }
+            
+            .intro-slide { width: 100%; padding-right: 0; margin-bottom: 5vh; text-align: center; }
+            .intro-slide h2 { font-size: 3.5rem; }
+            .intro-slide p { max-width: 100%; margin: 0 auto; }
+            .scroll-indicator { justify-content: center; }
+            
+            .feature-card { width: 100%; height: 50vh; border-radius: 2rem !important; }
+            .f-content { opacity: 1; transform: translateY(0); }
+            .f-desc { max-height: 150px; opacity: 1; margin-top: 1rem; }
+            
+            .t-header-wrap h2 { font-size: 3rem; }
+            .t-grid { flex-direction: column; transform: none !important; width: 100%; margin: 0; gap: 4vh; }
+            .t-col { width: 100%; gap: 4vh; margin-top: 0 !important; transform: none !important; }
+            .t-card-wrap { animation: none !important; }
+            
+            .cursor-dot, .cursor-ring { display: none !important; }
+            * { cursor: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="fixed-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="ambient-orb"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="features-wrapper">
+        <div class="features-sticky">
+            <div class="features-track">
+                
+                <div class="intro-slide">
+                    <h2 class="section-title">
+                        <div class="line-wrap"><div class="line-inner serif">Where Nature</div></div>
+                        <div class="line-wrap"><div class="line-inner serif">Meets <i>Intelligence.</i></div></div>
+                    </h2>
+                    <p class="fade-up">An ecosystem designed for fluidity and focus. We replaced digital clutter and harsh grids with organic logic, building spaces that breathe.</p>
+                    <div class="scroll-indicator fade-up">
+                        <div class="mouse"><div class="wheel"></div></div>
+                        <span>Scroll to Explore</span>
+                    </div>
+                </div>
+
+                <div class="feature-card shape-1 hover-trigger">
+                    <img src="https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?q=80&w=1600&auto=format&fit=crop" class="f-image" alt="Organic Arch">
+                    <div class="f-content">
+                        <div class="f-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                        <h3 class="serif">Organic Architecture</h3>
+                        <p class="f-desc">Built on a foundation that shifts gracefully with your demands, mirroring the immense resilience and adaptability of natural structures.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card shape-2 hover-trigger">
+                    <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=1600&auto=format&fit=crop" class="f-image" alt="Deep Forest">
+                    <div class="f-content">
+                        <div class="f-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                        <h3 class="serif">Absolute Clarity</h3>
+                        <p class="f-desc">Silent, unobtrusive processing power. We stripped away the neon noise so you have the undisturbed tranquility required to focus.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card shape-3 hover-trigger">
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1600&auto=format&fit=crop" class="f-image" alt="Architecture Structure">
+                    <div class="f-content">
+                        <div class="f-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                        <h3 class="serif">Immutable Core</h3>
+                        <p class="f-desc">Security isn't a bolt-on feature; it is the bedrock. Flawless data integrity encased in a remarkably elegant, minimalist exterior.</p>
+                    </div>
+                </div>
+
+                <div class="feature-card shape-4 hover-trigger">
+                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600&auto=format&fit=crop" class="f-image" alt="Mountain Peaks">
+                    <div class="f-content">
+                        <div class="f-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                        <h3 class="serif">Fluid Dynamics</h3>
+                        <p class="f-desc">Interactions that anticipate your intent. The platform seamlessly learns your specific rhythm and synchronizes perfectly.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-wrapper">
+        <div class="t-header-wrap">
+            <span class="t-subtitle fade-up">Ecosystem Perspectives</span>
+            <h2 class="section-title">
+                <div class="line-wrap"><div class="line-inner serif">Voices of</div></div>
+                <div class="line-wrap"><div class="line-inner serif"><i>Clarity.</i></div></div>
+            </h2>
+        </div>
+
+        <div class="t-grid">
+            <div class="t-col col-1">
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">A masterpiece of digital ecology. It feels like working within a living, breathing space rather than a rigid synthetic system. Completely redefined our workflow.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" alt="Elara Vance" class="t-avatar">
+                            <div>
+                                <div class="t-name">Elara Vance</div>
+                                <div class="t-role">Product Lead, Aethos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">Finally, a platform that respects focus. Every feature feels organically placed. The natural aesthetic combined with such robust architecture is unmatched.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" alt="Marcus Cole" class="t-avatar">
+                            <div>
+                                <div class="t-name">Marcus Cole</div>
+                                <div class="t-role">Creative Director</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="t-col col-2">
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">I've never experienced an interface so deeply attuned to natural workflows. It responds with quiet intelligence, eliminating friction completely.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=150&auto=format&fit=crop" alt="Julian Thorne" class="t-avatar">
+                            <div>
+                                <div class="t-name">Julian Thorne</div>
+                                <div class="t-role">Founder, Synthetix</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">Elegant, fluid, and brilliantly executed. It stands out by whispering instead of shouting. A profound paradigm shift in professional software.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop" alt="Elena Rostova" class="t-avatar">
+                            <div>
+                                <div class="t-name">Elena Rostova</div>
+                                <div class="t-role">Tech Curator</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="t-col col-3">
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">The attention to the smallest interactions makes every click feel rewarding. The performance is staggeringly fast, yet it feels completely serene.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=150&auto=format&fit=crop" alt="David Kim" class="t-avatar">
+                            <div>
+                                <div class="t-name">David Kim</div>
+                                <div class="t-role">Systems Engineer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card-wrap">
+                    <div class="t-card hover-trigger">
+                        <div class="quote-mark">"</div>
+                        <div class="t-stars">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <p class="t-quote">We integrated the entire ecosystem in days. The seamless flow and earthy visual language make it an absolute joy for our team to use daily.</p>
+                        <div class="t-author">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150&auto=format&fit=crop" alt="Sarah Jenkins" class="t-avatar">
+                            <div>
+                                <div class="t-name">Sarah Jenkins</div>
+                                <div class="t-role">Software Architect</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-buffer">
+        Natural Intelligence © 2026
+    </footer>
+
+    <script>
+        // 1. Initialize Lenis Smooth Scroll
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0, 0);
+
+        // 2. Custom Cursor & Ambient Orb Logic
+        const dot = document.querySelector('.cursor-dot');
+        const ring = document.querySelector('.cursor-ring');
+        const orb = document.querySelector('.ambient-orb');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let ringX = mouseX, ringY = mouseY;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+
+            // Slow move ambient orb to follow mouse roughly
+            gsap.to(orb, { x: mouseX - window.innerWidth / 2, y: mouseY - window.innerHeight / 2, duration: 3, ease: "power2.out" });
+        });
+
+        function renderCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = ringX + 'px';
+            ring.style.top = ringY + 'px';
+            requestAnimationFrame(renderCursor);
+        }
+        renderCursor();
+
+        document.querySelectorAll('.hover-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => ring.classList.add('hover-active'));
+            el.addEventListener('mouseleave', () => ring.classList.remove('hover-active'));
+        });
+
+        // 3. Text Reveal Micro-animations
+        gsap.utils.toArray('.section-title').forEach(title => {
+            gsap.to(title.querySelectorAll('.line-inner'), {
+                y: "0%", duration: 1.2, stagger: 0.15, ease: "power4.out",
+                scrollTrigger: { trigger: title, start: "top 85%" }
+            });
+        });
+
+        gsap.utils.toArray('.fade-up').forEach(el => {
+            gsap.fromTo(el, { opacity: 0, y: 30 }, {
+                opacity: 1, y: 0, duration: 1.2, ease: "power3.out",
+                scrollTrigger: { trigger: el, start: "top 90%" }
+            });
+        });
+
+        // 4. GSAP Advanced Scroll Context (Desktop Only) - THE FIX
+        let mm = gsap.matchMedia();
+
+        function initGSAP() {
+            mm.add("(min-width: 1025px)", () => {
+                
+                const track = document.querySelector('.features-track');
+                const wrapper = document.querySelector('.features-wrapper');
+                
+                // Function to dynamically calculate exact scroll width needed
+                function getScrollAmount() {
+                    let trackWidth = track.scrollWidth;
+                    return -(trackWidth - window.innerWidth);
+                }
+
+                // Create the main horizontal tween
+                const scrollTween = gsap.to(track, {
+                    x: getScrollAmount,
+                    ease: "none"
+                });
+
+                // Create the ScrollTrigger to pin and scrub the tween
+                ScrollTrigger.create({
+                    trigger: wrapper,
+                    start: "top top",
+                    end: () => `+=${getScrollAmount() * -1}`,
+                    pin: true,
+                    animation: scrollTween,
+                    scrub: 1,
+                    invalidateOnRefresh: true // <--- The magic key for resizing / bugs
+                });
+
+                // Internal Parallax for Feature Images (Linked directly to the scrollTween)
+                gsap.utils.toArray('.feature-card').forEach(card => {
+                    const img = card.querySelector('.f-image');
+                    gsap.to(img, {
+                        x: "15%", 
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: card,
+                            containerAnimation: scrollTween,
+                            start: "left right",
+                            end: "right left",
+                            scrub: true
+                        }
+                    });
+                });
+
+                // Testimonials Diagonal Parallax (Smoothed out bottom boundary)
+                const tWrap = ".testimonials-wrapper";
+                gsap.to('.col-1', { yPercent: -15, ease: "none", scrollTrigger: { trigger: tWrap, start: "top bottom", end: "bottom bottom", scrub: 1 }});
+                gsap.to('.col-2', { yPercent: 10, ease: "none", scrollTrigger: { trigger: tWrap, start: "top bottom", end: "bottom bottom", scrub: 1 }});
+                gsap.to('.col-3', { yPercent: -20, ease: "none", scrollTrigger: { trigger: tWrap, start: "top bottom", end: "bottom bottom", scrub: 1 }});
+            });
+        }
+
+        // Extemely important to prevent jumping bugs: 
+        // Wait for images to load before calculating ScrollTrigger bounds
+        window.addEventListener('load', () => {
+            initGSAP();
+            ScrollTrigger.refresh();
+        });
+
+        // 5. Interactive 3D Tilt & Magnetic Glow for Testimonial Cards
+        document.querySelectorAll('.t-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                
+                const rotateX = ((y - rect.height / 2) / rect.height) * -12; 
+                const rotateY = ((x - rect.width / 2) / rect.width) * 12;
+                
+                gsap.to(card, {
+                    rotateX: rotateX, rotateY: rotateY, scale: 1.02,
+                    duration: 0.5, ease: "power2.out", transformPerspective: 1000,
+                    overwrite: "auto" // Prevents animation glitches if mouse moves rapidly
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    rotateX: 0, rotateY: 0, scale: 1,
+                    duration: 0.8, ease: "elastic.out(1, 0.5)",
+                    overwrite: "auto"
+                });
+            });
+        });
+
+        // Page load fade-in
+        gsap.fromTo("body", { opacity: 0 }, { opacity: 1, duration: 1.5, ease: "power2.inOut" });
+    </script>
+</body>
+</html>

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Natural Digital Ecosystems</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@200;300;400;500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & BASE RESETS (Natural Earthy Palette)
+           ========================================================================== */
+        :root {
+            --bg-color: #E8E6E1;
+            /* Warm Sand / Alabaster */
+            --text-main: #1C1F1B;
+            /* Deep Forest Pine */
+            --text-muted: #6B7068;
+            /* Moss Gray */
+            --accent-color: #A38F72;
+            /* Earthy Clay / Muted Gold */
+            --glass-bg: rgba(28, 31, 27, 0.4);
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Outfit', sans-serif;
+            --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom kinetic cursor */
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Tactile Paper Noise Overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ==========================================================================
+           2. KINETIC CURSOR
+           ========================================================================== */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
+        }
+
+        body.hover-mode .cursor-ring {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(28, 31, 27, 0.08);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+
+        body.hover-mode .cursor-dot {
+            opacity: 0;
+        }
+
+        /* ==========================================================================
+           3. ABOUT US INTRO SECTION
+           ========================================================================== */
+        .about-hero {
+            position: relative;
+            padding: 18vh 5vw 10vh 5vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Scrolling Background Text Mask */
+        .bg-marquee {
+            position: absolute;
+            top: 40%;
+            left: -5%;
+            font-size: 16vw;
+            font-family: var(--font-serif);
+            color: rgba(28, 31, 27, 0.03);
+            white-space: nowrap;
+            z-index: -1;
+            pointer-events: none;
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+        }
+
+        .hero-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .hero-left {
+            flex: 1.2;
+        }
+
+        .hero-right {
+            flex: 0.8;
+            padding-left: 5vw;
+            padding-bottom: 1.5rem;
+        }
+
+        .eyebrow {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .intro-title {
+            font-size: clamp(4rem, 7vw, 7rem);
+            line-height: 0.95;
+            color: var(--text-main);
+            font-family: var(--font-serif);
+            letter-spacing: -0.02em;
+        }
+
+        .intro-title em {
+            font-style: italic;
+            color: var(--accent-color);
+        }
+
+        .line {
+            display: block;
+            overflow: hidden;
+            padding-bottom: 5px;
+        }
+
+        .word {
+            display: inline-block;
+            transform: translateY(110%);
+        }
+
+        .intro-desc {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Magnetic Global Button */
+        .magnetic-wrap {
+            display: inline-block;
+            padding: 15px;
+            margin: -15px;
+        }
+
+        .btn-primary {
+            background: transparent;
+            border: 1px solid var(--text-main);
+            color: var(--text-main);
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s var(--ease-fluid);
+            display: inline-flex;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text-main);
+            border-radius: 50%;
+            transition: top 0.5s var(--ease-fluid), border-radius 0.5s var(--ease-fluid);
+            z-index: -1;
+        }
+
+        .btn-primary:hover {
+            color: var(--bg-color);
+        }
+
+        .btn-primary:hover::before {
+            top: 0;
+            border-radius: 0;
+        }
+
+        /* ==========================================================================
+           4. ULTRA-CREATIVE FEATURES ACCORDION
+           ========================================================================== */
+        .features-section {
+            padding: 5vh 5vw 20vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .accordion {
+            display: flex;
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            height: 75vh;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #000;
+        }
+
+        .panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.8s var(--ease-fluid);
+            border-right: 1px solid rgba(232, 230, 225, 0.15);
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel.active {
+            flex: 3.5;
+        }
+
+        /* Background Images & Parallax Logic */
+        .panel-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.25);
+            transition: transform 1s var(--ease-fluid), filter 0.8s ease;
+            filter: grayscale(80%) brightness(0.5);
+            transform-origin: center;
+        }
+
+        .panel.active .panel-bg img {
+            transform: scale(1.05);
+            filter: grayscale(0%) brightness(0.9);
+        }
+
+        /* Atmospheric Dark Gradient Overlay */
+        .panel-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.3;
+            background: linear-gradient(to top, rgba(10, 12, 10, 0.95) 0%, rgba(10, 12, 10, 0.1) 50%, rgba(10, 12, 10, 0.7) 100%);
+            transition: opacity 0.8s ease;
+        }
+
+        .panel.active .panel-overlay {
+            opacity: 1;
+        }
+
+        /* --- COLLAPSED STATE (Vertical) --- */
+        .panel-collapsed {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .p-num {
+            color: #E8E6E1;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .p-num::after {
+            content: '';
+            width: 1px;
+            height: 30px;
+            background: var(--accent-color);
+        }
+
+        .p-title-vert {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            color: #E8E6E1;
+            font-family: var(--font-serif);
+            font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+            white-space: nowrap;
+            margin: auto 0;
+            transition: transform 0.6s var(--ease-fluid), opacity 0.6s ease;
+        }
+
+        .panel.active .panel-collapsed {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel.active .p-title-vert {
+            transform: rotate(180deg) translateY(-30px);
+        }
+
+        /* --- EXPANDED STATE (Glassmorphism & Data) --- */
+        .panel-expanded {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+
+        .panel.active .panel-expanded {
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0.2s;
+        }
+
+        .p-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .p-num-large {
+            font-family: var(--font-serif);
+            font-size: 4.5rem;
+            color: #E8E6E1;
+            font-style: italic;
+            line-height: 1;
+        }
+
+        /* Rotating SVG Badge */
+        .p-badge {
+            width: 85px;
+            height: 85px;
+            animation: spin 12s linear infinite;
+        }
+
+        .p-badge svg {
+            fill: #E8E6E1;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Premium Glassmorphism Detail Card */
+        .p-bottom {
+            background: linear-gradient(135deg, rgba(28, 31, 27, 0.6) 0%, rgba(28, 31, 27, 0.2) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 35px 40px;
+            max-width: 440px;
+            transform: translateY(40px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.8s var(--ease-fluid);
+        }
+
+        .panel.active .p-bottom {
+            transform: translateY(0);
+            transition-delay: 0.2s;
+        }
+
+        .p-title-horiz {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 3vw, 3rem);
+            color: #E8E6E1;
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+
+        .p-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(232, 230, 225, 0.8);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        /* Micro-Animations: Data Bars */
+        .p-micro {
+            margin-bottom: 30px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #E8E6E1;
+            margin-bottom: 6px;
+            opacity: 0.9;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(232, 230, 225, 0.15);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0;
+            transition: width 1.5s var(--ease-fluid);
+        }
+
+        .panel.active .stat-fill {
+            width: var(--target-width);
+            transition-delay: 0.5s;
+        }
+
+        /* Internal Panel Button */
+        .panel-btn {
+            background: transparent;
+            border: 1px solid rgba(232, 230, 225, 0.4);
+            color: #E8E6E1;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .panel-btn::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #E8E6E1;
+            border-radius: 50%;
+            transition: top 0.4s var(--ease-fluid), border-radius 0.4s var(--ease-fluid);
+            z-index: -1;
+        }
+
+        .panel-btn:hover {
+            color: var(--text-main);
+            border-color: transparent;
+        }
+
+        .panel-btn:hover::before {
+            top: 0;
+            border-radius: 0;
+        }
+
+        .panel-btn svg {
+            width: 14px;
+            height: 14px;
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+
+        .panel-btn:hover svg {
+            transform: translateX(4px);
+        }
+
+        /* ==========================================================================
+           5. RESPONSIVE DESIGN LOGIC
+           ========================================================================== */
+        @media (max-width: 900px) {
+            .hero-container {
+                flex-direction: column;
+                text-align: left;
+            }
+
+            .hero-right {
+                padding-left: 0;
+                margin-top: 30px;
+            }
+
+            .accordion {
+                flex-direction: column;
+                height: auto;
+                border-radius: 16px;
+            }
+
+            .panel {
+                height: 12vh;
+                border-right: none;
+                border-bottom: 1px solid rgba(232, 230, 225, 0.15);
+                transition: height 0.8s var(--ease-fluid);
+            }
+
+            .panel:last-child {
+                border-bottom: none;
+            }
+
+            .panel.active {
+                height: 65vh;
+            }
+
+            .p-title-vert {
+                writing-mode: horizontal-tb;
+                transform: none !important;
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+            .panel-collapsed {
+                flex-direction: row;
+                padding: 0 30px;
+                justify-content: flex-start;
+                gap: 20px;
+            }
+
+            .p-num {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .p-num::after {
+                width: 30px;
+                height: 1px;
+                margin: 0;
+            }
+
+            .panel-expanded {
+                padding: 20px;
+            }
+
+            .p-top {
+                display: none;
+            }
+
+            /* Simplify mobile space */
+            .p-bottom {
+                padding: 25px;
+                max-width: 100%;
+                border-radius: 16px;
+            }
+
+            .bg-marquee {
+                font-size: 25vw;
+                top: 20%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
+
+            <section class="about-hero">
+                <div class="bg-marquee">ORGANIC DIGITAL ECOSYSTEMS • ORGANIC DIGITAL ECOSYSTEMS • </div>
+
+                <div class="hero-container">
+                    <div class="hero-left">
+                        <p class="eyebrow">About Us</p>
+                        <h1 class="intro-title">
+                            <div class="line"><span class="word">Cultivating</span></div>
+                            <div class="line"><span class="word"><em>Digital</em></span> <span
+                                    class="word">Nature.</span></div>
+                        </h1>
+                    </div>
+                    <div class="hero-right">
+                        <p class="intro-desc fade-up">We bypass rigid grids and artificial aesthetics. Our methodology
+                            is rooted in the organic flow of the physical world, crafting deeply detailed, fluid, and
+                            profoundly human web architectures.</p>
+                        <div class="magnetic-wrap fade-up">
+                            <button class="btn-primary interactive"><span>Our Philosophy</span></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features-section">
+                <div class="accordion">
+
+                    <div class="panel interactive active">
+                        <div class="panel-bg"><img
+                                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop"
+                                alt="Organic Architecture"></div>
+                        <div class="panel-overlay"></div>
+
+                        <div class="panel-collapsed">
+                            <div class="p-num">01</div>
+                            <h2 class="p-title-vert">Organic Systems</h2>
+                        </div>
+
+                        <div class="panel-expanded">
+                            <div class="p-top">
+                                <span class="p-num-large">01</span>
+                                <div class="p-badge">
+                                    <svg viewBox="0 0 100 100">
+                                        <path id="circle1" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                                            fill="none" />
+                                        <text font-size="10" letter-spacing="2.5" font-family="'Outfit', sans-serif"
+                                            font-weight="500">
+                                            <textPath href="#circle1">NATURAL DESIGN • FLOW • </textPath>
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="p-bottom">
+                                <h2 class="p-title-horiz">Organic Systems</h2>
+                                <p class="p-desc">Bypassing rigid grid structures. We engineer foundational layouts that
+                                    feel asymmetrical yet perfectly balanced, mimicking physical environments.</p>
+
+                                <div class="p-micro">
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Fluidity</span><span class="counter"
+                                                data-target="98">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 98%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Adaptability</span><span class="counter"
+                                                data-target="100">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="magnetic-wrap"><button class="panel-btn"><span>Discover</span><svg
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg></button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel interactive">
+                        <div class="panel-bg"><img
+                                src="https://images.unsplash.com/photo-1505909182942-e2f09aee3e89?q=80&w=1200&auto=format&fit=crop"
+                                alt="Water Ripples"></div>
+                        <div class="panel-overlay"></div>
+
+                        <div class="panel-collapsed">
+                            <div class="p-num">02</div>
+                            <h2 class="p-title-vert">Tactile Kinetics</h2>
+                        </div>
+
+                        <div class="panel-expanded">
+                            <div class="p-top">
+                                <span class="p-num-large">02</span>
+                                <div class="p-badge">
+                                    <svg viewBox="0 0 100 100">
+                                        <path id="circle2" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                                            fill="none" />
+                                        <text font-size="10" letter-spacing="2.5" font-family="'Outfit', sans-serif"
+                                            font-weight="500">
+                                            <textPath href="#circle2">PHYSICS ENGINE • MOTION • </textPath>
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="p-bottom">
+                                <h2 class="p-title-horiz">Tactile Kinetics</h2>
+                                <p class="p-desc">Interfaces with physical weight. We introduce friction, gravity, and
+                                    momentum to digital interactions, restoring a true sense of touch.</p>
+
+                                <div class="p-micro">
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Friction</span><span class="counter"
+                                                data-target="94">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 94%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Momentum</span><span class="counter"
+                                                data-target="99">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 99%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="magnetic-wrap"><button class="panel-btn"><span>Experience</span><svg
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg></button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel interactive">
+                        <div class="panel-bg"><img
+                                src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=1200&auto=format&fit=crop"
+                                alt="Forest Canopy"></div>
+                        <div class="panel-overlay"></div>
+
+                        <div class="panel-collapsed">
+                            <div class="p-num">03</div>
+                            <h2 class="p-title-vert">Symbiotic Growth</h2>
+                        </div>
+
+                        <div class="panel-expanded">
+                            <div class="p-top">
+                                <span class="p-num-large">03</span>
+                                <div class="p-badge">
+                                    <svg viewBox="0 0 100 100">
+                                        <path id="circle3" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                                            fill="none" />
+                                        <text font-size="10" letter-spacing="2.5" font-family="'Outfit', sans-serif"
+                                            font-weight="500">
+                                            <textPath href="#circle3">SCALABLE CODE • EVOLVE • </textPath>
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="p-bottom">
+                                <h2 class="p-title-horiz">Symbiotic Growth</h2>
+                                <p class="p-desc">Ecosystems designed to evolve. Our codebases are written to adapt
+                                    intuitively to shifting user behaviors and scaling business needs.</p>
+
+                                <div class="p-micro">
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Scalability</span><span class="counter"
+                                                data-target="100">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Retention</span><span class="counter"
+                                                data-target="92">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 92%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="magnetic-wrap"><button class="panel-btn"><span>View Data</span><svg
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg></button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel interactive">
+                        <div class="panel-bg"><img
+                                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop"
+                                alt="Smooth Stone Interior"></div>
+                        <div class="panel-overlay"></div>
+
+                        <div class="panel-collapsed">
+                            <div class="p-num">04</div>
+                            <h2 class="p-title-vert">Ethereal Depth</h2>
+                        </div>
+
+                        <div class="panel-expanded">
+                            <div class="p-top">
+                                <span class="p-num-large">04</span>
+                                <div class="p-badge">
+                                    <svg viewBox="0 0 100 100">
+                                        <path id="circle4" d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                                            fill="none" />
+                                        <text font-size="10" letter-spacing="2.5" font-family="'Outfit', sans-serif"
+                                            font-weight="500">
+                                            <textPath href="#circle4">IMMERSIVE • AESTHETICS • </textPath>
+                                        </text>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="p-bottom">
+                                <h2 class="p-title-horiz">Ethereal Depth</h2>
+                                <p class="p-desc">Multi-layered dimensional spaces. Utilizing sophisticated parallax and
+                                    fluid masks to create immersive canvases that invite deep exploration.</p>
+
+                                <div class="p-micro">
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Immersion</span><span class="counter"
+                                                data-target="97">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 97%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-group">
+                                        <div class="stat-line"><span>Aesthetics</span><span class="counter"
+                                                data-target="100">0</span></div>
+                                        <div class="stat-bar">
+                                            <div class="stat-fill" style="--target-width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="magnetic-wrap"><button class="panel-btn"><span>Explore Depth</span><svg
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg></button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            /* 1. Initialize Smooth Scrolling (Lenis) */
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true
+            });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0, 0);
+
+            /* 2. Custom Kinetic Cursor */
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.querySelector('.cursor-ring');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let dotX = mouseX, dotY = mouseY, ringX = mouseX, ringY = mouseY;
+
+            window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+            function renderCursor() {
+                dotX += (mouseX - dotX) * 0.2; dotY += (mouseY - dotY) * 0.2;
+                ringX += (mouseX - ringX) * 0.1; ringY += (mouseY - ringY) * 0.1;
+                dot.style.left = `${dotX}px`; dot.style.top = `${dotY}px`;
+                ring.style.left = `${ringX}px`; ring.style.top = `${ringY}px`;
+                requestAnimationFrame(renderCursor);
+            }
+            if (window.innerWidth > 900) requestAnimationFrame(renderCursor);
+
+            // Cursor Hover States
+            document.querySelectorAll('button, a, .interactive').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hover-mode'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hover-mode'));
+            });
+
+            /* 3. Hero Section Entrance & Scroll Animations */
+            gsap.to('.word', { y: '0%', duration: 1.4, stagger: 0.15, ease: 'power4.out', delay: 0.2 });
+            gsap.from('.eyebrow, .fade-up', { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: 'power3.out', delay: 1.2 });
+
+            gsap.to('.bg-marquee', {
+                xPercent: -20, ease: 'none',
+                scrollTrigger: { trigger: 'body', start: 'top top', end: 'bottom top', scrub: true }
+            });
+
+            /* 4. Magnetic Interaction Logic */
+            document.querySelectorAll('button').forEach(btn => {
+                const wrap = btn.closest('.magnetic-wrap');
+                if (!wrap) return;
+                wrap.addEventListener('mousemove', (e) => {
+                    const rect = wrap.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                    gsap.to(btn, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+                    if (btn.querySelector('span')) gsap.to(btn.querySelector('span'), { x: x * 0.4, y: y * 0.4, duration: 0.3, ease: 'power2.out' });
+                });
+                wrap.addEventListener('mouseleave', () => {
+                    gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
+                    if (btn.querySelector('span')) gsap.to(btn.querySelector('span'), { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.3)' });
+                });
+            });
+
+            /* 5. Flex Accordion Logic & Micro-Animations */
+            const panels = document.querySelectorAll('.panel');
+
+            function runCounters(panel) {
+                const counters = panel.querySelectorAll('.counter');
+                counters.forEach(c => {
+                    const target = parseInt(c.getAttribute('data-target'));
+                    gsap.fromTo(c, { innerHTML: 0 }, {
+                        innerHTML: target, duration: 1.5, ease: 'power3.out',
+                        snap: { innerHTML: 1 }, delay: 0.4
+                    });
+                });
+            }
+
+            // Init first panel counters
+            runCounters(panels[0]);
+
+            panels.forEach(panel => {
+                // Accordion Hover
+                panel.addEventListener('mouseenter', () => {
+                    if (panel.classList.contains('active')) return;
+                    panels.forEach(p => p.classList.remove('active'));
+                    panel.classList.add('active');
+                    runCounters(panel);
+                });
+
+                // Magnetic 3D Background effect when panel is active
+                const bgImg = panel.querySelector('.panel-bg img');
+                panel.addEventListener('mousemove', (e) => {
+                    if (!panel.classList.contains('active') || window.innerWidth <= 900) return;
+                    const rect = panel.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    gsap.to(bgImg, { x: x * 30, y: y * 30, duration: 0.5, ease: 'power2.out' });
+                });
+                panel.addEventListener('mouseleave', () => {
+                    gsap.to(bgImg, { x: 0, y: 0, duration: 0.8, ease: 'power2.out' });
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
