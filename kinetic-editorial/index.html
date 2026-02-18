@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINETIC. | Vanguard Design Practice</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* =========================================
+           1. CORE VARIABLES & LUXURY RESET
+        ========================================= */
+        :root {
+            --bg-bone: #E8E6E1;
+            --text-main: #0A0A0A;
+            --text-muted: #6B6B6B;
+            --accent: #D9381E;
+            --grid-line: rgba(10, 10, 10, 0.06);
+
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Instrument Serif', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        body {
+            background-color: var(--bg-bone);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--text-main);
+            color: var(--bg-bone);
+        }
+
+        @media (pointer: coarse) {
+            body {
+                cursor: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        /* =========================================
+           2. CINEMATIC PRELOADER
+        ========================================= */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            background: var(--text-main);
+            color: var(--bg-bone);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5vw 4vw;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+        }
+
+        .pl-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            opacity: 0.6;
+        }
+
+        .pl-counter {
+            font-family: var(--font-sans);
+            font-size: clamp(6rem, 16vw, 16rem);
+            font-weight: 800;
+            line-height: 0.8;
+            letter-spacing: -0.04em;
+            align-self: flex-end;
+        }
+
+        /* =========================================
+           3. CLEAN ARCHITECTURAL FRAME (PASSEPARTOUT)
+        ========================================= */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9000;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .grid-system {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .g-nav {
+            position: absolute;
+            top: 12vh;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--grid-line);
+            transform-origin: left;
+        }
+
+        .g-footer {
+            position: absolute;
+            bottom: 10vh;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--grid-line);
+            transform-origin: left;
+        }
+
+        .g-left {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 4vw;
+            width: 1px;
+            background: var(--grid-line);
+            transform-origin: top;
+        }
+
+        .g-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 4vw;
+            width: 1px;
+            background: var(--grid-line);
+            transform-origin: top;
+        }
+
+        .cross {
+            position: absolute;
+            width: 11px;
+            height: 11px;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+        }
+
+        .cross::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(10, 10, 10, 0.3);
+        }
+
+        .cross::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.3);
+        }
+
+        /* =========================================
+           4. CUSTOM EDITORIAL CURSOR
+        ========================================= */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cursor-text {
+            color: var(--bg-bone);
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+        }
+
+        body.hover-img .cursor {
+            width: 85px;
+            height: 85px;
+            background: var(--text-main);
+        }
+
+        body.hover-img .cursor-text {
+            opacity: 1;
+        }
+
+        body.hover-link .cursor {
+            width: 45px;
+            height: 45px;
+            background: transparent;
+            border: 1px solid var(--text-main);
+        }
+
+        /* =========================================
+           5. NAVIGATION & META INFO
+        ========================================= */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12vh;
+            padding: 0 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .brand {
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4vw;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+            padding: 5px;
+        }
+
+        .nav-meta {
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            display: flex;
+            gap: 2vw;
+            align-items: center;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 10vh;
+            padding: 0 5vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .vertical-text {
+            position: fixed;
+            left: 1.5vw;
+            top: 50%;
+            writing-mode: vertical-rl;
+            transform: translateY(-50%) rotate(180deg);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* =========================================
+           6. HERO COMPOSITION
+        ========================================= */
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6vw;
+            z-index: 10;
+        }
+
+        .hero-left {
+            width: 50%;
+            padding-right: 4vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-title {
+            margin: 0;
+            padding: 0;
+            margin-bottom: 2.5rem;
+        }
+
+        .line {
+            overflow: hidden;
+            padding-bottom: 0.2em;
+            margin-bottom: -0.2em;
+        }
+
+        .line span {
+            display: inline-block;
+            transform-origin: top left;
+        }
+
+        .serif {
+            font-family: var(--font-serif);
+            font-size: clamp(4rem, 7.5vw, 9.5rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 0.85;
+            padding-right: 0.1em;
+        }
+
+        .sans {
+            font-family: var(--font-sans);
+            font-size: clamp(3.2rem, 6.5vw, 8.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 0.9;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .indent {
+            margin-left: 10%;
+        }
+
+        .subcopy {
+            max-width: 440px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 10%;
+        }
+
+        .subcopy strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 3.5rem;
+            margin-left: 10%;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-main);
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--text-main);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+        }
+
+        .btn-primary:hover::after {
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .btn-primary .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .btn-primary:hover .dot {
+            transform: scale(1.5);
+        }
+
+        .hero-right {
+            width: 50%;
+            height: 72vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            justify-content: flex-end;
+        }
+
+        .gallery-bounds {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            height: 100%;
+        }
+
+        .img-wrap {
+            position: absolute;
+            overflow: hidden;
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            background: #d4d2cd;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+        }
+
+        .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.2);
+            filter: grayscale(100%) contrast(1.1) brightness(0.95) sepia(3%);
+            transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s ease;
+        }
+
+        .img-wrap:hover img {
+            filter: grayscale(0%) sepia(0%) contrast(1.0) brightness(1);
+            transform: scale(1.02);
+        }
+
+        .img-label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 10;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--bg-bone);
+            background: rgba(10, 10, 10, 0.8);
+            padding: 4px 8px;
+            backdrop-filter: blur(4px);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .img-wrap:hover .img-label {
+            opacity: 1;
+        }
+
+        .img-1 {
+            top: 0;
+            right: 0;
+            width: 75%;
+            height: 75%;
+            z-index: 1;
+        }
+
+        .img-2 {
+            bottom: 5%;
+            left: 0;
+            width: 55%;
+            height: 50%;
+            z-index: 2;
+            border: 6px solid var(--bg-bone);
+        }
+
+        .spinning-badge {
+            position: absolute;
+            bottom: 8%;
+            right: -5%;
+            width: 110px;
+            height: 110px;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            animation: spin 20s linear infinite;
+        }
+
+        .spinning-badge svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--text-main);
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================
+           RESPONSIVE RULES
+        ========================================= */
+        @media (max-width: 1024px) {
+            body {
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .hero {
+                flex-direction: column;
+                justify-content: flex-start;
+                height: auto;
+                padding-top: 15vh;
+                padding-bottom: 10vh;
+            }
+
+            .hero-left {
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 8vh;
+            }
+
+            .hero-right {
+                width: 100%;
+                height: 60vh;
+                justify-content: center;
+            }
+
+            .gallery-bounds {
+                margin: 0 auto;
+            }
+
+            .indent,
+            .subcopy,
+            .btn-primary {
+                margin-left: 0;
+            }
+
+            .nav-links,
+            .nav-meta,
+            .grid-system,
+            .vertical-text,
+            .bottom-bar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .serif {
+                font-size: 4rem;
+            }
+
+            .sans {
+                font-size: 3.2rem;
+            }
+
+            .img-1 {
+                width: 85%;
+            }
+
+            .img-2 {
+                width: 65%;
+                left: -5%;
+            }
+
+            .pl-counter {
+                font-size: 9rem;
+            }
+
+            .spinning-badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="preloader">
+        <div class="pl-top">
+            <div>KINETIC. FRAMEWORK</div>
+            <div style="color:var(--text-muted)">SYSTEM BOOT // V5.0</div>
+        </div>
+        <div class="pl-counter">00</div>
+    </div>
+
+    <div class="noise"></div>
+
+    <div class="grid-system">
+        <div class="g-nav gsap-line-h"></div>
+        <div class="g-footer gsap-line-h"></div>
+        <div class="g-left gsap-line-v"></div>
+        <div class="g-right gsap-line-v"></div>
+
+        <div class="cross gsap-draft" style="top: 12vh; left: 4vw;"></div>
+        <div class="cross gsap-draft" style="top: 12vh; right: 4vw;"></div>
+        <div class="cross gsap-draft" style="bottom: 10vh; left: 4vw;"></div>
+        <div class="cross gsap-draft" style="bottom: 10vh; right: 4vw;"></div>
+    </div>
+
+    <div class="cursor">
+        <div class="cursor-text">VIEW</div>
+    </div>
+
+    <div class="vertical-text gsap-fade">ARCHIVE VOL. 084 // EST. 2026</div>
+
+    <nav class="gsap-fade">
+        <a href="#" class="brand magnetic hover-link">KINETIC.</a>
+        <div class="nav-links">
+            <a href="#" class="magnetic hover-link">Studio</a>
+            <a href="#" class="magnetic hover-link">Expertise</a>
+            <a href="#" class="magnetic hover-link">Journal</a>
+        </div>
+        <div class="nav-meta">
+            <div>LOCAL TIME</div>
+            <div>—</div>
+            <div id="live-time" style="color: var(--text-main); font-weight: 600;">00:00:00</div>
+        </div>
+    </nav>
+
+    <main class="hero">
+
+        <div class="hero-left">
+            <h1 class="hero-title">
+                <div class="line"><span class="serif">We engineer</span></div>
+                <div class="line"><span class="sans indent">CULTURAL IMPACT</span></div>
+                <div class="line"><span class="serif">& visual truth.</span></div>
+            </h1>
+
+            <p class="subcopy gsap-fade">
+                An independent design practice operating at the vanguard of <strong>editorial brutalism</strong>. We
+                build elegant visual systems by embracing whitespace and profound typography.
+            </p>
+
+            <div class="magnetic-wrap" style="display:inline-block;">
+                <a href="#" class="btn-primary magnetic hover-link gsap-fade">
+                    <div class="dot"></div>
+                    Initialize Archive
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="gallery-bounds">
+
+                <div class="img-wrap img-1 hover-img" data-speed="14">
+                    <div class="img-label">FIG 01. / FACADE</div>
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+                        class="parallax-img" alt="Brutalist Architecture Space">
+                </div>
+
+                <div class="img-wrap img-2 hover-img" data-speed="-12">
+                    <div class="img-label">FIG 02. / INTERIOR</div>
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80"
+                        class="parallax-img" alt="Modern Minimalist Interior">
+                </div>
+
+                <div class="spinning-badge gsap-fade">
+                    <svg viewBox="0 0 100 100">
+                        <path id="circlePath" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
+                            fill="transparent" />
+                        <text font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700"
+                            letter-spacing="3.5">
+                            <textPath href="#circlePath">INDEPENDENT DESIGN STUDIO • </textPath>
+                        </text>
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div class="bottom-bar gsap-fade">
+        <div>GEO // 48.1351° N, 11.5820° E (MUNICH)</div>
+        <div style="display: flex; gap: 2vw; align-items: center;">
+            <span id="tracker" style="font-weight: 600; color: var(--text-main);">X.000 Y.000</span>
+            <span>SCROLL TO DISCOVER</span>
+        </div>
+    </div>
+
+    <script>
+        // ==================================================
+        // 1. LIVE TIME & LIVE MOUSE COORDINATES
+        // ==================================================
+        function updateTime() {
+            const timeEl = document.getElementById('live-time');
+            if (timeEl) {
+                const now = new Date();
+                timeEl.innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/Berlin', hour12: false }) + ' CET';
+            }
+        }
+        setInterval(updateTime, 1000); updateTime();
+
+        const trackerEl = document.getElementById('tracker');
+        window.addEventListener('mousemove', (e) => {
+            if (trackerEl && window.innerWidth > 1024) {
+                const x = (e.clientX / window.innerWidth).toFixed(3);
+                const y = (e.clientY / window.innerHeight).toFixed(3);
+                trackerEl.innerText = `X.${x} Y.${y}`;
+            }
+        });
+
+        // ==================================================
+        // 2. ELITE CURSOR PHYSICS
+        // ==================================================
+        const cursor = document.querySelector('.cursor');
+        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+        let cursorX = mouseX, cursorY = mouseY;
+
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+        function renderCursor() {
+            if (window.innerWidth > 768) {
+                cursorX += (mouseX - cursorX) * 0.15;
+                cursorY += (mouseY - cursorY) * 0.15;
+                cursor.style.left = `${cursorX}px`;
+                cursor.style.top = `${cursorY}px`;
+            }
+            requestAnimationFrame(renderCursor);
+        }
+        renderCursor();
+
+        document.querySelectorAll('.hover-img').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-img'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-img'));
+        });
+        document.querySelectorAll('.hover-link, .magnetic').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hover-link'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hover-link'));
+        });
+
+        // ==================================================
+        // 3. MAGNETIC LINKS
+        // ==================================================
+        document.querySelectorAll('.magnetic').forEach(elem => {
+            elem.addEventListener('mousemove', (e) => {
+                if (window.innerWidth <= 768) return;
+                const rect = elem.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
+                gsap.to(elem, { x: x, y: y, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+            });
+            elem.addEventListener('mouseleave', () => {
+                gsap.to(elem, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)', overwrite: 'auto' });
+            });
+        });
+
+        // ==================================================
+        // 4. CONTROLLED PARALLAX
+        // ==================================================
+        window.addEventListener('mousemove', (e) => {
+            if (window.innerWidth <= 1024) return;
+            const x = (e.clientX / window.innerWidth - 0.5);
+            const y = (e.clientY / window.innerHeight - 0.5);
+
+            document.querySelectorAll('.img-wrap').forEach((wrap) => {
+                const speed = wrap.getAttribute('data-speed');
+                const img = wrap.querySelector('.parallax-img');
+
+                gsap.to(wrap, { x: x * speed, y: y * speed, duration: 2, ease: 'power2.out', overwrite: 'auto' });
+                gsap.to(img, { x: -x * speed * 1.5, y: -y * speed * 1.5, duration: 2, ease: 'power2.out', overwrite: 'auto' });
+            });
+        });
+
+        // ==================================================
+        // 5. ENTRANCE CHOREOGRAPHY
+        // ==================================================
+        window.addEventListener("load", () => {
+            gsap.set('.line span', { y: "130%", skewY: 5 });
+            gsap.set('.gsap-fade', { opacity: 0, y: 15 });
+            gsap.set('.gsap-draft', { opacity: 0, scale: 0.5 });
+            gsap.set('.gsap-line-v', { scaleY: 0 });
+            gsap.set('.gsap-line-h', { scaleX: 0 });
+            gsap.set('.img-wrap', { clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' });
+            gsap.set('.spinning-badge', { opacity: 0, scale: 0.8 });
+
+            const tl = gsap.timeline();
+            const counter = { val: 0 };
+
+            tl.to(counter, {
+                val: 100, duration: 1.2, ease: "power4.inOut",
+                onUpdate: () => { document.querySelector('.pl-counter').innerText = Math.floor(counter.val).toString().padStart(2, '0'); }
+            })
+                .to('.preloader', { yPercent: -100, duration: 1.0, ease: "expo.inOut" }, "+=0.1")
+
+                .to('.gsap-line-v', { scaleY: 1, duration: 1.2, ease: "power3.inOut" }, "-=0.6")
+                .to('.gsap-line-h', { scaleX: 1, duration: 1.2, ease: "power3.inOut", stagger: 0.1 }, "-=1.0")
+                .to('.gsap-draft', { opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.5)", stagger: 0.05 }, "-=0.5")
+
+                .to('.img-wrap', { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.6, stagger: 0.15, ease: 'power4.inOut' }, "-=1.0")
+
+                .to('.line span', { y: "0%", skewY: 0, duration: 1.4, stagger: 0.1, ease: 'power4.out' }, "-=1.2")
+
+                .to('.gsap-fade', { opacity: 1, y: 0, duration: 1.0, stagger: 0.05, ease: 'power2.out' }, "-=0.8")
+                .to('.spinning-badge', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.5)' }, "-=0.6");
+        });
+    </script>
+</body>
+
+</html>
