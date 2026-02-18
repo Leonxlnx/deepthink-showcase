@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Liquid UI & Soft-UI Prompts</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. SHOWCASE WEBSITE DESIGN (Sleek, Dark, High-End)
+           ========================================================================== */
+        :root {
+            --bg-site: #030305;
+            --text-main: #f4f4f5;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-dark: #1f1f22;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-site);
+            color: var(--text-main);
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center center;
+        }
+
+        .hero {
+            padding: 160px 20px 100px;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(ellipse at 50% -20%, rgba(120, 119, 198, 0.2), transparent 70%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z' fill='rgba(255,255,255,0.02)' fill-rule='nonzero'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: #d4d4d8;
+            margin-bottom: 24px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 600;
+            letter-spacing: -0.05em;
+            margin: 0 0 24px;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #a1a1aa;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 140px;
+        }
+
+        .showcase-block {
+            border: 1px solid var(--border-dark);
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0a0a0c;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .block-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mac-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .mac-dot.red {
+            background: #ff5f56;
+        }
+
+        .mac-dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .mac-dot.green {
+            background: #27c93f;
+        }
+
+        .block-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #a1a1aa;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+
+        .preview-stage {
+            min-height: 550px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 40px;
+        }
+
+        .env-1 {
+            background: #111111;
+        }
+
+        .env-2 {
+            background: #fdfdfd;
+        }
+
+        .env-3 {
+            background: #000000;
+        }
+
+        .env-4 {
+            background: #3b3b3e;
+        }
+
+        .code-area {
+            background: #050505;
+            border-top: 1px solid var(--border-dark);
+            position: relative;
+        }
+
+        .code-tabs {
+            display: flex;
+            border-bottom: 1px solid #1a1a1a;
+            position: relative;
+        }
+
+        .code-tab {
+            padding: 16px 28px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .code-tab.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .code-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #fff;
+        }
+
+        .code-tab:hover:not(.active) {
+            color: #aaa;
+        }
+
+        .btn-copy {
+            position: absolute;
+            right: 16px;
+            top: 12px;
+            background: #1f1f22;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copy:hover {
+            background: #2a2a2e;
+            border-color: #555;
+        }
+
+        .btn-copy.success {
+            background: #10b981;
+            border-color: #10b981;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .code-pane {
+            display: none;
+            padding: 24px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .code-pane.active {
+            display: block;
+        }
+
+        pre[class*="language-"] {
+            margin: 0 !important;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        code[class*="language-"] {
+            font-size: 0.85rem !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            line-height: 1.6 !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+
+    <style id="dynamic-component-styles"></style>
+</head>
+
+<body>
+
+    <template id="html-1">
+        <div class="ui1-wrapper">
+            <div class="ui1-liquid-glow"></div>
+            <div class="ui1-liquid-glow sharp"></div>
+
+            <div class="ui1-box">
+                <input type="text" class="ui1-input" placeholder="Ask anything">
+
+                <div class="ui1-toolbar">
+                    <button class="ui1-btn ui1-icon-only"><i class="ph ph-plus"></i></button>
+                    <button class="ui1-btn"><i class="ph ph-globe"></i> Deep Research</button>
+                    <button class="ui1-btn active"><i class="ph-fill ph-lightbulb"></i> Think</button>
+                    <div style="flex: 1;"></div>
+                    <button class="ui1-btn ui1-icon-only"><i class="ph ph-dots-three"></i></button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="css-1">
+        .ui1-wrapper {
+        position: relative; width: 100%; max-width: 600px; font-family: 'Inter', sans-serif;
+        }
+
+        /* Liquid Color Animation (Paper.js / WebGL Style in pure CSS) */
+        @keyframes ui1-liquid {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 100% 0%; }
+        }
+
+        .ui1-liquid-glow {
+        position: absolute;
+        inset: -6px;
+        background: linear-gradient(
+        90deg,
+        #0ea5e9, #10b981, #f97316, #e11d48, #8b5cf6, #0ea5e9
+        );
+        background-size: 500% 100%;
+        animation: ui1-liquid 6s linear infinite;
+        filter: blur(22px);
+        border-radius: 30px;
+        z-index: 0;
+        opacity: 0.9;
+        }
+        .ui1-liquid-glow.sharp {
+        inset: -2px;
+        filter: blur(6px);
+        opacity: 0.6;
+        }
+
+        .ui1-box {
+        position: relative; z-index: 1; background: rgba(20, 20, 22, 0.85); border-radius: 24px;
+        padding: 16px 20px; display: flex; flex-direction: column; gap: 16px;
+        backdrop-filter: blur(30px);
+        box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.15),
+        inset 0 -1px 1px rgba(0,0,0,0.6),
+        0 20px 40px rgba(0,0,0,0.8);
+        border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .ui1-input {
+        background: transparent; border: none; outline: none; color: #fff;
+        font-size: 1.15rem; font-family: inherit; padding: 4px 0; width: 100%;
+        }
+        .ui1-input::placeholder { color: #71717a; }
+
+        .ui1-toolbar { display: flex; gap: 8px; align-items: center; }
+
+        .ui1-btn {
+        background: linear-gradient(180deg, #2e2e32 0%, #252528 100%);
+        border: 1px solid #1f1f22; color: #a1a1aa;
+        padding: 8px 14px; border-radius: 12px; font-size: 0.9rem; font-weight: 500;
+        display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s ease;
+        box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.08),
+        0 2px 4px rgba(0,0,0,0.3);
+        }
+        .ui1-btn:hover {
+        background: linear-gradient(180deg, #38383c 0%, #2e2e32 100%);
+        color: #fff; transform: translateY(-1px);
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.12), 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .ui1-btn.active {
+        background: #121214; color: #fff;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.6); border-color: #000;
+        }
+        .ui1-icon-only { padding: 8px 10px; }
+        .ui1-btn i { font-size: 1.15rem; }
+    </template>
+
+    <template id="html-2">
+        <div class="ui2-stage">
+            <div class="ui2-blobs">
+                <div class="ui2-blob ui2-blob-1"></div>
+                <div class="ui2-blob ui2-blob-2"></div>
+                <div class="ui2-blob ui2-blob-3"></div>
+            </div>
+
+            <div class="ui2-wrapper">
+                <div class="ui2-main-card">
+                    <input type="text" class="ui2-input" placeholder="Describe what you want to build">
+
+                    <div class="ui2-icon-row">
+                        <div class="ui2-figma-ring">
+                            <button class="ui2-icon-btn">
+                                <svg width="18" height="26" viewBox="0 0 38 57" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M19 28.5C19 33.7467 14.7467 38 9.5 38C4.25329 38 0 33.7467 0 28.5C0 23.2533 4.25329 19 9.5 19C14.7467 19 19 23.2533 19 28.5Z"
+                                        fill="#0ACF83" />
+                                    <path
+                                        d="M0 47.5C0 52.7467 4.25329 57 9.5 57C14.7467 57 19 52.7467 19 47.5V38H9.5C4.25329 38 0 42.2533 0 47.5Z"
+                                        fill="#1ABCFE" />
+                                    <path d="M0 9.5C0 14.7467 4.25329 19 9.5 19H19V0H9.5C4.25329 0 0 4.25329 0 9.5Z"
+                                        fill="#F24E1E" />
+                                    <path d="M19 0H28.5C33.7467 0 38 4.25329 38 9.5C38 14.7467 33.7467 19 28.5 19H19V0Z"
+                                        fill="#FF7262" />
+                                    <path
+                                        d="M38 28.5C38 33.7467 33.7467 38 28.5 38C23.2533 38 19 33.7467 19 28.5C19 23.2533 23.2533 19 28.5 19C33.7467 19 38 23.2533 38 28.5Z"
+                                        fill="#A259FF" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <button class="ui2-icon-btn ui2-github-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#000000">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ui2-pills">
+                    <button class="ui2-pill">Build a mobile app <i class="ph ph-arrow-up-right"></i></button>
+                    <button class="ui2-pill">Build a finance... <i class="ph ph-arrow-up-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="css-2">
+        .ui2-stage {
+        position: relative; width: 100%; display: flex; justify-content: center; align-items: center;
+        }
+
+        .ui2-blobs {
+        position: absolute; inset: -50px; z-index: 0; pointer-events: none;
+        filter: blur(45px) saturate(160%);
+        }
+        .ui2-blob { position: absolute; border-radius: 50%; animation: ui2-blob-anim 12s infinite alternate ease-in-out;
+        }
+        .ui2-blob-1 { width: 220px; height: 220px; background: #FF7262; top: -20px; left: -10px; }
+        .ui2-blob-2 { width: 280px; height: 280px; background: #1ABCFE; bottom: -40px; right: -20px; animation-delay:
+        -3s; }
+        .ui2-blob-3 { width: 180px; height: 180px; background: #A259FF; top: 40px; left: 30%; animation-delay: -6s; }
+
+        @keyframes ui2-blob-anim {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        100% { transform: translate(40px, 30px) scale(1.15) rotate(20deg); border-radius: 60% 40% 30% 70% / 60% 50% 40%
+        50%; }
+        }
+
+        .ui2-wrapper {
+        position: relative; z-index: 1; width: 100%; max-width: 500px;
+        display: flex; flex-direction: column; gap: 16px; font-family: 'Inter', sans-serif;
+        }
+
+        .ui2-main-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(40px) saturate(150%);
+        -webkit-backdrop-filter: blur(40px) saturate(150%);
+        border-radius: 20px; padding: 24px 28px;
+        box-shadow:
+        inset 0 0 0 1.5px rgba(255,255,255,0.9),
+        inset 0 20px 40px rgba(255,255,255,0.4),
+        0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .ui2-input {
+        width: 100%; background: transparent; border: none; outline: none;
+        font-size: 1.25rem; color: #111; margin-bottom: 24px; font-family: inherit; font-weight: 500;
+        }
+        .ui2-input::placeholder { color: #a1a1aa; font-weight: 400; }
+
+        .ui2-icon-row { display: flex; gap: 16px; align-items: center; }
+
+        @keyframes ui2-spin-ring { 100% { transform: rotate(360deg); } }
+
+        .ui2-figma-ring {
+        border-radius: 50%; padding: 3px; display: flex;
+        background: conic-gradient(from 0deg, #1ABCFE, #A259FF, #F24E1E, #FF7262, #0ACF83, #1ABCFE);
+        box-shadow: 0 4px 16px rgba(162,89,255,0.3);
+        animation: ui2-spin-ring 5s linear infinite;
+        }
+        .ui2-figma-ring .ui2-icon-btn {
+        animation: ui2-spin-ring 5s linear infinite reverse;
+        }
+
+        .ui2-icon-btn {
+        width: 44px; height: 44px; border-radius: 50%; background: #fff; border: none;
+        display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .ui2-icon-btn:hover { transform: scale(1.05); }
+
+        .ui2-github-btn {
+        width: 50px; height: 50px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(0,0,0,0.05);
+        }
+
+        .ui2-pills { display: flex; gap: 12px; margin-left: 4px; justify-content: flex-end;}
+        .ui2-pill {
+        background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,1); color:
+        #555;
+        padding: 10px 18px; border-radius: 100px; font-size: 0.9rem; font-weight: 500;
+        display: flex; align-items: center; gap: 6px; cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: 0.2s;
+        }
+        .ui2-pill:hover { background: #fff; color: #111; box-shadow: 0 6px 16px rgba(0,0,0,0.06); transform:
+        translateY(-1px); }
+        .ui2-pill i { font-size: 1rem; color: #a1a1aa; transition: 0.2s; }
+        .ui2-pill:hover i { color: #111; }
+    </template>
+
+    <template id="html-3">
+        <div class="ui3-wrapper">
+            <div class="ui3-matrix-bg">
+                W C T + U N . Q Q Z . M X<br>
+                Y B . B Q X . * * . M U H E<br>
+                S Y S . L K H D Q V . * @ X<br>
+                P + K . T µ . o C . 0 N + Z<br>
+                X & H . D P . N K Q . + *
+            </div>
+
+            <div class="ui3-ambient-glow"></div>
+
+            <div class="ui3-laser-border">
+                <div class="ui3-inner">
+                    <div class="ui3-input-row">
+                        <span class="ui3-cursor">|</span>
+                        <input type="text" class="ui3-input" placeholder="Ask anything...">
+                    </div>
+
+                    <div class="ui3-toolbar">
+                        <div class="ui3-group">
+                            <button class="ui3-btn ui3-icon-only"><i class="ph ph-plus"></i></button>
+                            <button class="ui3-btn"><i class="ph ph-leaf"></i> Normal <i
+                                    class="ph-fill ph-caret-down ui3-caret"></i></button>
+                            <button class="ui3-btn active"><i class="ph-fill ph-lightbulb" style="color: #0ea5e9;"></i>
+                                DeepThink <i class="ph-fill ph-caret-down ui3-caret"></i></button>
+                        </div>
+                        <div class="ui3-group">
+                            <button class="ui3-btn"><i class="ph ph-waveform"></i> Voice</button>
+                            <button class="ui3-send-btn"><i class="ph-fill ph-paper-plane-tilt"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="css-3">
+        .ui3-wrapper {
+        position: relative; width: 100%; max-width: 650px; font-family: 'Inter', sans-serif; z-index: 1;
+        display: flex; justify-content: center; align-items: center;
+        }
+
+        .ui3-matrix-bg {
+        position: absolute; text-align: center; color: rgba(255,255,255,0.05);
+        font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2.8; letter-spacing: 0.5em;
+        z-index: -2; pointer-events: none; width: 150%;
+        -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
+        }
+
+        .ui3-ambient-glow {
+        position: absolute; inset: -20px; z-index: -1; pointer-events: none; border-radius: 30px;
+        background: radial-gradient(circle at 10% 50%, rgba(249,115,22,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 90% 50%, rgba(14,165,233,0.3) 0%, transparent 50%);
+        filter: blur(24px);
+        animation: ui3-pulse 4s ease-in-out infinite alternate;
+        }
+        @keyframes ui3-pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        .ui3-laser-border {
+        position: relative; width: 100%; padding: 1.5px; border-radius: 20px;
+        background: #111; overflow: hidden;
+        box-shadow: 0 40px 80px -10px rgba(0,0,0,0.8);
+        }
+        .ui3-laser-border::before {
+        content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        background: conic-gradient(from 0deg, transparent 0%, transparent 40%, #f97316 50%, #0ea5e9 60%, transparent
+        70%, transparent 100%);
+        animation: ui3-border-spin 4s linear infinite;
+        z-index: 0;
+        }
+        @keyframes ui3-border-spin { 100% { transform: rotate(360deg); } }
+
+        .ui3-inner {
+        position: relative; z-index: 1;
+        background: #09090b; border-radius: 19px; padding: 14px 18px;
+        display: flex; flex-direction: column; gap: 16px;
+        box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .ui3-input-row { display: flex; align-items: center; padding: 0 6px; }
+        .ui3-cursor { color: #f97316; font-weight: bold; font-size: 1.2rem; margin-right: 10px; animation: ui3-blink 1s
+        step-end infinite; }
+        @keyframes ui3-blink { 50% { opacity: 0; } }
+
+        .ui3-input { width: 100%; background: transparent; border: none; outline: none; color: #fff; font-size: 1.1rem;
+        font-family: inherit; }
+        .ui3-input::placeholder { color: #52525b; }
+
+        .ui3-toolbar { display: flex; justify-content: space-between; align-items: center; }
+        .ui3-group { display: flex; gap: 8px; align-items: center; }
+
+        .ui3-btn {
+        background: transparent; border: 1px solid #27272a; color: #a1a1aa; padding: 7px 14px;
+        border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 6px;
+        cursor: pointer; transition: 0.2s;
+        }
+        .ui3-btn:hover { background: #18181b; color: #fff; }
+        .ui3-btn.active { background: #1a1a1f; color: #fff; border-color: #3f3f46; }
+        .ui3-icon-only { padding: 7px 9px; border-radius: 50%; }
+        .ui3-caret { font-size: 0.6rem; color: #71717a; }
+
+        .ui3-send-btn {
+        width: 34px; height: 34px; border-radius: 50%; border: none; color: #fff;
+        background: linear-gradient(135deg, #c084fc, #ec4899); display: flex; align-items: center; justify-content:
+        center;
+        cursor: pointer; box-shadow: 0 0 15px rgba(217,70,239,0.5); font-size: 1.1rem; margin-left: 4px; transition:
+        0.2s;
+        }
+        .ui3-send-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(217,70,239,0.7); }
+    </template>
+
+    <template id="html-4">
+        <div class="ui4-wrapper">
+            <div class="ui4-liquid-shape"></div>
+
+            <div class="ui4-inner">
+                <div class="ui4-input-row">
+                    <span class="ui4-cursor">|</span>
+                    <input type="text" class="ui4-input" placeholder="Ask Lovable to create a prototype">
+                </div>
+
+                <div class="ui4-toolbar">
+                    <div class="ui4-group">
+                        <button class="ui4-btn ui4-icon-only"><i class="ph ph-plus"></i></button>
+                        <button class="ui4-btn"><i class="ph ph-image"></i> Attach</button>
+                        <button class="ui4-btn"><i class="ph ph-globe"></i> Public</button>
+                    </div>
+                    <div class="ui4-group">
+                        <button class="ui4-btn ui4-icon-only"><i class="ph ph-waveform"></i></button>
+                        <button class="ui4-send-btn"><i class="ph-bold ph-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="css-4">
+        .ui4-wrapper {
+        position: relative; width: 100%; max-width: 650px; font-family: 'JetBrains Mono', monospace;
+        }
+
+        @keyframes ui4-flow {
+        0% { background-position: 0% 50%; transform: scale(1); }
+        50% { background-position: 100% 50%; transform: scale(1.05); }
+        100% { background-position: 0% 50%; transform: scale(1); }
+        }
+
+        .ui4-liquid-shape {
+        position: absolute; bottom: -30px; left: -30px; width: 280px; height: 180px; z-index: 0;
+
+        background: radial-gradient(circle at 0% 0%, #ec4899, transparent 60%),
+        radial-gradient(circle at 100% 100%, #ea580c, transparent 60%),
+        radial-gradient(circle at 100% 0%, #eab308, transparent 60%);
+        background-size: 200% 200%;
+        animation: ui4-flow 6s infinite alternate ease-in-out;
+
+        -webkit-mask-image:
+        radial-gradient(circle at center, black 1.5px, transparent 2px),
+        linear-gradient(to top right, black 20%, transparent 70%);
+        -webkit-mask-size: 8px 8px, 100% 100%;
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        }
+
+        .ui4-inner {
+        position: relative; z-index: 2; background: #232325; border-radius: 14px;
+        padding: 18px 24px; display: flex; flex-direction: column; gap: 32px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .ui4-input-row { display: flex; align-items: center; }
+        .ui4-cursor { color: #ea580c; font-weight: bold; margin-right: 14px; font-size: 1.1rem; }
+        .ui4-input {
+        width: 100%; background: transparent; border: none; outline: none;
+        color: #e5e5e5; font-size: 0.95rem; font-family: inherit;
+        }
+        .ui4-input::placeholder { color: #888; }
+
+        .ui4-toolbar { display: flex; justify-content: space-between; align-items: center; font-family: 'Inter',
+        sans-serif;}
+        .ui4-group { display: flex; gap: 8px; align-items: center; }
+
+        .ui4-btn {
+        background: #2b2b2e; border: 1px solid #36363a; color: #a1a1aa; padding: 8px 12px;
+        border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+        cursor: pointer; transition: 0.2s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.2);
+        font-weight: 500;
+        }
+        .ui4-btn:hover { background: #36363a; color: #fff; border-color: #4d4d50; }
+        .ui4-icon-only { padding: 8px 10px; }
+        .ui4-btn i { font-size: 1.1rem; }
+
+        .ui4-send-btn {
+        background: linear-gradient(90deg, #ec4899, #ea580c); border: none; color: #fff;
+        padding: 8px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(234,88,12,0.3); transition: 0.2s;
+        }
+        .ui4-send-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+    </template>
+
+
+    <header class="hero">
+        <div class="hero-badge">Pure CSS • Zero Dependencies • Native SVG</div>
+        <h1>Liquid Metal UI Showcases</h1>
+        <p>Atemberaubende flüssige Farbverläufe, organisch morphende Halftone-Raster und weichster Glassmorphismus.
+            Komplexe WebGL / Paper.js-Effekte übersetzt in hochperformantes, kopierbares CSS.</p>
+    </header>
+
+    <main class="container">
+
+        <article class="showcase-block">
+            <div class="block-header">
+                <div>
+                    <h2 class="block-title">01. 360° All-Around Liquid Edge Glow</h2>
+                </div>
+                <div class="mac-dots">
+                    <div class="mac-dot red"></div>
+                    <div class="mac-dot yellow"></div>
+                    <div class="mac-dot green"></div>
+                </div>
+            </div>
+            <div class="preview-stage env-1">
+                <div id="render-1"></div>
+            </div>
+            <div class="code-area active" id="code-area-1">
+                <div class="code-tabs">
+                    <button class="code-tab active" onclick="switchTab(1, 'html')">index.html</button>
+                    <button class="code-tab" onclick="switchTab(1, 'css')">styles.css</button>
+                    <button class="btn-copy" onclick="copyCode(1, this)"><i class="ph-bold ph-copy"></i> Copy
+                        Snippet</button>
+                </div>
+                <div class="code-pane active" id="pane-1-html">
+                    <pre><code class="language-html" id="code-html-1"></code></pre>
+                </div>
+                <div class="code-pane" id="pane-1-css">
+                    <pre><code class="language-css" id="code-css-1"></code></pre>
+                </div>
+            </div>
+        </article>
+
+        <article class="showcase-block">
+            <div class="block-header">
+                <div>
+                    <h2 class="block-title">02. Paper.js Blobs & Ultra Glassmorphism</h2>
+                </div>
+                <div class="mac-dots">
+                    <div class="mac-dot red"></div>
+                    <div class="mac-dot yellow"></div>
+                    <div class="mac-dot green"></div>
+                </div>
+            </div>
+            <div class="preview-stage env-2">
+                <div id="render-2"></div>
+            </div>
+            <div class="code-area active" id="code-area-2">
+                <div class="code-tabs">
+                    <button class="code-tab active" onclick="switchTab(2, 'html')">index.html</button>
+                    <button class="code-tab" onclick="switchTab(2, 'css')">styles.css</button>
+                    <button class="btn-copy" onclick="copyCode(2, this)"><i class="ph-bold ph-copy"></i> Copy
+                        Snippet</button>
+                </div>
+                <div class="code-pane active" id="pane-2-html">
+                    <pre><code class="language-html" id="code-html-2"></code></pre>
+                </div>
+                <div class="code-pane" id="pane-2-css">
+                    <pre><code class="language-css" id="code-css-2"></code></pre>
+                </div>
+            </div>
+        </article>
+
+        <article class="showcase-block">
+            <div class="block-header">
+                <div>
+                    <h2 class="block-title">03. Cyber Traveling Light Laser Border</h2>
+                </div>
+                <div class="mac-dots">
+                    <div class="mac-dot red"></div>
+                    <div class="mac-dot yellow"></div>
+                    <div class="mac-dot green"></div>
+                </div>
+            </div>
+            <div class="preview-stage env-3">
+                <div id="render-3"></div>
+            </div>
+            <div class="code-area active" id="code-area-3">
+                <div class="code-tabs">
+                    <button class="code-tab active" onclick="switchTab(3, 'html')">index.html</button>
+                    <button class="code-tab" onclick="switchTab(3, 'css')">styles.css</button>
+                    <button class="btn-copy" onclick="copyCode(3, this)"><i class="ph-bold ph-copy"></i> Copy
+                        Snippet</button>
+                </div>
+                <div class="code-pane active" id="pane-3-html">
+                    <pre><code class="language-html" id="code-html-3"></code></pre>
+                </div>
+                <div class="code-pane" id="pane-3-css">
+                    <pre><code class="language-css" id="code-css-3"></code></pre>
+                </div>
+            </div>
+        </article>
+
+        <article class="showcase-block">
+            <div class="block-header">
+                <div>
+                    <h2 class="block-title">04. Morphing Halftone Ink Raster (Masked)</h2>
+                </div>
+                <div class="mac-dots">
+                    <div class="mac-dot red"></div>
+                    <div class="mac-dot yellow"></div>
+                    <div class="mac-dot green"></div>
+                </div>
+            </div>
+            <div class="preview-stage env-4">
+                <div id="render-4"></div>
+            </div>
+            <div class="code-area active" id="code-area-4">
+                <div class="code-tabs">
+                    <button class="code-tab active" onclick="switchTab(4, 'html')">index.html</button>
+                    <button class="code-tab" onclick="switchTab(4, 'css')">styles.css</button>
+                    <button class="btn-copy" onclick="copyCode(4, this)"><i class="ph-bold ph-copy"></i> Copy
+                        Snippet</button>
+                </div>
+                <div class="code-pane active" id="pane-4-html">
+                    <pre><code class="language-html" id="code-html-4"></code></pre>
+                </div>
+                <div class="code-pane" id="pane-4-css">
+                    <pre><code class="language-css" id="code-css-4"></code></pre>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <script>
+        const activeTabs = { 1: 'html', 2: 'html', 3: 'html', 4: 'html' };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicStyles = document.getElementById('dynamic-component-styles');
+            let cssToInject = '';
+
+            for (let i = 1; i <= 4; i++) {
+                const htmlStr = document.getElementById(`html-${i}`).innerHTML.replace(/^\s*[\r\n]/, '').replace(/[\r\n]\s*$/, '');
+                const cssStr = document.getElementById(`css-${i}`).innerHTML.replace(/^\s*[\r\n]/, '').replace(/[\r\n]\s*$/, '');
+
+                document.getElementById(`render-${i}`).innerHTML = htmlStr;
+                cssToInject += cssStr + '\n\n';
+
+                document.getElementById(`code-html-${i}`).textContent = htmlStr;
+                document.getElementById(`code-css-${i}`).textContent = cssStr;
+            }
+
+            dynamicStyles.innerHTML = cssToInject;
+            Prism.highlightAll();
+        });
+
+        function switchTab(blockId, type) {
+            activeTabs[blockId] = type;
+            const area = document.getElementById(`code-area-${blockId}`);
+
+            area.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            area.querySelectorAll('.code-pane').forEach(p => p.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`pane-${blockId}-${type}`).classList.add('active');
+        }
+
+        function copyCode(blockId, btnElement) {
+            const currentType = activeTabs[blockId];
+            const textToCopy = document.getElementById(`code-${currentType}-${blockId}`).textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHtml = btnElement.innerHTML;
+                btnElement.innerHTML = '<i class="ph-bold ph-check"></i> Kopiert!';
+                btnElement.classList.add("success");
+
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHtml;
+                    btnElement.classList.remove("success");
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
