@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Ecosystem Features</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Outfit:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================
+           CORE VARIABLES & NATURAL PALETTE
+           ========================================= */
+        :root {
+            --bg-base: #040705;
+            --text-primary: #e6e8e5;
+            --text-secondary: #9aa69d;
+            --accent-sage: #8ab696;
+            --accent-sand: #e6cd98;
+
+            --glass-bg: rgba(20, 26, 22, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-hover: rgba(255, 255, 255, 0.12);
+
+            --font-head: 'Cormorant Garamond', serif;
+            --font-body: 'Outfit', sans-serif;
+            --ease-natural: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* =========================================
+           RESET & BASE STYLES
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================
+           CUSTOM CURSOR
+           ========================================= */
+        #cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-sand);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--accent-sand);
+        }
+
+        #cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(230, 205, 152, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.hovering #cursor-ring {
+            width: 70px;
+            height: 70px;
+            background: rgba(230, 205, 152, 0.08);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+
+        /* =========================================
+           AMBIENT BACKGROUND & EFFECTS
+           ========================================= */
+        .natural-features {
+            position: relative;
+            padding: 12rem 0;
+            min-height: 100vh;
+        }
+
+        .ambient-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+            filter: saturate(0.5) contrast(1.1) brightness(0.8);
+            transform: scale(1.05);
+            transition: transform 0.1s linear;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, var(--bg-base) 0%, rgba(4, 7, 5, 0.6) 20%, rgba(4, 7, 5, 0.6) 80%, var(--bg-base) 100%),
+                radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-base) 150%);
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.04;
+            z-index: 1;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        #spores-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* =========================================
+           HEADER
+           ========================================= */
+        .header {
+            text-align: center;
+            max-width: 750px;
+            margin: 0 auto 8rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--accent-sage);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge .pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-sage);
+            box-shadow: 0 0 10px var(--accent-sage);
+            animation: pulse 2s infinite;
+        }
+
+        .title {
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .title em {
+            font-family: var(--font-head);
+            font-style: italic;
+            color: var(--accent-sand);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* =========================================
+           STAGGERED WINDING LAYOUT
+           ========================================= */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem 8rem;
+            position: relative;
+        }
+
+        .card-wrapper:nth-child(odd) {
+            grid-column: 1;
+            align-self: flex-start;
+        }
+
+        .card-wrapper:nth-child(even) {
+            grid-column: 2;
+            margin-top: 10rem;
+            align-self: flex-start;
+        }
+
+        .winding-path {
+            position: absolute;
+            top: 5%;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .winding-path svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        #scroll-line {
+            fill: none;
+            stroke: rgba(230, 205, 152, 0.15);
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 8px rgba(230, 205, 152, 0.4));
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        #path-orb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            margin-top: -4px;
+            margin-left: -4px;
+            background: var(--accent-sand);
+            border-radius: 50%;
+            box-shadow: 0 0 20px 4px var(--accent-sand);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* =========================================
+           3D GLASS CARDS
+           ========================================= */
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 3rem;
+            position: relative;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            perspective: 1500px;
+            transition: border-color 0.4s;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            border-color: var(--glass-hover);
+        }
+
+        .card-spotlight {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(800px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover .card-spotlight {
+            opacity: 1;
+        }
+
+        .bg-num {
+            position: absolute;
+            top: -30px;
+            right: 20px;
+            font-family: var(--font-head);
+            font-size: 12rem;
+            font-style: italic;
+            color: #fff;
+            opacity: 0.015;
+            line-height: 1;
+            pointer-events: none;
+            transition: transform 0.8s var(--ease-natural);
+        }
+
+        .feature-card:hover .bg-num {
+            transform: translate(-20px, 20px) scale(1.05);
+            opacity: 0.03;
+        }
+
+        .card-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card:hover .card-inner {
+            transition: transform 0.1s linear;
+        }
+
+        .card-info {
+            transform: translateZ(20px);
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-list svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent-sage);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .magnetic-wrap {
+            display: inline-block;
+            padding: 15px;
+            margin: -15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        .btn:hover {
+            background: #fff;
+            color: var(--bg-base);
+            border-color: #fff;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover svg {
+            transform: translateX(4px);
+            stroke: var(--bg-base);
+        }
+
+        /* =========================================
+           MICRO-ANIMATIONS
+           ========================================= */
+        .card-visual {
+            width: 100%;
+            height: 160px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(40px);
+            transition: transform 0.4s var(--ease-natural);
+        }
+
+        .feature-card:hover .card-visual {
+            transform: translateZ(60px) scale(1.03);
+        }
+
+        /* 1. Neural Sync */
+        .v-neural svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .n-line {
+            stroke: var(--accent-sand);
+            stroke-width: 1.5;
+            stroke-dasharray: 150;
+            stroke-dashoffset: 150;
+            opacity: 0.2;
+            transition: stroke-dashoffset 1.5s var(--ease-natural), opacity 0.5s;
+        }
+
+        .feature-card:hover .n-line {
+            stroke-dashoffset: 0;
+            opacity: 1;
+        }
+
+        .n-node {
+            fill: var(--text-primary);
+            transform: scale(0);
+            transform-origin: center;
+            transform-box: fill-box;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .n-node.core {
+            fill: var(--accent-sage);
+        }
+
+        .feature-card:hover .n-node {
+            transform: scale(1);
+        }
+
+        .feature-card:hover .n-node:nth-of-type(1) {
+            transition-delay: 0.1s;
+        }
+
+        .feature-card:hover .n-node:nth-of-type(2) {
+            transition-delay: 0.2s;
+        }
+
+        .feature-card:hover .n-node:nth-of-type(3) {
+            transition-delay: 0.3s;
+        }
+
+        /* 2. Fluid Dynamics */
+        .v-fluid .fluid-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(138, 182, 150, 0.1);
+        }
+
+        .wave {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            left: -50px;
+            border-radius: 40%;
+            background: rgba(138, 182, 150, 0.4);
+            bottom: -180px;
+            transition: bottom 1.2s var(--ease-natural);
+        }
+
+        .wave:nth-child(2) {
+            background: rgba(230, 205, 152, 0.2);
+            border-radius: 45%;
+            bottom: -190px;
+        }
+
+        .feature-card:hover .wave:nth-child(1) {
+            bottom: -100px;
+            animation: spinWave 6s linear infinite;
+        }
+
+        .feature-card:hover .wave:nth-child(2) {
+            bottom: -110px;
+            animation: spinWave 8s linear infinite reverse;
+        }
+
+        .v-fluid .drop {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: 0 0 10px var(--text-primary);
+        }
+
+        .feature-card:hover .v-fluid .drop {
+            animation: dropFall 2s infinite ease-in;
+        }
+
+        @keyframes spinWave {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes dropFall {
+            0% {
+                top: 10px;
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                top: 70px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 80px;
+                opacity: 0;
+            }
+        }
+
+        /* 3. Isometric Blocks */
+        .v-iso {
+            perspective: 800px;
+        }
+
+        .iso-container {
+            transform: rotateX(60deg) rotateZ(-45deg);
+            transform-style: preserve-3d;
+            display: flex;
+            gap: 8px;
+        }
+
+        .iso-block {
+            width: 26px;
+            height: 26px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s var(--ease-natural);
+        }
+
+        .iso-face {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border: 1px solid rgba(230, 205, 152, 0.3);
+        }
+
+        .iso-top {
+            background: rgba(230, 205, 152, 0.15);
+            transform: translateZ(13px);
+        }
+
+        .iso-left {
+            background: rgba(230, 205, 152, 0.05);
+            transform: rotateX(-90deg) translateZ(13px);
+        }
+
+        .iso-right {
+            background: rgba(230, 205, 152, 0.25);
+            transform: rotateY(90deg) translateZ(13px);
+        }
+
+        .feature-card:hover .b1 {
+            transform: translateZ(35px);
+        }
+
+        .feature-card:hover .b2 {
+            transform: translateZ(15px);
+            transition-delay: 0.1s;
+        }
+
+        .feature-card:hover .b3 {
+            transform: translateZ(50px);
+            transition-delay: 0.2s;
+        }
+
+        /* 4. Sync Rings */
+        .v-rings {
+            perspective: 800px;
+            transform-style: preserve-3d;
+        }
+
+        .ring-wrap {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            transform-style: preserve-3d;
+            transition: transform 1.2s var(--ease-natural);
+        }
+
+        .ring {
+            width: 100%;
+            height: 100%;
+            border: 1px dashed rgba(138, 182, 150, 0.5);
+            border-radius: 50%;
+            animation: spinRing 12s linear infinite;
+            transition: border-color 0.5s, border-style 0.5s;
+        }
+
+        .rw1 {
+            transform: rotateX(60deg) rotateY(20deg);
+        }
+
+        .rw2 {
+            transform: rotateX(30deg) rotateY(60deg);
+        }
+
+        .rw3 {
+            transform: rotateX(45deg) rotateY(45deg);
+        }
+
+        .feature-card:hover .rw1 {
+            transform: rotateX(80deg) rotateY(0deg) scale(1.3);
+        }
+
+        .feature-card:hover .rw2 {
+            transform: rotateX(0deg) rotateY(80deg) scale(1.1);
+        }
+
+        .feature-card:hover .rw3 {
+            transform: rotateX(45deg) rotateY(45deg) scale(0.9);
+        }
+
+        .feature-card:hover .ring {
+            border-style: solid;
+            border-color: rgba(138, 182, 150, 0.9);
+        }
+
+        .core-orb {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-sand);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent-sand);
+            transform: scale(0);
+            transition: transform 0.6s 0.2s var(--ease-natural);
+        }
+
+        .feature-card:hover .core-orb {
+            transform: scale(1);
+        }
+
+        @keyframes spinRing {
+            100% {
+                transform: rotateZ(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* =========================================
+           SCROLL REVEAL
+           ========================================= */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1.2s var(--ease-natural), transform 1.2s var(--ease-natural);
+        }
+
+        [data-reveal].is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           RESPONSIVE DESIGN
+           ========================================= */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .card-wrapper:nth-child(even) {
+                margin-top: 0;
+            }
+
+            .winding-path {
+                display: none;
+            }
+
+            #cursor-dot,
+            #cursor-ring {
+                display: none;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .natural-features {
+                padding: 8rem 0;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+
+            .title {
+                font-size: 2.8rem;
+            }
+
+            .card-visual {
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <section class="natural-features">
+
+        <div class="ambient-bg">
+            <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2560&auto=format&fit=crop"
+                class="bg-img" alt="Moody Forest Base">
+            <div class="bg-overlay"></div>
+            <div class="noise-overlay"></div>
+            <canvas id="spores-canvas"></canvas>
+        </div>
+
+        <div class="container">
+            <header class="header" data-reveal>
+                <div class="badge"><span class="pulse"></span> Ecosystem Elements</div>
+                <h2 class="title">Naturally <em>Evolved</em> Architecture.</h2>
+                <p class="subtitle">Abandon the rigid bento grids. Embrace a breathing infrastructure designed to scale
+                    naturally, adapt fluidly, and synchronize gracefully with your most demanding workflows.</p>
+            </header>
+
+            <div class="features-grid">
+
+                <div class="winding-path">
+                    <svg viewBox="0 0 100 1000" preserveAspectRatio="none">
+                        <path id="scroll-line" d="M50,0 Q20,250 50,500 T50,1000" />
+                    </svg>
+                    <div id="path-orb"></div>
+                </div>
+
+                <div class="card-wrapper" data-reveal>
+                    <div class="feature-card">
+                        <div class="card-spotlight"></div>
+                        <div class="bg-num">01</div>
+                        <div class="card-inner">
+                            <div class="card-visual v-neural">
+                                <svg viewBox="0 0 100 100">
+                                    <path
+                                        d="M50,50 L20,30 M50,50 L80,20 M50,50 L30,80 M50,50 L75,75 M20,30 L30,10 M80,20 L95,40"
+                                        class="n-line" />
+                                    <circle cx="50" cy="50" r="5" class="n-node core" />
+                                    <circle cx="20" cy="30" r="3" class="n-node" />
+                                    <circle cx="80" cy="20" r="3" class="n-node" />
+                                    <circle cx="30" cy="80" r="3" class="n-node" />
+                                    <circle cx="75" cy="75" r="3" class="n-node" />
+                                    <circle cx="30" cy="10" r="2" class="n-node" />
+                                    <circle cx="95" cy="40" r="2" class="n-node" />
+                                </svg>
+                            </div>
+                            <div class="card-info">
+                                <h3 class="card-title">Symbiotic Network</h3>
+                                <p class="card-desc">Just as mycelium redistributes nutrients, our architecture
+                                    organically balances payloads—ensuring your system never encounters a hard limit.
+                                </p>
+                                <ul class="feature-list">
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Predictive Resource Scaling</li>
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Self-Healing Node Logic</li>
+                                </ul>
+                                <div class="magnetic-wrap">
+                                    <a href="#" class="btn"><span>Explore Network</span> <svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-wrapper" data-reveal>
+                    <div class="feature-card">
+                        <div class="card-spotlight"></div>
+                        <div class="bg-num">02</div>
+                        <div class="card-inner">
+                            <div class="card-visual v-fluid">
+                                <div class="fluid-container">
+                                    <div class="wave"></div>
+                                    <div class="wave"></div>
+                                    <div class="drop"></div>
+                                </div>
+                            </div>
+                            <div class="card-info">
+                                <h3 class="card-title">Fluid Dynamics</h3>
+                                <p class="card-desc">Workflows that bend around friction. Experience an interface that
+                                    reacts with liquid smoothness, bypassing traditional bottlenecks instantly.</p>
+                                <ul class="feature-list">
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Unbroken Data Flow</li>
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Zero-Resistance Sync</li>
+                                </ul>
+                                <div class="magnetic-wrap">
+                                    <a href="#" class="btn"><span>Dive Deeper</span> <svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-wrapper" data-reveal>
+                    <div class="feature-card">
+                        <div class="card-spotlight"></div>
+                        <div class="bg-num">03</div>
+                        <div class="card-inner">
+                            <div class="card-visual v-iso">
+                                <div class="iso-container">
+                                    <div class="iso-block b1">
+                                        <div class="iso-face iso-top"></div>
+                                        <div class="iso-face iso-left"></div>
+                                        <div class="iso-face iso-right"></div>
+                                    </div>
+                                    <div class="iso-block b2">
+                                        <div class="iso-face iso-top"></div>
+                                        <div class="iso-face iso-left"></div>
+                                        <div class="iso-face iso-right"></div>
+                                    </div>
+                                    <div class="iso-block b3">
+                                        <div class="iso-face iso-top"></div>
+                                        <div class="iso-face iso-left"></div>
+                                        <div class="iso-face iso-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-info">
+                                <h3 class="card-title">Deep Root Bedrock</h3>
+                                <p class="card-desc">A canopy can only reach as high as its roots are deep. Built on
+                                    immutable, anchored protocols that fiercely protect your assets underground.</p>
+                                <ul class="feature-list">
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Immutable Framework</li>
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> End-to-End Encryption</li>
+                                </ul>
+                                <div class="magnetic-wrap">
+                                    <a href="#" class="btn"><span>View Bedrock</span> <svg viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-wrapper" data-reveal>
+                    <div class="feature-card">
+                        <div class="card-spotlight"></div>
+                        <div class="bg-num">04</div>
+                        <div class="card-inner">
+                            <div class="card-visual v-rings">
+                                <div class="ring-wrap rw1">
+                                    <div class="ring"></div>
+                                </div>
+                                <div class="ring-wrap rw2">
+                                    <div class="ring"></div>
+                                </div>
+                                <div class="ring-wrap rw3">
+                                    <div class="ring"></div>
+                                </div>
+                                <div class="core-orb"></div>
+                            </div>
+                            <div class="card-info">
+                                <h3 class="card-title">Atmospheric Sync</h3>
+                                <p class="card-desc">A completely serverless environment that feels weightless. Deploy
+                                    instantly, evaporating heavy maintenance and infrastructure costs.</p>
+                                <ul class="feature-list">
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Instant Global Deployment</li>
+                                    <li><svg viewBox="0 0 24 24">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg> Weightless Footprint</li>
+                                </ul>
+                                <div class="magnetic-wrap">
+                                    <a href="#" class="btn"><span>Deploy Now</span> <svg viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+            const cursorDot = document.getElementById('cursor-dot');
+            const cursorRing = document.getElementById('cursor-ring');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+
+            if (!isTouch) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
+                });
+
+                const renderCursor = () => {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
+                    requestAnimationFrame(renderCursor);
+                };
+                requestAnimationFrame(renderCursor);
+
+                document.querySelectorAll('.magnetic-wrap, .feature-card').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+                });
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+
+            const path = document.getElementById('scroll-line');
+            const orb = document.getElementById('path-orb');
+
+            if (path && !isTouch && window.innerWidth > 1024) {
+                const pathLength = path.getTotalLength();
+                path.style.strokeDasharray = pathLength;
+                path.style.strokeDashoffset = pathLength;
+
+                window.addEventListener('scroll', () => {
+                    const section = document.querySelector('.features-grid');
+                    const rect = section.getBoundingClientRect();
+                    const scrollDistance = (window.innerHeight * 0.6) - rect.top;
+                    const totalScrollable = rect.height;
+
+                    let progress = scrollDistance / totalScrollable;
+                    progress = Math.max(0, Math.min(1, progress));
+
+                    path.style.strokeDashoffset = pathLength - (progress * pathLength);
+
+                    if (progress > 0 && progress < 1) {
+                        const point = path.getPointAtLength(progress * pathLength);
+                        const svgRect = path.closest('svg').getBoundingClientRect();
+                        const scaleX = svgRect.width / 100;
+                        const scaleY = svgRect.height / 1000;
+
+                        orb.style.transform = `translate(${point.x * scaleX}px, ${point.y * scaleY}px)`;
+                        orb.style.opacity = 1;
+                    } else {
+                        orb.style.opacity = 0;
+                    }
+                });
+            }
+
+            if (!isTouch) {
+                document.querySelectorAll('.feature-card').forEach(card => {
+                    const inner = card.querySelector('.card-inner');
+                    const visual = card.querySelector('.card-visual');
+
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+
+                        card.style.setProperty('--mouse-x', `${x}px`);
+                        card.style.setProperty('--mouse-y', `${y}px`);
+
+                        const rotateX = ((y - rect.height / 2) / rect.height) * -12;
+                        const rotateY = ((x - rect.width / 2) / rect.width) * 12;
+
+                        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                        if (visual) visual.style.transform = `translateZ(40px) rotateX(${rotateX * 0.5}deg) rotateY(${rotateY * 0.5}deg)`;
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        inner.style.transform = `rotateX(0deg) rotateY(0deg)`;
+                        if (visual) visual.style.transform = `translateZ(40px) rotateX(0deg) rotateY(0deg)`;
+                    });
+                });
+
+                document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+                    const btn = wrap.querySelector('.btn');
+                    wrap.addEventListener('mousemove', (e) => {
+                        const rect = wrap.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) - rect.width / 2;
+                        const y = (e.clientY - rect.top) - rect.height / 2;
+                        btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    });
+                    wrap.addEventListener('mouseleave', () => {
+                        btn.style.transform = `translate(0px, 0px)`;
+                    });
+                });
+
+                const bgImage = document.querySelector('.bg-img');
+                window.addEventListener('mousemove', (e) => {
+                    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                    bgImage.style.transform = `scale(1.05) translate(${x}px, ${y}px)`;
+                });
+            }
+
+            const canvas = document.getElementById('spores-canvas');
+            const ctx = canvas.getContext('2d');
+            let spores = [];
+
+            const resizeCanvas = () => {
+                const parent = canvas.parentElement;
+                canvas.width = parent.offsetWidth;
+                canvas.height = parent.offsetHeight;
+                initSpores();
+            };
+
+            class Spore {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3 - 0.2;
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.y < 0) this.y = canvas.height;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.x > canvas.width) this.x = 0;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(230, 205, 152, ${this.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = 'rgba(230, 205, 152, 0.5)';
+                    ctx.fill();
+                }
+            }
+
+            const initSpores = () => {
+                spores = [];
+                const count = Math.floor((canvas.width * canvas.height) / 12000);
+                for (let i = 0; i < count; i++) spores.push(new Spore());
+            };
+
+            const animateSpores = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                spores.forEach(spore => {
+                    spore.update();
+                    spore.draw();
+                });
+                requestAnimationFrame(animateSpores);
+            };
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            animateSpores();
+        });
+    </script>
+</body>
+
+</html>

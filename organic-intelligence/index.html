@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - Organic Intelligence</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & SETUP
+           ========================================================================== */
+        :root {
+            --c-bg: #0a0c0a;
+            --c-text: #F4F7F4;
+            --c-muted: #A3ACA5;
+            --c-accent: #8A9A8B;
+            --c-accent-warm: #D9C3A6;
+
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-hover: rgba(20, 26, 22, 0.7);
+            --glass-hover-border: rgba(138, 154, 139, 0.4);
+
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--c-bg);
+            color: var(--c-text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================================================
+           2. CUSTOM CURSOR
+           ========================================================================== */
+        .cursor-dot,
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--c-accent-warm);
+            box-shadow: 0 0 10px var(--c-accent-warm);
+        }
+
+        .cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(217, 195, 166, 0.3);
+            background: rgba(217, 195, 166, 0.02);
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
+        }
+
+        .cursor-ring.active {
+            width: 65px;
+            height: 65px;
+            border-color: var(--c-accent);
+            background: rgba(138, 154, 139, 0.08);
+            backdrop-filter: blur(2px);
+        }
+
+        /* ==========================================================================
+           3. BACKGROUND ENVIRONMENT
+           ========================================================================== */
+        .features-section {
+            position: relative;
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: -5%;
+            z-index: 0;
+            background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop') center/cover;
+            filter: brightness(0.2) saturate(0.8) blur(3px);
+            will-change: transform;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(circle at center, rgba(10, 12, 10, 0.3) 0%, var(--c-bg) 100%);
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.03;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        #particles-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           4. CENTRAL HUB & SVG ENERGY LINES
+           ========================================================================== */
+        .features-container {
+            position: absolute;
+            inset: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            z-index: 5;
+        }
+
+        #connections-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .conn-path {
+            fill: none;
+            stroke: url(#line-grad);
+            stroke-width: 1.5;
+            stroke-dasharray: 4 12;
+            opacity: 0.15;
+            transition: opacity 0.5s ease, stroke-width 0.5s ease;
+            animation: dashAnim 30s linear infinite;
+        }
+
+        .conn-path.active {
+            opacity: 0.8;
+            stroke-width: 2.5;
+            stroke-dasharray: 6 16;
+            animation: dashAnim 12s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(138, 154, 139, 0.4));
+        }
+
+        @keyframes dashAnim {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+
+        .center-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .hub-eyebrow {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--c-accent-warm);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .center-hub h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 400;
+            color: var(--c-text);
+        }
+
+        .center-hub h2 i {
+            color: var(--c-accent);
+            font-style: italic;
+        }
+
+        .hub-rings {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 380px;
+            height: 380px;
+            z-index: -1;
+        }
+
+        .h-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(138, 154, 139, 0.1);
+        }
+
+        .hr-1 {
+            width: 100%;
+            height: 100%;
+            border-top-color: var(--c-accent);
+            animation: spin 25s linear infinite;
+        }
+
+        .hr-2 {
+            width: 75%;
+            height: 75%;
+            border-right-color: var(--c-accent-warm);
+            animation: spin 18s linear infinite reverse;
+        }
+
+        .hr-3 {
+            width: 50%;
+            height: 50%;
+            border-bottom-color: var(--c-accent);
+            animation: spin 12s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* ==========================================================================
+           5. ORGANIC PEBBLES
+           ========================================================================== */
+        .pebble-wrapper {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            z-index: 10;
+            transition: opacity 0.4s ease;
+        }
+
+        .pebble-wrapper:hover {
+            z-index: 100;
+        }
+
+        .pw-1 {
+            top: 18%;
+            left: 8%;
+            animation: floatPebble 6s ease-in-out infinite alternate 0s;
+        }
+
+        .pw-2 {
+            top: 14%;
+            right: 8%;
+            animation: floatPebble 7s ease-in-out infinite alternate -2s;
+        }
+
+        .pw-3 {
+            bottom: 15%;
+            left: 12%;
+            animation: floatPebble 5.5s ease-in-out infinite alternate -4s;
+        }
+
+        .pw-4 {
+            bottom: 20%;
+            right: 10%;
+            animation: floatPebble 6.5s ease-in-out infinite alternate -1s;
+        }
+
+        @keyframes floatPebble {
+            from {
+                transform: translateY(0px);
+            }
+
+            to {
+                transform: translateY(-20px);
+            }
+        }
+
+        .pebble-aura {
+            position: absolute;
+            inset: -15px;
+            border-radius: 50%;
+            z-index: -1;
+            background: radial-gradient(circle, rgba(138, 154, 139, 0.25) 0%, transparent 70%);
+            animation: pulseAura 4s infinite alternate;
+            transition: opacity 0.4s;
+        }
+
+        @keyframes pulseAura {
+            from {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+
+            to {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .pebble-wrapper:hover .pebble-aura {
+            opacity: 0;
+        }
+
+        .pebble {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            pointer-events: auto;
+            transition: width 0.6s var(--ease-out), height 0.6s var(--ease-out),
+                border-radius 0.6s var(--ease-out), background 0.6s ease,
+                border-color 0.6s ease, box-shadow 0.6s ease;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
+        }
+
+        .pw-1 .pebble {
+            top: 0;
+            left: 0;
+        }
+
+        .pw-2 .pebble {
+            top: 0;
+            right: 0;
+        }
+
+        .pw-3 .pebble {
+            bottom: 0;
+            left: 0;
+        }
+
+        .pw-4 .pebble {
+            bottom: 0;
+            right: 0;
+        }
+
+        .pebble-wrapper:hover .pebble {
+            width: 360px;
+            height: 320px;
+            border-radius: 20px;
+            background: var(--glass-hover);
+            border-color: var(--glass-hover-border);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .pebble-glare {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            background: radial-gradient(circle 250px at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.06), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .pebble-wrapper:hover .pebble-glare {
+            opacity: 1;
+        }
+
+        /* ==========================================================================
+           6. PEBBLE INTERNAL CONTENT
+           ========================================================================== */
+        .icon-wrap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--c-accent);
+            transition: all 0.6s var(--ease-out);
+            z-index: 15;
+        }
+
+        .icon-wrap svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .pebble-wrapper:hover .icon-wrap {
+            top: 40px;
+            left: 40px;
+            transform: translate(0, 0) scale(0.9);
+            color: var(--c-text);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+        }
+
+        .pebble-content {
+            position: absolute;
+            top: 95px;
+            left: 35px;
+            right: 35px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        .pebble-wrapper:hover .pebble-content {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .p-index {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--c-accent-warm);
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease 0.1s;
+        }
+
+        .pebble-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: var(--c-text);
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease 0.15s;
+        }
+
+        .p-line {
+            height: 1px;
+            width: 0;
+            background: linear-gradient(90deg, var(--c-accent), transparent);
+            margin-bottom: 18px;
+            transition: width 0.7s var(--ease-out) 0.25s;
+        }
+
+        .pebble-content p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--c-muted);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease 0.3s;
+        }
+
+        .p-data {
+            display: flex;
+            gap: 30px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease 0.4s;
+        }
+
+        .pebble-wrapper:hover .p-index,
+        .pebble-wrapper:hover .pebble-content h3,
+        .pebble-wrapper:hover .pebble-content p,
+        .pebble-wrapper:hover .p-data {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pebble-wrapper:hover .p-line {
+            width: 100%;
+        }
+
+        .p-data-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .p-data-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--c-muted);
+        }
+
+        .p-data-val {
+            font-size: 1.05rem;
+            color: var(--c-accent-warm);
+            font-weight: 500;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* ==========================================================================
+           7. MOBILE RESPONSIVE LAYOUT
+           ========================================================================== */
+        @media (max-width: 900px) {
+            body {
+                cursor: auto;
+            }
+
+            .cursor-dot,
+            .cursor-ring,
+            #connections-canvas,
+            .hub-rings {
+                display: none;
+            }
+
+            .features-section {
+                padding: 60px 20px;
+                align-items: flex-start;
+                min-height: auto;
+            }
+
+            .features-container {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .center-hub {
+                position: relative;
+                transform: none !important;
+                margin: 40px auto 60px auto;
+                top: auto;
+                left: auto;
+            }
+
+            .pebble-wrapper {
+                position: relative;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                width: 100%;
+                height: 90px;
+                animation: none;
+            }
+
+            .pebble-aura {
+                display: none;
+            }
+
+            .pebble {
+                width: 100% !important;
+                height: 90px;
+                border-radius: 20px;
+                top: 0 !important;
+                left: 0 !important;
+                right: auto !important;
+                bottom: auto !important;
+                background: rgba(255, 255, 255, 0.03);
+            }
+
+            .pebble-wrapper:hover .pebble,
+            .pebble-wrapper:active .pebble {
+                height: 360px !important;
+                background: var(--glass-hover);
+            }
+
+            .icon-wrap {
+                top: 45px;
+                left: 45px;
+            }
+
+            .pebble-content {
+                left: 25px;
+                right: 25px;
+                top: 100px;
+            }
+
+            .pebble-content h3 {
+                font-size: 1.8rem;
+            }
+
+            .mobile-title {
+                position: absolute;
+                top: 45px;
+                left: 90px;
+                transform: translateY(-50%);
+                font-family: 'Playfair Display', serif;
+                font-size: 1.3rem;
+                color: var(--c-text);
+                transition: opacity 0.3s;
+                pointer-events: none;
+            }
+
+            .pebble-wrapper:hover .mobile-title,
+            .pebble-wrapper:active .mobile-title {
+                opacity: 0;
+            }
+        }
+
+        @media (min-width: 901px) {
+            .mobile-title {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="features-section" id="features">
+
+        <div class="bg-layer"></div>
+        <div class="bg-overlay"></div>
+        <div class="noise-overlay"></div>
+        <canvas id="particles-canvas"></canvas>
+
+        <div class="features-container">
+
+            <svg id="connections-canvas">
+                <defs>
+                    <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8A9A8B" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#D9C3A6" stop-opacity="0.1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <div class="center-hub">
+                <div class="hub-rings">
+                    <div class="h-ring hr-1"></div>
+                    <div class="h-ring hr-2"></div>
+                    <div class="h-ring hr-3"></div>
+                </div>
+                <span class="hub-eyebrow">Discover</span>
+                <h2>Organic<br><i>Intelligence</i></h2>
+            </div>
+
+            <div class="pebble-wrapper pw-1">
+                <div class="pebble-aura"></div>
+                <div class="pebble">
+                    <div class="pebble-glare"></div>
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <path
+                                d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
+                        </svg>
+                    </div>
+                    <span class="mobile-title">Symbiotic Design</span>
+                    <div class="pebble-content">
+                        <div class="p-index">01</div>
+                        <h3>Symbiotic Design</h3>
+                        <div class="p-line"></div>
+                        <p>Our architecture weaves deeply into your ecosystem. Like roots in soil, it creates a
+                            foundational network that nourishes every branch effortlessly.</p>
+                        <div class="p-data">
+                            <div class="p-data-item"><span class="p-data-label">Integration</span><span
+                                    class="p-data-val">Seamless</span></div>
+                            <div class="p-data-item"><span class="p-data-label">Latency</span><span
+                                    class="p-data-val">0.2ms</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pebble-wrapper pw-2">
+                <div class="pebble-aura"></div>
+                <div class="pebble">
+                    <div class="pebble-glare"></div>
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <path d="M2 12C4 12 5 15 8 15C11 15 13 9 16 9C19 9 20 12 22 12" />
+                            <path d="M2 17C4 17 5 20 8 20C11 20 13 14 16 14C19 14 20 17 22 17" />
+                            <path d="M2 7C4 7 5 10 8 10C11 10 13 4 16 4C19 4 20 7 22 7" />
+                        </svg>
+                    </div>
+                    <span class="mobile-title">Fluid Scalability</span>
+                    <div class="pebble-content">
+                        <div class="p-index">02</div>
+                        <h3>Fluid Scalability</h3>
+                        <div class="p-line"></div>
+                        <p>Traffic spikes and data floods are handled with absolute grace. The system ebbs and flows
+                            dynamically to maintain perfect equilibrium at all times.</p>
+                        <div class="p-data">
+                            <div class="p-data-item"><span class="p-data-label">Volume</span><span
+                                    class="p-data-val">Limitless</span></div>
+                            <div class="p-data-item"><span class="p-data-label">Response</span><span
+                                    class="p-data-val">Instant</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pebble-wrapper pw-3">
+                <div class="pebble-aura"></div>
+                <div class="pebble">
+                    <div class="pebble-glare"></div>
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="M4.93 4.93l1.41 1.41" />
+                            <path d="M17.66 17.66l1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="M4.93 19.07l1.41-1.41" />
+                            <path d="M17.66 6.34l1.41-1.41" />
+                        </svg>
+                    </div>
+                    <span class="mobile-title">Luminous Insights</span>
+                    <div class="pebble-content">
+                        <div class="p-index">03</div>
+                        <h3>Luminous Insights</h3>
+                        <div class="p-line"></div>
+                        <p>Illuminate the darkest corners of your data. We translate complex analytics into clear,
+                            natural visualizations that reveal the undeniable truth.</p>
+                        <div class="p-data">
+                            <div class="p-data-item"><span class="p-data-label">Clarity</span><span
+                                    class="p-data-val">Absolute</span></div>
+                            <div class="p-data-item"><span class="p-data-label">Precision</span><span
+                                    class="p-data-val">99.9%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pebble-wrapper pw-4">
+                <div class="pebble-aura"></div>
+                <div class="pebble">
+                    <div class="pebble-glare"></div>
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                            <path d="M4 12h16" />
+                            <path d="M4 6h10" />
+                            <path d="M4 18h10" />
+                            <path d="M14 6c2 0 3-1 3-3" />
+                            <path d="M14 18c2 0 3 1 3 3" />
+                            <path d="M20 12c2 0 3-1 3-3" />
+                        </svg>
+                    </div>
+                    <span class="mobile-title">Kinetic Response</span>
+                    <div class="pebble-content">
+                        <div class="p-index">04</div>
+                        <h3>Kinetic Response</h3>
+                        <div class="p-line"></div>
+                        <p>Micro-animations that feel truly alive. Every digital interaction breathes with the organic
+                            physics of the natural world, keeping you engaged.</p>
+                        <div class="p-data">
+                            <div class="p-data-item"><span class="p-data-label">Physics</span><span
+                                    class="p-data-val">Fluid</span></div>
+                            <div class="p-data-item"><span class="p-data-label">Refresh</span><span
+                                    class="p-data-val">120Hz</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDesktop = window.innerWidth > 900;
+            const wrappers = document.querySelectorAll('.pebble-wrapper');
+            const svgCanvas = document.getElementById('connections-canvas');
+            const hub = document.querySelector('.center-hub');
+            const bgLayer = document.querySelector('.bg-layer');
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.querySelector('.cursor-ring');
+
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+            let paths = [];
+
+            if (isDesktop) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+
+                    const x = (mouseX / window.innerWidth - 0.5) * 25;
+                    const y = (mouseY / window.innerHeight - 0.5) * 25;
+                    bgLayer.style.transform = `scale(1.05) translate(${x}px, ${y}px)`;
+                    hub.style.transform = `translate(calc(-50% + ${x * -0.8}px), calc(-50% + ${y * -0.8}px))`;
+                });
+
+                wrappers.forEach((wrapper, i) => {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.classList.add('conn-path');
+                    svgCanvas.appendChild(path);
+                    paths.push(path);
+
+                    wrapper.addEventListener('mouseenter', () => {
+                        path.classList.add('active');
+                        ring.classList.add('active');
+                        wrappers.forEach((w, j) => { if (i !== j) w.style.opacity = '0.3'; });
+                    });
+                    wrapper.addEventListener('mouseleave', () => {
+                        path.classList.remove('active');
+                        ring.classList.remove('active');
+                        wrappers.forEach(w => w.style.opacity = '1');
+                    });
+                });
+            }
+
+            wrappers.forEach(wrapper => {
+                const pebble = wrapper.querySelector('.pebble');
+                pebble.addEventListener('mousemove', (e) => {
+                    const rect = pebble.getBoundingClientRect();
+                    pebble.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                    pebble.style.setProperty('--my', `${e.clientY - rect.top}px`);
+                });
+            });
+
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let w, h;
+
+            function initCanvas() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                particles = [];
+                const count = Math.floor((w * h) / 15000);
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * w, y: Math.random() * h,
+                        r: Math.random() * 1.5 + 0.5,
+                        dx: (Math.random() - 0.5) * 0.3,
+                        dy: -(Math.random() * 0.4 + 0.1),
+                        opacity: Math.random() * 0.5 + 0.1,
+                        angle: Math.random() * Math.PI * 2,
+                        spin: (Math.random() - 0.5) * 0.02
+                    });
+                }
+            }
+            window.addEventListener('resize', () => { if (window.innerWidth > 900) initCanvas(); });
+            initCanvas();
+
+            function render() {
+                if (isDesktop) {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+                }
+
+                if (isDesktop && paths.length) {
+                    const hubRect = hub.getBoundingClientRect();
+                    const hx = hubRect.left + hubRect.width / 2;
+                    const hy = hubRect.top + hubRect.height / 2;
+
+                    wrappers.forEach((wrapper, i) => {
+                        const pebble = wrapper.querySelector('.pebble');
+                        const pRect = pebble.getBoundingClientRect();
+                        const px = pRect.left + pRect.width / 2;
+                        const py = pRect.top + pRect.height / 2;
+
+                        const cp1x = hx + (px - hx) * 0.4;
+                        const cp1y = hy + (py - hy) * 0.1;
+                        const cp2x = px - (px - hx) * 0.4;
+                        const cp2y = py - (py - hy) * 0.1;
+
+                        paths[i].setAttribute('d', `M ${hx} ${hy} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${px} ${py}`);
+                    });
+                }
+
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.angle += p.spin;
+                    p.x += p.dx + Math.sin(p.angle) * 0.5;
+                    p.y += p.dy;
+
+                    if (p.y < 0) p.y = h; if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(217, 195, 166, ${p.opacity})`;
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(render);
+            }
+            render();
+        });
+    </script>
+</body>
+
+</html>
