@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Excellence | Features & Testimonials</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Prata&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            /* Natural, Earthy Palette - NO NEON, NO PURPLE */
+            --bg-light: #F4F2EC;
+            /* Alabaster / Oatmeal */
+            --text-light: #1A1C1A;
+            /* Forest Charcoal */
+            --accent-sage: #8A9A86;
+            /* Muted Sage Green */
+            --accent-sand: #D4A373;
+            /* Warm Camel / Sand */
+
+            --bg-dark: #111211;
+            /* Deep Night Forest */
+            --text-dark: #E8EAE6;
+            /* Soft Pearl */
+
+            --font-serif: 'Prata', serif;
+            --font-sans: 'Outfit', sans-serif;
+
+            --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Custom Organic Cursor */
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: var(--font-serif);
+            font-weight: 400;
+        }
+
+        em {
+            font-style: italic;
+            color: var(--accent-sage);
+        }
+
+        /* ==========================================================================
+           2. AMBIENT BACKGROUNDS & CUSTOM CURSOR
+           ========================================================================== */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.04;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .ambient-orb {
+            position: fixed;
+            top: 15vh;
+            right: 5vw;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(138, 154, 134, 0.15) 0%, transparent 65%);
+            filter: blur(60px);
+            z-index: -1;
+            pointer-events: none;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatOrb {
+            100% {
+                transform: translate(-5vw, 10vh) scale(1.1);
+            }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-light);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: background 0.3s;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--text-light);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s, color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: transparent;
+        }
+
+        /* Cursor Hover States */
+        body.theme-dark .cursor {
+            background: var(--text-dark);
+        }
+
+        body.theme-dark .cursor-follower {
+            border-color: var(--text-dark);
+        }
+
+        .cursor-follower.hover-active {
+            width: 70px;
+            height: 70px;
+            background: rgba(138, 154, 134, 0.15);
+            backdrop-filter: blur(2px);
+            border-color: transparent;
+        }
+
+        body.cursor-drag .cursor {
+            opacity: 0;
+        }
+
+        body.cursor-drag .cursor-follower {
+            width: 80px;
+            height: 80px;
+            background: rgba(212, 163, 115, 0.9);
+            border-color: transparent;
+            color: var(--bg-dark);
+        }
+
+        body.cursor-drag .cursor-follower::after {
+            content: 'DRAG';
+        }
+
+        /* ==========================================================================
+           3. TYPOGRAPHY & UTILITIES
+           ========================================================================== */
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 5rem;
+        }
+
+        .eyebrow {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent-sage);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .title {
+            font-size: clamp(3.5rem, 6vw, 6rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 500px;
+            margin-top: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Word-by-Word Split Reveal */
+        .split-text span {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+        }
+
+        .split-text span>span {
+            display: inline-block;
+            transform: translateY(110%);
+            transition: transform 1s var(--ease-out);
+            will-change: transform;
+        }
+
+        .split-text.in-view span>span {
+            transform: translateY(0);
+        }
+
+        /* ==========================================================================
+           4. FEATURES: OVERLAPPING STICKY CARDS
+           ========================================================================== */
+        .features-sec {
+            padding: 12vh 0 0 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-stack {
+            position: relative;
+            padding-top: 5vh;
+            padding-bottom: 15vh;
+        }
+
+        .stacked-card {
+            position: sticky;
+            top: 10vh;
+            height: 80vh;
+            margin-bottom: 30vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4rem;
+            gap: 4rem;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.03);
+            transform-origin: top center;
+            will-change: transform, filter;
+        }
+
+        .stacked-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .card-content {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card-badge {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-sand);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            line-height: 1.1;
+        }
+
+        .card-desc {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+
+        .micro-list {
+            list-style: none;
+            margin-bottom: 3rem;
+        }
+
+        .micro-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .micro-list svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent-sage);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Magnetic Button */
+        .btn-magnetic {
+            padding: 1.2rem 2.5rem;
+            background: transparent;
+            border: 1px solid var(--text-light);
+            border-radius: 50px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            transition: color 0.4s, border-color 0.4s;
+        }
+
+        .btn-magnetic::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--text-light);
+            border-radius: 50px;
+            transition: top 0.4s var(--ease-out);
+            z-index: -1;
+        }
+
+        .btn-magnetic:hover {
+            color: var(--bg-light);
+            border-color: transparent;
+        }
+
+        .btn-magnetic:hover::before {
+            top: 0;
+        }
+
+        /* Organic Morphing Image Mask */
+        .card-visual {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .organic-mask {
+            width: 100%;
+            height: 90%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: organicMorph 12s infinite alternate ease-in-out;
+            transition: border-radius 0.6s var(--ease-out);
+        }
+
+        .stacked-card:hover .organic-mask {
+            border-radius: 20px;
+            animation-play-state: paused;
+        }
+
+        @keyframes organicMorph {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+
+            100% {
+                border-radius: 60% 40% 30% 70% / 60% 40% 50% 60%;
+            }
+        }
+
+        .parallax-img {
+            width: 120%;
+            height: 120%;
+            object-fit: cover;
+            transition: transform 0.1s linear;
+        }
+
+        /* ==========================================================================
+           5. TESTIMONIALS: 3D INTERACTIVE CAROUSEL
+           ========================================================================== */
+        .testimonials-sec {
+            position: relative;
+            z-index: 10;
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+            border-top-left-radius: 80px;
+            border-top-right-radius: 80px;
+            margin-top: -60px;
+            padding: 15vh 0 20vh;
+            overflow: hidden;
+            box-shadow: 0 -30px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        .t-bg-overlay {
+            position: absolute;
+            inset: -10%;
+            width: 120%;
+            height: 120%;
+            background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop') center/cover;
+            filter: blur(12px) brightness(0.2) saturate(0.6);
+            z-index: -1;
+            will-change: transform;
+        }
+
+        .testimonials-sec em {
+            color: var(--accent-sand);
+        }
+
+        .testimonials-sec .subtitle {
+            color: #A0A4A0;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+            margin-top: 4rem;
+        }
+
+        .carousel-ring {
+            width: 420px;
+            height: 480px;
+            position: relative;
+            transform-style: preserve-3d;
+            /* Driven by JS */
+        }
+
+        /* The Card Wrapper (handles 3D position) */
+        .testi-card {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d;
+        }
+
+        /* The Inner Glass Card (handles style, tilt, glow) */
+        .testi-card-inner {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 30px;
+            padding: 3.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.4s var(--ease-out), filter 0.5s, opacity 0.5s, border-color 0.4s, background 0.4s;
+        }
+
+        /* States based on JS rotation */
+        .testi-card.active .testi-card-inner {
+            transform: scale(1);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 163, 115, 0.3);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .testi-card:not(.active) .testi-card-inner {
+            filter: blur(6px) brightness(0.5);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Inner Ambient Flashlight */
+        .t-glow {
+            position: absolute;
+            top: var(--mouse-y, 50%);
+            left: var(--mouse-x, 50%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(212, 163, 115, 0.15) 0%, transparent 60%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .testi-card.active:hover .t-glow {
+            opacity: 1;
+        }
+
+        .t-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .t-quote-icon {
+            position: absolute;
+            top: -30px;
+            left: -10px;
+            font-family: var(--font-serif);
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.03);
+            line-height: 1;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .t-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .t-stars {
+            display: flex;
+            gap: 4px;
+        }
+
+        .t-stars svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-sand);
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .testi-card.active .t-stars svg {
+            animation: starPop 0.5s var(--ease-out) forwards;
+        }
+
+        .testi-card.active .t-stars svg:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .testi-card.active .t-stars svg:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .testi-card.active .t-stars svg:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .testi-card.active .t-stars svg:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        .testi-card.active .t-stars svg:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes starPop {
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .t-date {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .t-text {
+            font-family: var(--font-serif);
+            font-size: 1.45rem;
+            line-height: 1.5;
+            font-style: italic;
+            color: var(--text-dark);
+            margin: auto 0;
+            font-weight: 300;
+        }
+
+        .t-footer {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.5rem;
+        }
+
+        .avatar-box {
+            position: relative;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 2;
+        }
+
+        /* Spinning SVG Ring */
+        .spin-ring {
+            position: absolute;
+            top: -12.5px;
+            left: -12.5px;
+            width: 80px;
+            height: 80px;
+            fill: var(--accent-sage);
+            animation: spinText 12s linear infinite;
+            z-index: 1;
+        }
+
+        .spin-ring text {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            font-family: var(--font-sans);
+        }
+
+        @keyframes spinText {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .t-meta h4 {
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+
+        .t-meta p {
+            font-size: 0.8rem;
+            color: #A0A4A0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .drag-indicator {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-sand);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .drag-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        @keyframes pulse {
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE REFINEMENTS
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .stacked-card {
+                flex-direction: column;
+                padding: 3rem;
+                height: auto;
+                min-height: 80vh;
+                gap: 2rem;
+                margin-bottom: 10vh;
+            }
+
+            .card-visual {
+                width: 100%;
+                height: 350px;
+                flex: none;
+            }
+
+            .organic-mask {
+                height: 100%;
+            }
+
+            .carousel-ring {
+                width: 340px;
+                height: 440px;
+            }
+
+            .testi-card-inner {
+                padding: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .cursor,
+            .cursor-follower {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .title {
+                font-size: 3rem;
+            }
+
+            .stacked-card {
+                padding: 2rem;
+            }
+
+            .carousel-ring {
+                width: 280px;
+                height: 400px;
+            }
+
+            .t-text {
+                font-size: 1.2rem;
+            }
+
+            .t-quote-icon {
+                font-size: 6rem;
+                top: -20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise-overlay"></div>
+    <div class="ambient-orb"></div>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <section class="features-sec" id="features">
+        <div class="container">
+
+            <div class="section-header">
+                <span class="eyebrow">01 // The Foundation</span>
+                <h2 class="title split-text">Intelligent by <em>Nature.</em></h2>
+                <p class="subtitle">Discarding rigid bento grids, we forge digital landscapes that mimic the physical
+                    world through fluid motion, sensory depth, and organic adaptation.</p>
+            </div>
+
+            <div class="card-stack">
+
+                <div class="stacked-card hover-target">
+                    <div class="card-content">
+                        <span class="card-badge">01 // Architecture</span>
+                        <h3 class="card-title">Organic Workflows</h3>
+                        <p class="card-desc">Algorithms that breathe and adapt to your natural thought patterns,
+                            completely eliminating operational friction before it even occurs.</p>
+                        <ul class="micro-list">
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Contextual Awareness</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Fluid Restructuring</li>
+                        </ul>
+                        <button class="btn-magnetic"><span>Explore Detail</span></button>
+                    </div>
+                    <div class="card-visual">
+                        <div class="organic-mask">
+                            <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop"
+                                alt="Nature Flow" class="parallax-img">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stacked-card hover-target">
+                    <div class="card-content">
+                        <span class="card-badge">02 // Kinetic</span>
+                        <h3 class="card-title">Infinite Expansion</h3>
+                        <p class="card-desc">Zero-latency scaling that grows seamlessly with your ecosystem's demands,
+                            maintaining uncompromised elegance regardless of absolute volume.</p>
+                        <ul class="micro-list">
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Elastic Infrastructure</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Unyielding Performance</li>
+                        </ul>
+                        <button class="btn-magnetic"><span>View Metrics</span></button>
+                    </div>
+                    <div class="card-visual">
+                        <div class="organic-mask">
+                            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop"
+                                alt="Abstract Expansion" class="parallax-img">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stacked-card hover-target">
+                    <div class="card-content">
+                        <span class="card-badge">03 // Sensory</span>
+                        <h3 class="card-title">Tactile Depth</h3>
+                        <p class="card-desc">Rich visual and kinesthetic feedback loops that bridge the gap between
+                            digital coldness and physical warmth, making screens feel alive.</p>
+                        <ul class="micro-list">
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Physics-Based Motion</li>
+                            <li><svg viewBox="0 0 24 24">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg> Spatial Glassmorphism</li>
+                        </ul>
+                        <button class="btn-magnetic"><span>Experience</span></button>
+                    </div>
+                    <div class="card-visual">
+                        <div class="organic-mask">
+                            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop"
+                                alt="Tactile Architecture" class="parallax-img">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-sec" id="testimonials">
+        <div class="t-bg-overlay" id="t-bg-overlay"></div>
+
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <span class="eyebrow">02 // Reflections</span>
+                <h2 class="title split-text">Voices of <em>Resonance.</em></h2>
+            </div>
+
+            <div class="carousel-wrapper" id="carousel-wrapper">
+                <div class="carousel-ring" id="carousel-ring">
+                </div>
+
+                <div class="drag-indicator">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 12h8M8 12l4-4m-4 4l4 4" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span>Drag horizontally</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const isMobile = window.innerWidth <= 768;
+
+            /* --- 1. Custom Smooth Cursor --- */
+            const cursor = document.querySelector('.cursor');
+            const follower = document.querySelector('.cursor-follower');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let fX = mouseX, fY = mouseY;
+
+            window.addEventListener('mousemove', e => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                if (!isMobile) cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+            });
+
+            function cursorLoop() {
+                if (!isMobile) {
+                    fX += (mouseX - fX) * 0.15; fY += (mouseY - fY) * 0.15;
+                    follower.style.transform = `translate(${fX}px, ${fY}px) translate(-50%, -50%)`;
+                }
+                requestAnimationFrame(cursorLoop);
+            }
+            cursorLoop();
+
+            // Cursor Hover States
+            document.querySelectorAll('button, .hover-target').forEach(el => {
+                el.addEventListener('mouseenter', () => follower.classList.add('hover-active'));
+                el.addEventListener('mouseleave', () => follower.classList.remove('hover-active'));
+            });
+
+            const carouselWrapper = document.getElementById('carousel-wrapper');
+            carouselWrapper.addEventListener('mouseenter', () => document.body.classList.add('cursor-drag'));
+            carouselWrapper.addEventListener('mouseleave', () => document.body.classList.remove('cursor-drag'));
+
+            /* --- 2. Magnetic Buttons --- */
+            document.querySelectorAll('.btn-magnetic').forEach(btn => {
+                btn.addEventListener('mousemove', function (e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.35;
+                    this.style.transform = `translate(${x}px, ${y}px)`;
+                });
+                btn.addEventListener('mouseleave', function () {
+                    this.style.transform = `translate(0px, 0px)`;
+                });
+            });
+
+            /* --- 3. Split Text Reveal on Scroll --- */
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Dark Theme Toggle based on section entering view
+                        if (entry.target.closest('.testimonials-sec')) {
+                            document.body.classList.add('theme-dark');
+                        }
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.split-text').forEach(title => {
+                const text = title.innerHTML; title.innerHTML = '';
+                // Splitting handling nested HTML tags slightly manually for <em>
+                const words = text.split(/(<[^>]*>|[^<>\s]+)/g).filter(v => v.trim() !== '');
+                let delay = 0;
+                words.forEach(word => {
+                    if (word.startsWith('<')) {
+                        const tempDiv = document.createElement('div'); tempDiv.innerHTML = word;
+                        const el = tempDiv.firstChild;
+                        if (el && el.innerText) {
+                            const spanWrap = document.createElement('span');
+                            const innerSpan = document.createElement('span');
+                            innerSpan.style.transitionDelay = `${delay}s`;
+                            innerSpan.appendChild(el); spanWrap.appendChild(innerSpan);
+                            title.appendChild(spanWrap); title.appendChild(document.createTextNode(' '));
+                            delay += 0.04;
+                        }
+                    } else {
+                        const spanWrap = document.createElement('span');
+                        const innerSpan = document.createElement('span');
+                        innerSpan.style.transitionDelay = `${delay}s`;
+                        innerSpan.innerText = word; spanWrap.appendChild(innerSpan);
+                        title.appendChild(spanWrap); title.appendChild(document.createTextNode(' '));
+                        delay += 0.04;
+                    }
+                });
+                observer.observe(title);
+            });
+
+            /* --- 4. Stacked Cards Scale/Darken & Inner Parallax --- */
+            const stackCards = document.querySelectorAll('.stacked-card');
+            window.addEventListener('scroll', () => {
+                stackCards.forEach((card, i) => {
+                    const rect = card.getBoundingClientRect();
+                    const stickyTop = window.innerHeight * 0.1;
+                    const nextCard = stackCards[i + 1];
+
+                    if (nextCard) {
+                        const nextRect = nextCard.getBoundingClientRect();
+                        const dist = nextRect.top - rect.top;
+                        const threshold = window.innerHeight * 0.85;
+
+                        if (rect.top <= stickyTop + 2 && dist < threshold) {
+                            let prog = Math.max(0, Math.min(1, 1 - (dist / threshold)));
+                            card.style.transform = `scale(${1 - prog * 0.08})`;
+                            card.style.filter = `brightness(${1 - prog * 0.4})`;
+                        } else {
+                            card.style.transform = `scale(1)`; card.style.filter = `brightness(1)`;
+                        }
+                    }
+                });
+
+                // Background Parallax
+                const tBg = document.getElementById('t-bg-overlay');
+                tBg.style.transform = `translateY(${window.scrollY * 0.05}px)`;
+            });
+
+            // Inner Image Parallax
+            stackCards.forEach(card => {
+                const img = card.querySelector('.parallax-img');
+                card.addEventListener('mousemove', e => {
+                    if (isMobile) return;
+                    const rect = card.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width - 0.5;
+                    const y = (e.clientY - rect.top) / rect.height - 0.5;
+                    img.style.transform = `translate(${x * -30}px, ${y * -30}px) scale(1.15)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    img.style.transform = `translate(0, 0) scale(1.15)`;
+                });
+            });
+
+            /* --- 5. Testimonials 3D Orbit Carousel --- */
+            const testimonialsData = [
+                { name: "Evelyn Reed", role: "Design Director", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop", text: "The aesthetic purity is matched only by the uncompromising engineering beneath. It's a breathtaking ecosystem." },
+                { name: "Marcus Thorne", role: "Lead Architect", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop", text: "We discarded our previous rigid tools immediately. This system moves and breathes exactly how our designers do." },
+                { name: "Sophia Lin", role: "Founder, Kinfolk", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop", text: "A masterclass in restraint and elegance. It presents incredibly complex data through an interface of pure, serene calm." },
+                { name: "David Kaufmann", role: "CTO, Nexus", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop", text: "The sensory depth and kinetic interactions create an environment where my engineers genuinely love to focus and build." },
+                { name: "Amira Hassan", role: "Operations, Terra", img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop", text: "Unbelievably fluid. It transforms previously tedious operations into an absolute joy. This is the future of natural design." }
+            ];
+
+            const ring = document.getElementById('carousel-ring');
+            const numCards = testimonialsData.length;
+            const theta = 360 / numCards;
+            const radius = isMobile ? 220 : 450;
+            const cardsArr = [];
+
+            testimonialsData.forEach((data, i) => {
+                const card = document.createElement('div');
+                card.className = 'testi-card';
+                card.style.transform = `rotateY(${i * theta}deg) translateZ(${radius}px)`;
+
+                card.innerHTML = `
+                    <div class="testi-card-inner">
+                        <div class="t-glow"></div>
+                        <div class="t-content">
+                            <div class="t-quote-icon">"</div>
+                            <div class="t-top">
+                                <div class="t-stars">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                </div>
+                                <span class="t-date">Jan 2026</span>
+                            </div>
+                            <p class="t-text">"${data.text}"</p>
+                            <div class="t-footer">
+                                <div class="avatar-box">
+                                    <svg class="spin-ring" viewBox="0 0 100 100">
+                                        <path id="txt-path-${i}" d="M 50,50 m -35,0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0" fill="none" />
+                                        <text><textPath href="#txt-path-${i}" startOffset="0%">• VERIFIED PARTNER • NATURAL DESIGN </textPath></text>
+                                    </svg>
+                                    <img src="${data.img}" class="avatar-img" alt="${data.name}">
+                                </div>
+                                <div class="t-meta">
+                                    <h4>${data.name}</h4>
+                                    <p>${data.role}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                ring.appendChild(card);
+                cardsArr.push(card);
+
+                // Flashlight and 3D Tilt on the INNER card to not break Carousel Rotation
+                card.addEventListener('mousemove', e => {
+                    if (!card.classList.contains('active') || isMobile) return;
+                    const inner = card.querySelector('.testi-card-inner');
+                    const rect = inner.getBoundingClientRect();
+                    const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+
+                    inner.style.setProperty('--mouse-x', `${x}px`);
+                    inner.style.setProperty('--mouse-y', `${y}px`);
+
+                    const cx = rect.width / 2; const cy = rect.height / 2;
+                    const rotX = ((y - cy) / cy) * -6; const rotY = ((x - cx) / cx) * 6;
+                    inner.style.transform = `scale(1.02) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    const inner = card.querySelector('.testi-card-inner');
+                    if (card.classList.contains('active')) inner.style.transform = `scale(1) rotateX(0) rotateY(0)`;
+                });
+            });
+
+            // Drag to Rotate Logic
+            let currentRot = 0; let targetRot = 0;
+            let isDragging = false; let startX = 0; let isHovered = false;
+
+            carouselWrapper.addEventListener('mousedown', e => { isDragging = true; startX = e.clientX; });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const delta = e.clientX - startX;
+                targetRot += delta * 0.35; startX = e.clientX;
+            });
+
+            carouselWrapper.addEventListener('touchstart', e => { isDragging = true; startX = e.touches[0].clientX; }, { passive: true });
+            window.addEventListener('touchend', () => isDragging = false);
+            carouselWrapper.addEventListener('touchmove', e => {
+                if (!isDragging) return;
+                const delta = e.touches[0].clientX - startX;
+                targetRot += delta * 0.5; startX = e.touches[0].clientX;
+            }, { passive: true });
+
+            carouselWrapper.addEventListener('mouseenter', () => isHovered = true);
+            carouselWrapper.addEventListener('mouseleave', () => isHovered = false);
+
+            function renderCarousel() {
+                if (!isDragging && !isHovered) targetRot -= 0.1; // Gentle auto-spin
+                currentRot += (targetRot - currentRot) * 0.08;
+                ring.style.transform = `rotateY(${currentRot}deg)`;
+
+                // Calculate Active Card
+                let activeIndex = Math.round(-currentRot / theta) % numCards;
+                if (activeIndex < 0) activeIndex += numCards;
+
+                cardsArr.forEach((card, i) => {
+                    if (i === activeIndex) {
+                        card.classList.add('active');
+                        // Reset tilt if just became active
+                        if (!isHovered) card.querySelector('.testi-card-inner').style.transform = `scale(1) rotateX(0) rotateY(0)`;
+                    } else {
+                        card.classList.remove('active');
+                        card.querySelector('.testi-card-inner').style.transform = `scale(0.9)`;
+                    }
+                });
+                requestAnimationFrame(renderCarousel);
+            }
+            renderCarousel();
+        });
+    </script>
+</body>
+
+</html>
