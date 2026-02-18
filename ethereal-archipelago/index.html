@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Archipelago | Suspended Interfaces</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Prata&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg-mist: #EFEEE9;
+            --text-forest: #1A1C1A;
+            --sage: #8A9A86;
+            --sand: #D4A373;
+            --moss: #6B7C68;
+            --stone: #BCB8AE;
+
+            --bg-abyss: #0A0B0A;
+            --text-pearl: #E8E5DF;
+
+            --font-serif: 'Prata', serif;
+            --font-sans: 'Outfit', sans-serif;
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-mist);
+            color: var(--text-forest);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+        }
+
+        em {
+            font-style: italic;
+            color: var(--sage);
+        }
+
+        /* ==========================================================================
+           2. FIXED BACKGROUND & CURSOR
+           ========================================================================== */
+        .fixed-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(138, 154, 134, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(212, 163, 115, 0.06) 0%, transparent 50%),
+                var(--bg-mist);
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.04;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Cinematic Cursor */
+        #c-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--text-forest);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s, background 0.3s;
+        }
+
+        #c-ring {
+            position: fixed;
+            width: 44px;
+            height: 44px;
+            border: 1.5px solid rgba(26, 28, 26, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s var(--ease), height 0.4s var(--ease), border-color 0.4s, background 0.4s;
+        }
+
+        body.cursor-hover #c-ring {
+            width: 65px;
+            height: 65px;
+            background: rgba(138, 154, 134, 0.1);
+            border-color: var(--sage);
+        }
+
+        body.cursor-hover #c-dot {
+            opacity: 0;
+        }
+
+        body.in-dark #c-dot {
+            background: var(--text-pearl);
+        }
+
+        body.in-dark #c-ring {
+            border-color: rgba(232, 229, 223, 0.2);
+        }
+
+        body.in-dark.cursor-hover #c-ring {
+            border-color: var(--sand);
+            background: rgba(212, 163, 115, 0.1);
+        }
+
+        /* ==========================================================================
+           3. TYPOGRAPHY & UTILITIES
+           ========================================================================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        .eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--sage);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: #666;
+            max-width: 550px;
+            line-height: 1.7;
+            margin-top: 1.5rem;
+        }
+
+        /* ==========================================================================
+           4. FEATURES: SUSPENDED ARCHIPELAGO
+           ========================================================================== */
+        .features-sec {
+            padding: 15vh 0 10vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .archipelago {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 4rem;
+            margin-top: 8vh;
+            perspective: 1200px;
+        }
+
+        .float-wrapper {
+            animation: floatAnim 8s ease-in-out infinite alternate;
+        }
+
+        .float-wrapper:nth-child(2) {
+            animation-delay: -2s;
+            animation-duration: 9s;
+        }
+
+        .float-wrapper:nth-child(3) {
+            animation-delay: -4s;
+            animation-duration: 7s;
+        }
+
+        .float-wrapper:nth-child(4) {
+            animation-delay: -1s;
+            animation-duration: 10s;
+        }
+
+        @keyframes floatAnim {
+            from {
+                transform: translateY(-15px);
+            }
+
+            to {
+                transform: translateY(15px);
+            }
+        }
+
+        .island-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 32px;
+            padding: 3rem;
+            overflow: hidden;
+            transition: transform 0.5s var(--ease), box-shadow 0.5s;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .island-card:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Ambient glow on hover */
+        .island-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(138, 154, 134, 0.12) 0%, transparent 50%);
+            transition: opacity 0.4s;
+            z-index: 0;
+        }
+
+        .island-card:hover .island-glow {
+            opacity: 1;
+        }
+
+        .island-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(138, 154, 134, 0.15), rgba(212, 163, 115, 0.1));
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .island-icon i {
+            font-size: 1.8rem;
+            color: var(--sage);
+        }
+
+        .island-num {
+            position: absolute;
+            top: 2rem;
+            right: 2.5rem;
+            font-family: var(--font-serif);
+            font-size: 5rem;
+            color: rgba(0, 0, 0, 0.03);
+            line-height: 1;
+            z-index: 0;
+        }
+
+        .island-title {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .island-desc {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .island-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .island-tag {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            background: rgba(138, 154, 134, 0.08);
+            color: var(--moss);
+            border: 1px solid rgba(138, 154, 134, 0.15);
+        }
+
+        /* Interactive hover pulse ring */
+        .island-pulse {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 163, 115, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.4s, transform 0.4s var(--ease);
+            z-index: 1;
+        }
+
+        .island-card:hover .island-pulse {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .island-pulse i {
+            font-size: 1rem;
+            color: var(--sand);
+        }
+
+        /* ==========================================================================
+           5. TESTIMONIALS: ORBITAL LENS CONSTELLATION
+           ========================================================================== */
+        .testimonials-sec {
+            position: relative;
+            z-index: 5;
+            background: var(--bg-abyss);
+            color: var(--text-pearl);
+            padding: 15vh 0 20vh;
+            border-radius: 60px 60px 0 0;
+            margin-top: 5vh;
+        }
+
+        .testimonials-sec em {
+            color: var(--sand);
+        }
+
+        .testimonials-sec .subtitle {
+            color: #777;
+        }
+
+        .t-constellation {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            aspect-ratio: 1/1;
+            margin: 8vh auto 0;
+        }
+
+        .t-center-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .t-quote-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.5;
+            color: var(--text-pearl);
+            opacity: 0;
+            transition: opacity 0.6s, transform 0.6s var(--ease);
+            transform: translateY(15px);
+        }
+
+        .t-quote-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .t-quote-author {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--sand);
+            opacity: 0;
+            transition: opacity 0.5s 0.15s;
+        }
+
+        .t-quote-text.visible+.t-quote-author {
+            opacity: 1;
+        }
+
+        /* Outer ring */
+        .t-ring {
+            position: absolute;
+            inset: 5%;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 50%;
+        }
+
+        .t-nodes-wrapper {
+            position: absolute;
+            inset: 0;
+        }
+
+        .t-node {
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            transform: translate(-50%, -50%);
+            z-index: 15;
+        }
+
+        .t-node-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            transition: transform 0.4s var(--ease), border-color 0.4s, box-shadow 0.4s;
+            filter: grayscale(0.5) brightness(0.6);
+        }
+
+        .t-node:hover .t-node-inner,
+        .t-node.active .t-node-inner {
+            transform: scale(1.3);
+            border-color: var(--sand);
+            filter: grayscale(0) brightness(1);
+            box-shadow: 0 0 40px rgba(212, 163, 115, 0.25);
+        }
+
+        .t-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Active node pulse ring */
+        .t-node::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 163, 115, 0);
+            transition: border-color 0.4s;
+        }
+
+        .t-node.active::after {
+            border-color: rgba(212, 163, 115, 0.3);
+            animation: pulseRing 2.5s infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* SVG constellation lines */
+        .t-svg-lines {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .t-line {
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 1;
+            transition: stroke 0.4s;
+        }
+
+        .t-line.active {
+            stroke: rgba(212, 163, 115, 0.15);
+        }
+
+        /* ==========================================================================
+           6. RESPONSIVE
+           ========================================================================== */
+        @media (max-width: 768px) {
+
+            #c-dot,
+            #c-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .title {
+                font-size: 2.8rem;
+            }
+
+            .archipelago {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .t-constellation {
+                max-width: 340px;
+            }
+
+            .t-node {
+                width: 48px;
+                height: 48px;
+            }
+
+            .t-quote-text {
+                font-size: 1.15rem;
+            }
+
+            .t-center-display {
+                width: 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fixed-bg"></div>
+    <div class="noise"></div>
+    <div id="c-dot"></div>
+    <div id="c-ring"></div>
+
+    <section class="features-sec" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="eyebrow">01 // Archipelago</span>
+                <h2 class="title">Suspended <em>Islands.</em></h2>
+                <p class="subtitle">Each feature lives as an independent island — self-contained, floating in harmony,
+                    yet connected through an invisible ecosystem.</p>
+            </div>
+
+            <div class="archipelago">
+                <div class="float-wrapper">
+                    <div class="island-card hover-target">
+                        <div class="island-glow"></div>
+                        <span class="island-num">01</span>
+                        <div class="island-icon"><i class="ph ph-compass"></i></div>
+                        <h3 class="island-title">Adaptive Navigation</h3>
+                        <p class="island-desc">Intelligent pathfinding that learns your patterns and reshapes itself.
+                            The interface becomes your personal compass through complexity.</p>
+                        <div class="island-tags">
+                            <span class="island-tag">AI-Driven</span>
+                            <span class="island-tag">Contextual</span>
+                        </div>
+                        <div class="island-pulse"><i class="ph ph-arrow-up-right"></i></div>
+                    </div>
+                </div>
+
+                <div class="float-wrapper">
+                    <div class="island-card hover-target">
+                        <div class="island-glow"></div>
+                        <span class="island-num">02</span>
+                        <div class="island-icon"><i class="ph ph-waves"></i></div>
+                        <h3 class="island-title">Fluid Architecture</h3>
+                        <p class="island-desc">Layouts that breathe and reshape like tidal patterns — responding to
+                            content volume, user behavior, and device constraints organically.</p>
+                        <div class="island-tags">
+                            <span class="island-tag">Responsive</span>
+                            <span class="island-tag">Organic</span>
+                        </div>
+                        <div class="island-pulse"><i class="ph ph-arrow-up-right"></i></div>
+                    </div>
+                </div>
+
+                <div class="float-wrapper">
+                    <div class="island-card hover-target">
+                        <div class="island-glow"></div>
+                        <span class="island-num">03</span>
+                        <div class="island-icon"><i class="ph ph-eye"></i></div>
+                        <h3 class="island-title">Perceptive Depth</h3>
+                        <p class="island-desc">Multi-layered visual hierarchy that guides attention through parallax,
+                            glassmorphism, and carefully orchestrated focal points.</p>
+                        <div class="island-tags">
+                            <span class="island-tag">Parallax</span>
+                            <span class="island-tag">Glass</span>
+                        </div>
+                        <div class="island-pulse"><i class="ph ph-arrow-up-right"></i></div>
+                    </div>
+                </div>
+
+                <div class="float-wrapper">
+                    <div class="island-card hover-target">
+                        <div class="island-glow"></div>
+                        <span class="island-num">04</span>
+                        <div class="island-icon"><i class="ph ph-fingerprint"></i></div>
+                        <h3 class="island-title">Tactile Feedback</h3>
+                        <p class="island-desc">Physics-based micro-interactions that make every touch meaningful — from
+                            magnetic buttons to elastic scroll behaviors.</p>
+                        <div class="island-tags">
+                            <span class="island-tag">Physics</span>
+                            <span class="island-tag">Haptic</span>
+                        </div>
+                        <div class="island-pulse"><i class="ph ph-arrow-up-right"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-sec" id="testimonials">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <span class="eyebrow">02 // Constellation</span>
+                <h2 class="title">Ethereal <em>Echoes.</em></h2>
+                <p class="subtitle" style="margin-left: auto; margin-right: auto;">Orbiting voices from those who've
+                    experienced the archipelago firsthand.</p>
+            </div>
+
+            <div class="t-constellation" id="t-constellation">
+                <svg class="t-svg-lines" id="t-svg-lines" viewBox="0 0 850 850"></svg>
+                <div class="t-ring"></div>
+                <div class="t-nodes-wrapper" id="t-nodes"></div>
+                <div class="t-center-display" id="t-center"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const isMobile = window.innerWidth <= 768;
+
+            /* --- Lenis Smooth Scroll --- */
+            gsap.registerPlugin(ScrollTrigger);
+            const lenis = new Lenis({ duration: 1.2, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add(time => lenis.raf(time * 1000));
+            gsap.ticker.lagSmoothing(0);
+
+            /* --- Cursor --- */
+            const dot = document.getElementById('c-dot');
+            const ring = document.getElementById('c-ring');
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2, rx = mx, ry = my;
+
+            if (!isMobile) {
+                window.addEventListener('mousemove', e => {
+                    mx = e.clientX; my = e.clientY;
+                    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+                });
+                (function cursorLoop() {
+                    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+                    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+                    requestAnimationFrame(cursorLoop);
+                })();
+            }
+
+            // Hover States
+            document.querySelectorAll('.hover-target, a, button').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            });
+
+            // Dark section awareness
+            const darkSec = document.querySelector('.testimonials-sec');
+            const darkObs = new IntersectionObserver(entries => {
+                entries.forEach(e => document.body.classList.toggle('in-dark', e.isIntersecting));
+            }, { threshold: 0.3 });
+            darkObs.observe(darkSec);
+
+            /* --- Island Card Ambient Glow --- */
+            document.querySelectorAll('.island-card').forEach(card => {
+                const glow = card.querySelector('.island-glow');
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    card.style.setProperty('--gx', `${((e.clientX - r.left) / r.width * 100)}%`);
+                    card.style.setProperty('--gy', `${((e.clientY - r.top) / r.height * 100)}%`);
+                });
+            });
+
+            /* --- GSAP Island Reveals --- */
+            gsap.utils.toArray('.island-card').forEach((card, i) => {
+                gsap.to(card, {
+                    opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+                    scrollTrigger: { trigger: card, start: 'top 85%' },
+                    delay: i * 0.12
+                });
+            });
+
+            /* --- Testimonial Constellation --- */
+            const tData = [
+                { name: "Evelyn Reed", role: "Design Director", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop", text: "The suspended interface concept completely changed our perspective on spatial design. It's like working within a living atmosphere." },
+                { name: "Marcus Thorne", role: "Lead Architect", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop", text: "Each island feels purposeful and self-contained yet beautifully connected. The archipelago metaphor translates flawlessly to digital." },
+                { name: "Sophia Lin", role: "Founder, Kinfolk", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop", text: "Pure ethereal elegance. The floating interactions create a sense of weightlessness that makes complex tasks feel effortless." },
+                { name: "David Kaufmann", role: "CTO, Nexus", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop", text: "The tactile depth is extraordinary. Our team genuinely enjoys navigating these interfaces. Productivity has never felt so natural." },
+                { name: "Amira Hassan", role: "Operations Lead", img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop", text: "We've never experienced anything like this. The glassmorphism and floating physics create a genuinely ethereal workspace." }
+            ];
+
+            const nodesWrapper = document.getElementById('t-nodes');
+            const centerDisplay = document.getElementById('t-center');
+            const svgLines = document.getElementById('t-svg-lines');
+            const constellation = document.getElementById('t-constellation');
+            let activeT = 0;
+            const radius = isMobile ? 40 : 43;
+
+            tData.forEach((t, i) => {
+                const angle = (i / tData.length) * Math.PI * 2 - Math.PI / 2;
+                const x = 50 + radius * Math.cos(angle);
+                const y = 50 + radius * Math.sin(angle);
+
+                const node = document.createElement('div');
+                node.className = 't-node hover-target';
+                node.style.left = `${x}%`; node.style.top = `${y}%`;
+                node.innerHTML = `<div class="t-node-inner"><img src="${t.img}" alt="${t.name}"></div>`;
+                nodesWrapper.appendChild(node);
+
+                // SVG line
+                const size = 850;
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute('x1', size / 2); line.setAttribute('y1', size / 2);
+                line.setAttribute('x2', x / 100 * size); line.setAttribute('y2', y / 100 * size);
+                line.classList.add('t-line');
+                svgLines.appendChild(line);
+
+                node.addEventListener('click', () => showTestimonial(i));
+                node.addEventListener('mouseenter', () => showTestimonial(i));
+            });
+
+            const allNodes = document.querySelectorAll('.t-node');
+            const allLines = document.querySelectorAll('.t-line');
+
+            function showTestimonial(idx) {
+                activeT = idx;
+                const t = tData[idx];
+                centerDisplay.innerHTML = `
+                    <p class="t-quote-text visible">"${t.text}"</p>
+                    <p class="t-quote-author">${t.name} — ${t.role}</p>
+                `;
+                allNodes.forEach((n, i) => n.classList.toggle('active', i === idx));
+                allLines.forEach((l, i) => l.classList.toggle('active', i === idx));
+            }
+            showTestimonial(0);
+
+            // Auto-cycle
+            let cycle = setInterval(() => {
+                activeT = (activeT + 1) % tData.length;
+                showTestimonial(activeT);
+            }, 5000);
+
+            constellation.addEventListener('mouseenter', () => clearInterval(cycle));
+            constellation.addEventListener('mouseleave', () => {
+                cycle = setInterval(() => {
+                    activeT = (activeT + 1) % tData.length;
+                    showTestimonial(activeT);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+
+</html>
