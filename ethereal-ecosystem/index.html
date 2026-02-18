@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Ecosystem - Features</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Outfit:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050806;
+            --text-light: #EAEFE9;
+            --text-muted: #A3B1A9;
+            --accent-gold: #D4C4A8;
+            --accent-sage: #8BA88E;
+            --glass-bg: rgba(20, 30, 24, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover: rgba(212, 196, 168, 0.4);
+            --curve-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --curve-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(212, 196, 168, 0.15) 0%, transparent 70%);
+            border: 1px solid rgba(212, 196, 168, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s var(--curve-smooth), height 0.4s var(--curve-smooth), background 0.4s, border-color 0.4s;
+        }
+
+        body.hovering .cursor-glow {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(212, 196, 168, 0.25) 0%, transparent 70%);
+            border-color: rgba(212, 196, 168, 0.6);
+            backdrop-filter: blur(2px);
+        }
+
+        body.hovering .cursor-dot {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        .features-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5vw 8vw;
+            overflow: hidden;
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: -5%;
+            background-image: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a5d?q=80&w=2500&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            filter: grayscale(40%) brightness(0.4) contrast(1.2);
+            transition: transform 0.1s linear;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(5, 8, 6, 0.85) 0%, rgba(13, 19, 16, 0.6) 100%);
+            z-index: 1;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            opacity: 0.04;
+            pointer-events: none;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        #spores-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 5vw;
+            align-items: center;
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        .header-content {
+            flex: 0 0 380px;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeUp 1.2s var(--curve-smooth) forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .eyebrow {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent-gold);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .eyebrow::before {
+            content: '';
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            width: 35px;
+            height: 1px;
+            background: var(--accent-gold);
+            opacity: 0.6;
+        }
+
+        .title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3.5rem, 5vw, 5rem);
+            font-weight: 300;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+
+        .title .italic {
+            font-style: italic;
+            color: var(--accent-gold);
+            padding-right: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 3rem;
+        }
+
+        .magnetic-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            padding: 1.2rem 2.5rem;
+            background: rgba(212, 196, 168, 0.05);
+            border: 1px solid rgba(212, 196, 168, 0.3);
+            border-radius: 40px;
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            transition: background 0.4s, border-color 0.4s;
+            overflow: hidden;
+        }
+
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent-gold);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.6s var(--curve-smooth);
+            z-index: -1;
+        }
+
+        .magnetic-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--bg-dark);
+            font-weight: 500;
+        }
+
+        .magnetic-btn:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .magnetic-btn svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.4s var(--curve-smooth);
+        }
+
+        .magnetic-btn:hover svg {
+            transform: translateX(5px);
+        }
+
+        .slice-container {
+            flex: 1;
+            display: flex;
+            gap: 1.5vw;
+            height: 75vh;
+            min-height: 600px;
+            align-items: center;
+            perspective: 1200px;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: fadeUp 1.2s var(--curve-smooth) 0.3s forwards;
+        }
+
+        .slice {
+            position: relative;
+            flex: 1;
+            border-radius: 2vw;
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: flex 0.8s var(--curve-smooth), height 0.8s var(--curve-smooth), filter 0.6s ease, opacity 0.6s ease, transform 0.8s var(--curve-smooth), box-shadow 0.6s ease, border-color 0.6s ease;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+            transform-origin: center center;
+        }
+
+        .slice:nth-child(1) {
+            height: 85%;
+            transform: translateY(-4%);
+        }
+
+        .slice:nth-child(2) {
+            height: 100%;
+            transform: translateY(0);
+        }
+
+        .slice:nth-child(3) {
+            height: 90%;
+            transform: translateY(5%);
+        }
+
+        .slice:nth-child(4) {
+            height: 80%;
+            transform: translateY(-2%);
+        }
+
+        .slice-container:hover .slice {
+            filter: blur(8px) brightness(0.5);
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .slice-container .slice:hover {
+            flex: 3.5;
+            height: 100%;
+            filter: blur(0px) brightness(1.1);
+            opacity: 1;
+            transform: scale(1.02) translateY(0);
+            border-color: var(--glass-hover);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(212, 196, 168, 0.08);
+            z-index: 10;
+        }
+
+        .slice-bg {
+            position: absolute;
+            inset: -5%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            filter: grayscale(80%);
+            transition: opacity 0.8s ease, transform 3s ease-out, filter 0.8s ease;
+        }
+
+        .slice:hover .slice-bg {
+            opacity: 0.6;
+            transform: scale(1.08);
+            filter: grayscale(20%);
+        }
+
+        .slice-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5, 8, 6, 0.98) 0%, rgba(5, 8, 6, 0.4) 50%, transparent 100%);
+        }
+
+        .slice-icon {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            z-index: 5;
+            transition: transform 0.6s var(--curve-bounce), background 0.4s, color 0.4s, border-color 0.4s;
+        }
+
+        .slice:hover .slice-icon {
+            transform: rotate(-15deg) scale(1.15);
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            border-color: var(--accent-gold);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 196, 168, 0.4);
+        }
+
+        .slice-content {
+            position: relative;
+            z-index: 5;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+        }
+
+        .slice-header {
+            transition: margin-bottom 0.6s var(--curve-smooth), transform 0.6s var(--curve-smooth);
+            transform: translateY(0);
+        }
+
+        .slice:hover .slice-header {
+            margin-bottom: 1.5rem;
+            transform: translateY(-5px);
+        }
+
+        .slice-num {
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            letter-spacing: 3px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slice-num::before {
+            content: '';
+            width: 15px;
+            height: 1px;
+            background: var(--accent-gold);
+            transition: width 0.4s;
+        }
+
+        .slice:hover .slice-num::before {
+            width: 30px;
+        }
+
+        .slice-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+            color: #fff;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .slice-details-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.8s var(--curve-smooth);
+        }
+
+        .slice:hover .slice-details-wrapper {
+            grid-template-rows: 1fr;
+        }
+
+        .slice-details {
+            overflow: hidden;
+        }
+
+        .slice-details-inner {
+            width: 340px;
+            padding-top: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease 0.3s, transform 0.6s var(--curve-smooth) 0.2s;
+        }
+
+        .slice:hover .slice-details-inner {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slice-desc {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .micro-visual {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nodes-anim {
+            position: relative;
+            height: 90px;
+            width: 100%;
+        }
+
+        .node {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(212, 196, 168, 0.8);
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            transition: transform 0.3s;
+        }
+
+        .node.center {
+            width: 14px;
+            height: 14px;
+            top: 50%;
+            left: 50%;
+        }
+
+        .node.outer {
+            width: 6px;
+            height: 6px;
+        }
+
+        .o1 {
+            top: 20%;
+            left: 15%;
+        }
+
+        .o2 {
+            top: 85%;
+            left: 35%;
+        }
+
+        .o3 {
+            top: 35%;
+            left: 85%;
+        }
+
+        .o4 {
+            top: 75%;
+            left: 75%;
+        }
+
+        .node-aura {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 196, 168, 0.35) 0%, transparent 70%);
+            z-index: 1;
+            animation: pulse-aura 2.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-aura {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.6);
+                opacity: 1;
+            }
+        }
+
+        .node-lines {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .line-path {
+            stroke-dasharray: 8;
+            stroke-dashoffset: 100;
+        }
+
+        .slice:hover .line-path {
+            animation: dash-flow 4s linear infinite;
+        }
+
+        @keyframes dash-flow {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .fluid-anim {
+            height: 90px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .fluid-svg {
+            width: 200%;
+            height: 60px;
+        }
+
+        .slice:hover .fluid-svg {
+            animation: flow-wave 5s linear infinite;
+        }
+
+        @keyframes flow-wave {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .scale-anim {
+            height: 90px;
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .s-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent-sage) 0%, rgba(139, 168, 142, 0.4) 100%);
+            border-radius: 3px 3px 0 0;
+            height: 10%;
+            transition: height 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .s-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--text-light);
+            opacity: 0.5;
+        }
+
+        .slice:hover .s-bar {
+            animation: equalize 1.5s ease-in-out infinite alternate;
+        }
+
+        .slice:hover .s-bar:nth-child(even) {
+            background: linear-gradient(to top, var(--accent-gold) 0%, rgba(212, 196, 168, 0.4) 100%);
+            animation-direction: alternate-reverse;
+            animation-delay: 0.3s;
+        }
+
+        .slice:hover .s-bar:nth-child(3n) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes equalize {
+            0% {
+                height: 15%;
+            }
+
+            100% {
+                height: var(--h);
+            }
+        }
+
+        .crypto-anim {
+            position: relative;
+            height: 90px;
+        }
+
+        .crypto-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px dashed rgba(212, 196, 168, 0.4);
+        }
+
+        .r-outer {
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(139, 168, 142, 0.2);
+            border-top: 2px solid var(--accent-sage);
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        .r-inner {
+            width: 54px;
+            height: 54px;
+            border: 1.5px dashed rgba(212, 196, 168, 0.7);
+        }
+
+        .slice:hover .r-outer {
+            animation: spin 5s linear infinite;
+        }
+
+        .slice:hover .r-inner {
+            animation: spin 3.5s linear infinite reverse;
+        }
+
+        .crypto-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: var(--accent-gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(212, 196, 168, 0.5);
+            animation: float-core 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes float-core {
+            0% {
+                transform: translate(-50%, -50%) rotate(45deg) scale(0.95);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(45deg) scale(1.05);
+            }
+        }
+
+        .micro-tags {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .micro-tags li {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--bg-dark);
+            background: var(--accent-gold);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .micro-tags li:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .slice:hover .micro-tags li:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 1280px) {
+            .content-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4rem;
+            }
+
+            .header-content {
+                flex: none;
+                max-width: 800px;
+            }
+
+            .slice-container {
+                width: 100%;
+                height: 60vh;
+                min-height: 500px;
+            }
+
+            .slice-details-inner {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-section {
+                padding: 6rem 1.5rem;
+            }
+
+            .title {
+                font-size: 2.8rem;
+            }
+
+            .slice-container {
+                flex-direction: column;
+                height: auto;
+                gap: 1rem;
+                perspective: none;
+            }
+
+            .slice {
+                height: 120px !important;
+                transform: none !important;
+                width: 100%;
+                border-radius: 1.5rem;
+            }
+
+            .slice:hover,
+            .slice.active {
+                height: 480px !important;
+            }
+
+            .slice-content {
+                padding: 1.5rem;
+            }
+
+            .slice-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 0 !important;
+            }
+
+            .slice-num {
+                margin-bottom: 0;
+            }
+
+            .slice-num::before {
+                display: none;
+            }
+
+            .slice-title {
+                font-size: 1.8rem;
+            }
+
+            .slice-icon {
+                top: 1.5rem;
+                right: 1.5rem;
+                width: 45px;
+                height: 45px;
+            }
+
+            .slice-details-inner {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="features-section" id="features">
+        <div class="bg-layer" id="bg-layer"></div>
+        <div class="noise-overlay"></div>
+        <div class="bg-overlay"></div>
+        <canvas id="spores-canvas"></canvas>
+        <div class="cursor-glow" id="cursor-glow"></div>
+        <div class="cursor-dot" id="cursor-dot"></div>
+        <div class="content-wrapper">
+            <div class="header-content">
+                <span class="eyebrow interactable">Living Architecture</span>
+                <h2 class="title interactable">Natural <br><span class="italic">Fluidity</span></h2>
+                <p class="subtitle interactable">We transcend rigid bento grids. Discover an ecosystem of tools that
+                    breathe, adapt, and organically scale to map your most complex workflows seamlessly without breaking
+                    form.</p>
+                <a href="#explore" class="magnetic-btn interactable">
+                    Explore Ecosystem
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+            <div class="slice-container" id="slice-container">
+                <div class="slice interactable">
+                    <div class="slice-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="slice-overlay"></div>
+                    <div class="slice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <circle cx="12" cy="12" r="4"></circle>
+                        </svg></div>
+                    <div class="slice-content">
+                        <div class="slice-header"><span class="slice-num">01</span>
+                            <h3 class="slice-title">Symbiotic Core</h3>
+                        </div>
+                        <div class="slice-details-wrapper">
+                            <div class="slice-details">
+                                <div class="slice-details-inner">
+                                    <p class="slice-desc">A neural-like architecture that seamlessly interweaves with
+                                        your native infrastructure, forming an unbreakable, zero-friction bond mapping
+                                        to your exact needs.</p>
+                                    <div class="micro-visual nodes-anim">
+                                        <div class="node-aura"></div>
+                                        <div class="node center"></div>
+                                        <div class="node outer o1"></div>
+                                        <div class="node outer o2"></div>
+                                        <div class="node outer o3"></div>
+                                        <div class="node outer o4"></div>
+                                        <svg class="node-lines" width="100%" height="100%">
+                                            <line x1="50%" y1="50%" x2="15%" y2="20%" stroke="rgba(212,196,168,0.4)"
+                                                stroke-width="1.5" class="line-path" />
+                                            <line x1="50%" y1="50%" x2="35%" y2="85%" stroke="rgba(212,196,168,0.4)"
+                                                stroke-width="1.5" class="line-path" />
+                                            <line x1="50%" y1="50%" x2="85%" y2="35%" stroke="rgba(212,196,168,0.4)"
+                                                stroke-width="1.5" class="line-path" />
+                                            <line x1="50%" y1="50%" x2="75%" y2="75%" stroke="rgba(212,196,168,0.4)"
+                                                stroke-width="1.5" class="line-path" />
+                                        </svg>
+                                    </div>
+                                    <ul class="micro-tags">
+                                        <li>Zero Latency</li>
+                                        <li>Native Bond</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slice interactable">
+                    <div class="slice-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="slice-overlay"></div>
+                    <div class="slice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg></div>
+                    <div class="slice-content">
+                        <div class="slice-header"><span class="slice-num">02</span>
+                            <h3 class="slice-title">Fluid Dynamics</h3>
+                        </div>
+                        <div class="slice-details-wrapper">
+                            <div class="slice-details">
+                                <div class="slice-details-inner">
+                                    <p class="slice-desc">Engineered to mimic the path of least resistance. Information
+                                        streams continuously without bottlenecks, matching human thought speed
+                                        seamlessly.</p>
+                                    <div class="micro-visual fluid-anim">
+                                        <svg viewBox="0 0 200 60" preserveAspectRatio="none" class="fluid-svg">
+                                            <path d="M0,30 C30,60 70,0 100,30 C130,60 170,0 200,30" fill="none"
+                                                stroke="#8BA88E" stroke-width="2" />
+                                            <path d="M0,35 C40,15 60,55 100,35 C140,15 160,55 200,35" fill="none"
+                                                stroke="#D4C4A8" stroke-width="1.5" opacity="0.6" />
+                                            <path d="M0,25 C50,5 50,45 100,25 C150,5 150,45 200,25" fill="none"
+                                                stroke="rgba(255,255,255,0.2)" stroke-width="1" />
+                                        </svg>
+                                    </div>
+                                    <ul class="micro-tags">
+                                        <li>Kinetic Flow</li>
+                                        <li>120FPS Render</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slice interactable">
+                    <div class="slice-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="slice-overlay"></div>
+                    <div class="slice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg></div>
+                    <div class="slice-content">
+                        <div class="slice-header"><span class="slice-num">03</span>
+                            <h3 class="slice-title">Adaptive Scale</h3>
+                        </div>
+                        <div class="slice-details-wrapper">
+                            <div class="slice-details">
+                                <div class="slice-details-inner">
+                                    <p class="slice-desc">Whether a gentle breeze or a massive storm of traffic, our
+                                        systems instinctively expand and contract to maintain perfect equilibrium and
+                                        uptime.</p>
+                                    <div class="micro-visual scale-anim">
+                                        <div class="s-bar" style="--h: 30%"></div>
+                                        <div class="s-bar" style="--h: 65%"></div>
+                                        <div class="s-bar" style="--h: 45%"></div>
+                                        <div class="s-bar" style="--h: 90%"></div>
+                                        <div class="s-bar" style="--h: 55%"></div>
+                                        <div class="s-bar" style="--h: 85%"></div>
+                                        <div class="s-bar" style="--h: 35%"></div>
+                                        <div class="s-bar" style="--h: 60%"></div>
+                                    </div>
+                                    <ul class="micro-tags">
+                                        <li>Auto-Scaling</li>
+                                        <li>Self Healing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slice interactable">
+                    <div class="slice-bg"
+                        style="background-image: url('https://images.unsplash.com/photo-1506744626753-1fa44df31c7f?q=80&w=1000&auto=format&fit=crop');">
+                    </div>
+                    <div class="slice-overlay"></div>
+                    <div class="slice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg></div>
+                    <div class="slice-content">
+                        <div class="slice-header"><span class="slice-num">04</span>
+                            <h3 class="slice-title">Rooted Security</h3>
+                        </div>
+                        <div class="slice-details-wrapper">
+                            <div class="slice-details">
+                                <div class="slice-details-inner">
+                                    <p class="slice-desc">Deeply embedded encryption models that stand resilient. Like
+                                        ancient roots holding firm, protecting your vital assets silently and
+                                        effectively.</p>
+                                    <div class="micro-visual crypto-anim">
+                                        <div class="crypto-ring r-outer"></div>
+                                        <div class="crypto-ring r-inner"></div>
+                                        <div class="crypto-core"><svg viewBox="0 0 24 24" fill="none" stroke="#050806"
+                                                stroke-width="2.5"
+                                                style="width: 16px; height: 16px; transform: rotate(-45deg)">
+                                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                            </svg></div>
+                                    </div>
+                                    <ul class="micro-tags">
+                                        <li>E2E Encrypted</li>
+                                        <li>Quantum Safe</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursorDot = document.getElementById('cursor-dot');
+            const cursorGlow = document.getElementById('cursor-glow');
+            let dotX = window.innerWidth / 2, dotY = window.innerHeight / 2;
+            let glowX = dotX, glowY = dotY;
+            const isTouchDevice = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+            if (!isTouchDevice()) {
+                window.addEventListener('mousemove', (e) => { dotX = e.clientX; dotY = e.clientY; cursorDot.style.left = `${dotX}px`; cursorDot.style.top = `${dotY}px`; });
+                const animateCursor = () => { glowX += (dotX - glowX) * 0.12; glowY += (dotY - glowY) * 0.12; cursorGlow.style.left = `${glowX}px`; cursorGlow.style.top = `${glowY}px`; requestAnimationFrame(animateCursor); };
+                animateCursor();
+                document.querySelectorAll('.interactable').forEach(el => { el.addEventListener('mouseenter', () => document.body.classList.add('hovering')); el.addEventListener('mouseleave', () => document.body.classList.remove('hovering')); });
+                document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                    btn.addEventListener('mousemove', (e) => { const rect = btn.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`; });
+                    btn.addEventListener('mouseleave', () => { btn.style.transform = `translate(0px, 0px)`; });
+                });
+                const section = document.getElementById('features');
+                const bgLayer = document.getElementById('bg-layer');
+                const sliceContainer = document.getElementById('slice-container');
+                section.addEventListener('mousemove', (e) => { const x = (e.clientX / window.innerWidth - 0.5); const y = (e.clientY / window.innerHeight - 0.5); bgLayer.style.transform = `translate(${x * -30}px, ${y * -30}px) scale(1.05)`; if (window.innerWidth > 1024) { sliceContainer.style.transform = `perspective(1200px) rotateY(${x * 8}deg) rotateX(${y * -4}deg) translateY(0px)`; } });
+                section.addEventListener('mouseleave', () => { bgLayer.style.transform = `translate(0px, 0px) scale(1.05)`; if (window.innerWidth > 1024) { sliceContainer.style.transform = `perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(0px)`; } });
+            } else { cursorDot.style.display = 'none'; cursorGlow.style.display = 'none'; }
+            const canvas = document.getElementById('spores-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = window.innerWidth > 768 ? 70 : 35;
+            const resizeCanvas = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resizeCanvas); resizeCanvas();
+            for (let i = 0; i < particleCount; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 0.5, speedX: (Math.random() - 0.5) * 0.3, speedY: (Math.random() - 1) * 0.3 - 0.1, alpha: Math.random() * 0.4 + 0.1, angle: Math.random() * Math.PI * 2 }); }
+            const drawParticles = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.angle += 0.01; p.x += Math.sin(p.angle) * 0.3 + p.speedX; p.y += p.speedY; if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(212, 196, 168, ${p.alpha})`; ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(212, 196, 168, 0.3)'; ctx.fill(); }); requestAnimationFrame(drawParticles); };
+            drawParticles();
+        });
+    </script>
+</body>
+
+</html>
