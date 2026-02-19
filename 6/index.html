@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Validation // Testimonials</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           VARIABLES & RESET
+           ========================================================= */
+        :root {
+            --bg-deep: #020617;
+            /* Deep Slate 950 */
+            --panel-bg: rgba(15, 23, 42, 0.6);
+            /* Slate 900 Glass */
+            --border-color: rgba(56, 189, 248, 0.2);
+            --accent: #38bdf8;
+            /* Clean Tech Sky Blue */
+            --accent-glow: rgba(56, 189, 248, 0.5);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            min-height: 100vh;
+            cursor: none;
+            /* Custom precision cursor */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Disable custom cursor on touch devices */
+        @media (pointer: coarse) {
+            body {
+                cursor: auto !important;
+            }
+
+            #cursor {
+                display: none !important;
+            }
+        }
+
+        /* =========================================================
+           CUSTOM CURSOR
+           ========================================================= */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.3s ease;
+            mix-blend-mode: screen;
+        }
+
+        #cursor::before,
+        #cursor::after {
+            content: '';
+            position: absolute;
+            background: var(--accent);
+        }
+
+        #cursor::before {
+            top: 50%;
+            left: -6px;
+            right: -6px;
+            height: 1px;
+            transform: translateY(-50%);
+        }
+
+        #cursor::after {
+            left: 50%;
+            top: -6px;
+            bottom: -6px;
+            width: 1px;
+            transform: translateX(-50%);
+        }
+
+        /* =========================================================
+           BACKGROUND ENVIRONMENT
+           ========================================================= */
+        .science-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            overflow: hidden;
+        }
+
+        .blueprint-bg {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        .blueprint-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 10%, var(--bg-deep) 90%);
+        }
+
+        #particles {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .sys-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 6px 14px;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .sys-badge .pulse {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+
+        .title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .title strong {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* =========================================================
+           INTERFACE LAYOUT & SVG CONNECTION
+           ========================================================= */
+        .interface-container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            min-height: 550px;
+            position: relative;
+            z-index: 10;
+            animation: bootUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        @keyframes bootUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .connection-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: visible;
+        }
+
+        .data-wire {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 1;
+            transition: d 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .data-path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            stroke-dasharray: 6 8;
+            animation: dataFlow 15s linear infinite;
+            opacity: 0.7;
+            transition: d 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes dataFlow {
+            to {
+                stroke-dashoffset: -500;
+            }
+        }
+
+        /* =========================================================
+           NODES MAP (LEFT SIDE)
+           ========================================================= */
+        .nodes-map {
+            flex: 1;
+            position: relative;
+        }
+
+        .node {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 10;
+            /* Organic floating animation */
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .node:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .node:nth-child(2) {
+            animation-delay: -1.5s;
+        }
+
+        .node:nth-child(3) {
+            animation-delay: -3s;
+        }
+
+        .node:nth-child(4) {
+            animation-delay: -4.5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                margin-top: 0px;
+            }
+
+            50% {
+                margin-top: -15px;
+            }
+        }
+
+        .node-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            transition: all 0.4s ease;
+            filter: grayscale(80%) sepia(20%) hue-rotate(180deg) brightness(0.6);
+            background: var(--bg-deep);
+        }
+
+        .node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.4s;
+        }
+
+        .node.active .node-core {
+            filter: grayscale(0%);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .node.active img {
+            opacity: 1;
+        }
+
+        .node.active::before {
+            content: '';
+            position: absolute;
+            inset: -30px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: nodePulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes nodePulse {
+
+            0%,
+            100% {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* HUD Rings */
+        .node-ring,
+        .node-ring-2 {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .node.active .node-ring,
+        .node.active .node-ring-2 {
+            opacity: 1;
+        }
+
+        .node-ring {
+            inset: -12px;
+            border: 1px dashed rgba(56, 189, 248, 0.6);
+            animation: spinRing 10s linear infinite;
+        }
+
+        .node-ring-2 {
+            inset: -22px;
+            border: 1px solid transparent;
+            border-top-color: var(--accent);
+            border-bottom-color: rgba(56, 189, 248, 0.2);
+            animation: spinRingRev 15s linear infinite;
+        }
+
+        @keyframes spinRing {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinRingRev {
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        .node-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.8);
+            padding: 2px 6px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            border-radius: 2px;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .node.active .node-label {
+            color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        /* =========================================================
+           READOUT PANEL (RIGHT SIDE)
+           ========================================================= */
+        .readout-panel {
+            position: relative;
+            width: 460px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 40px rgba(56, 189, 248, 0.03), 0 20px 50px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 6px;
+            padding: 40px;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .readout-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .target-anchor {
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+
+        /* Sci-Fi Panel Decals */
+        .decal {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border: 2px solid var(--accent);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .decal.top-left {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .decal.top-right {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .decal.bottom-left {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .decal.bottom-right {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Scanning Laser FX */
+        .scanner-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent), 0 0 5px white;
+            opacity: 0;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        @keyframes scanSweep {
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Panel Internal Content */
+        .panel-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+        }
+
+        .status-text {
+            color: var(--accent);
+            animation: blinker 2s infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .feature-block {
+            margin-bottom: 30px;
+        }
+
+        .f-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .f-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            min-height: 36px;
+        }
+
+        .quote-block {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .quote-svg {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            fill: rgba(255, 255, 255, 0.02);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .quote-text {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            font-weight: 300;
+            min-height: 120px;
+        }
+
+        .subject-block {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .subject-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            object-fit: cover;
+            transition: filter 0.3s, opacity 0.3s;
+        }
+
+        /* Micro CSS Glitch when swapping data */
+        .subject-img.glitching {
+            filter: blur(3px) contrast(200%) hue-rotate(90deg) invert(20%);
+            opacity: 0.5;
+        }
+
+        .s-name {
+            font-size: 1rem;
+            font-weight: 600;
+            min-height: 20px;
+        }
+
+        .s-role {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            min-height: 16px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .m-lbl {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+
+        .m-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .m-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+        @media (max-width: 950px) {
+            .interface-container {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .nodes-map {
+                min-height: 350px;
+                width: 100%;
+            }
+
+            .readout-panel {
+                width: 100%;
+            }
+
+            .target-anchor {
+                left: 50%;
+                top: -1px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="cursor"></div>
+
+    <section class="science-section">
+
+        <div class="blueprint-bg"></div>
+        <canvas id="particles"></canvas>
+
+        <header class="section-header">
+            <div class="sys-badge"><span class="pulse"></span> SYSTEM NOMINAL</div>
+            <h2 class="title">Empirical <strong>Evidence</strong></h2>
+            <p class="subtitle">Select a subject node to decrypt observational feedback and validate core system
+                features.</p>
+        </header>
+
+        <div class="interface-container">
+
+            <svg class="connection-layer" id="svg-layer">
+                <path class="data-wire" id="data-wire" d=""></path>
+                <path class="data-path" id="data-path" d=""></path>
+            </svg>
+
+            <div class="nodes-map" id="nodes-map">
+                <div class="node active" data-index="0" style="left: 15%; top: 25%;">
+                    <div class="node-ring"></div>
+                    <div class="node-ring-2"></div>
+                    <div class="node-core"><img
+                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200"
+                            alt="Subject"></div>
+                    <div class="node-label">S-01</div>
+                </div>
+                <div class="node" data-index="1" style="left: 60%; top: 15%;">
+                    <div class="node-ring"></div>
+                    <div class="node-ring-2"></div>
+                    <div class="node-core"><img
+                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
+                            alt="Subject"></div>
+                    <div class="node-label">S-02</div>
+                </div>
+                <div class="node" data-index="2" style="left: 30%; top: 75%;">
+                    <div class="node-ring"></div>
+                    <div class="node-ring-2"></div>
+                    <div class="node-core"><img
+                            src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=200"
+                            alt="Subject"></div>
+                    <div class="node-label">S-03</div>
+                </div>
+                <div class="node" data-index="3" style="left: 80%; top: 65%;">
+                    <div class="node-ring"></div>
+                    <div class="node-ring-2"></div>
+                    <div class="node-core"><img
+                            src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=200"
+                            alt="Subject"></div>
+                    <div class="node-label">S-04</div>
+                </div>
+            </div>
+
+            <div class="readout-panel" id="readout-panel">
+                <div class="target-anchor" id="target-anchor"></div>
+                <div class="scanner-line" id="scanner-line"></div>
+
+                <div class="decal top-left"></div>
+                <div class="decal top-right"></div>
+                <div class="decal bottom-left"></div>
+                <div class="decal bottom-right"></div>
+
+                <div class="panel-inner">
+                    <div class="meta-header">
+                        <span>LOG_ID: <span id="log-id" style="color:#fff;">77A-01</span></span>
+                        <span class="status-text">DECRYPTED</span>
+                    </div>
+
+                    <div class="feature-block">
+                        <div class="f-label">VALIDATED FEATURE</div>
+                        <div class="f-value" id="f-val"></div>
+                    </div>
+
+                    <div class="quote-block">
+                        <svg class="quote-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                        </svg>
+                        <p class="quote-text" id="q-text"></p>
+                    </div>
+
+                    <div class="subject-block">
+                        <img src="" id="s-img" class="subject-img" alt="Avatar">
+                        <div class="s-info">
+                            <div class="s-name" id="s-name"></div>
+                            <div class="s-role" id="s-role"></div>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <div class="m-bar">
+                                <div class="m-fill" id="eff-fill"></div>
+                            </div>
+                            <div class="m-lbl">EFFICIENCY YIELD</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="m-bar">
+                                <div class="m-fill" id="stab-fill"></div>
+                            </div>
+                            <div class="m-lbl">CORE STABILITY</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        // --- Custom Cursor Interaction ---
+        const cursor = document.getElementById('cursor');
+        const nodes = document.querySelectorAll('.node');
+
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        nodes.forEach(node => {
+            node.addEventListener('mouseenter', () => {
+                cursor.style.width = '60px';
+                cursor.style.height = '60px';
+                cursor.style.background = 'rgba(56, 189, 248, 0.15)';
+            });
+            node.addEventListener('mouseleave', () => {
+                cursor.style.width = '30px';
+                cursor.style.height = '30px';
+                cursor.style.background = 'transparent';
+            });
+        });
+
+        // --- Data Source ---
+        const testimonials = [
+            {
+                id: "77A-01",
+                feature: "Neural Heuristics Pipeline",
+                quote: "The predictive models have accelerated our data synthesis by 400%. The system anticipates structural anomalies before they manifest, saving thousands of hours.",
+                name: "Dr. Aris Thorne",
+                role: "Lead Systems Researcher",
+                img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200",
+                eff: 87, stab: 99
+            },
+            {
+                id: "82B-04",
+                feature: "Quantum State Routing",
+                quote: "Zero-latency data transfer was theoretical until we integrated this protocol. It seamlessly bridges our global lab infrastructure without packet degradation.",
+                name: "Elena Rostova",
+                role: "Architecture Director",
+                img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+                eff: 98, stab: 100
+            },
+            {
+                id: "44C-09",
+                feature: "Biometric Handshake",
+                quote: "Security is absolute. The new biometric protocols ensure our proprietary sequences remain strictly confined to authorized personnel in real-time.",
+                name: "Marcus Vance",
+                role: "Head of Protocol Security",
+                img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=200",
+                eff: 100, stab: 95
+            },
+            {
+                id: "91X-12",
+                feature: "Synaptic Load Balancing",
+                quote: "During peak simulation cycles, the architecture redistributes computational load flawlessly. We've experienced zero node failures since implementation.",
+                name: "Sarah Jenkins",
+                role: "Operations Coordinator",
+                img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=200",
+                eff: 94, stab: 98
+            }
+        ];
+
+        // --- Text Scrambler Class ---
+        class Scrambler {
+            constructor() {
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+            }
+            scramble(element, newText) {
+                const oldText = element.innerText || '';
+                const length = Math.max(oldText.length, newText.length);
+                const queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    queue.push({ from, to, start, end });
+                }
+
+                cancelAnimationFrame(element.scrambleReq);
+                let frame = 0;
+
+                const update = () => {
+                    let output = '';
+                    let complete = 0;
+                    for (let i = 0; i < queue.length; i++) {
+                        let { from, to, start, end, char } = queue[i];
+                        if (frame >= end) {
+                            complete++;
+                            output += to;
+                        } else if (frame >= start) {
+                            if (!char || Math.random() < 0.28) {
+                                char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                                queue[i].char = char;
+                            }
+                            output += `<span style="color: rgba(56, 189, 248, 0.8)">${char}</span>`;
+                        } else {
+                            output += from;
+                        }
+                    }
+                    element.innerHTML = output;
+                    if (complete !== queue.length) {
+                        element.scrambleReq = requestAnimationFrame(update);
+                        frame++;
+                    }
+                };
+                update();
+            }
+        }
+
+        const scrambler = new Scrambler();
+        let activeIndex = -1;
+
+        // --- Core Application Logic ---
+        function selectNode(index) {
+            if (index === activeIndex) return;
+            activeIndex = index;
+
+            // Visual Active State
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.node[data-index="${index}"]`).classList.add('active');
+
+            const data = testimonials[index];
+
+            // Trigger Laser Scanner
+            const scanner = document.getElementById('scanner-line');
+            scanner.style.animation = 'none';
+            void scanner.offsetWidth; // reflow
+            scanner.style.animation = 'scanSweep 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+
+            // Glitch Image Swap
+            const avatar = document.getElementById('s-img');
+            avatar.classList.add('glitching');
+            setTimeout(() => {
+                avatar.src = data.img;
+                avatar.classList.remove('glitching');
+            }, 300);
+
+            // Scramble Text
+            document.getElementById('log-id').innerText = data.id;
+            scrambler.scramble(document.getElementById('f-val'), data.feature);
+            scrambler.scramble(document.getElementById('q-text'), `"${data.quote}"`);
+            scrambler.scramble(document.getElementById('s-name'), data.name);
+            scrambler.scramble(document.getElementById('s-role'), data.role);
+
+            // Animate Metrics
+            const effBar = document.getElementById('eff-fill');
+            const stabBar = document.getElementById('stab-fill');
+            effBar.style.width = '0%';
+            stabBar.style.width = '0%';
+
+            setTimeout(() => {
+                effBar.style.width = data.eff + '%';
+                stabBar.style.width = data.stab + '%';
+            }, 500);
+        }
+
+        // Attach Clicks
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('click', () => {
+                selectNode(parseInt(node.getAttribute('data-index')));
+            });
+        });
+
+        // --- Continuous Drawing Loop (SVG Lines & Particles) ---
+        const pCanvas = document.getElementById('particles');
+        const pCtx = pCanvas.getContext('2d');
+        let pWidth, pHeight;
+        let particles = [];
+
+        function initParticles() {
+            pWidth = pCanvas.width = window.innerWidth;
+            pHeight = pCanvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * pWidth,
+                    y: Math.random() * pHeight,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    size: Math.random() * 1.5 + 0.5
+                });
+            }
+        }
+        window.addEventListener('resize', initParticles);
+        initParticles();
+
+        function drawEnvironment() {
+            // 1. Draw Canvas Particles
+            pCtx.clearRect(0, 0, pWidth, pHeight);
+            pCtx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0) p.x = pWidth; if (p.x > pWidth) p.x = 0;
+                if (p.y < 0) p.y = pHeight; if (p.y > pHeight) p.y = 0;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                pCtx.fill();
+            });
+
+            // 2. Update SVG Dynamic Bezier Line
+            const activeNode = document.querySelector('.node.active');
+            const anchor = document.getElementById('target-anchor');
+            const svg = document.getElementById('svg-layer');
+            const wire = document.getElementById('data-wire');
+            const path = document.getElementById('data-path');
+
+            if (activeNode && anchor && svg) {
+                const svgRect = svg.getBoundingClientRect();
+                const nodeRect = activeNode.getBoundingClientRect();
+                const anchorRect = anchor.getBoundingClientRect();
+
+                // Start at active node center
+                const startX = nodeRect.left + nodeRect.width / 2 - svgRect.left;
+                const startY = nodeRect.top + nodeRect.height / 2 - svgRect.top;
+
+                // End at invisible anchor on readout panel
+                const endX = anchorRect.left + anchorRect.width / 2 - svgRect.left;
+                const endY = anchorRect.top + anchorRect.height / 2 - svgRect.top;
+
+                // Calculate orthogonal Bezier S-Curve based on screen size
+                let cp1X, cp1Y, cp2X, cp2Y;
+                if (window.innerWidth <= 950) {
+                    // Mobile: Vertical flow
+                    cp1X = startX;
+                    cp1Y = startY + (endY - startY) / 2;
+                    cp2X = endX;
+                    cp2Y = startY + (endY - startY) / 2;
+                } else {
+                    // Desktop: Horizontal flow
+                    cp1X = startX + (endX - startX) / 2;
+                    cp1Y = startY;
+                    cp2X = startX + (endX - startX) / 2;
+                    cp2Y = endY;
+                }
+
+                const d = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+                wire.setAttribute('d', d);
+                path.setAttribute('d', d);
+            }
+
+            requestAnimationFrame(drawEnvironment);
+        }
+
+        // Init System
+        selectNode(0);
+        drawEnvironment();
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Style - Features Comparison</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           1. CORE VARIABLES & RESET
+           Natural, deep forest palette. Strictly NO neon or purple.
+           ========================================================= */
+        :root {
+            --forest-bg: #050806;
+            --them-bg: #0d110e;
+            --us-bg: #0f1c13;
+
+            --text-main: #e4e6e4;
+            --text-muted: #8c968e;
+            --text-them: #5a635c;
+
+            --accent-green: #4ade80;
+            --accent-emerald: #10b981;
+
+            --glass-border: rgba(74, 222, 128, 0.12);
+            --transition-smooth: 0.9s cubic-bezier(0.25, 1, 0.15, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            background-color: var(--forest-bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom subtle scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--forest-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a261e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a3d30;
+        }
+
+        /* =========================================================
+           2. AMBIENT BACKGROUNDS & CANVAS
+           ========================================================= */
+        .nature-comparison-section {
+            position: relative;
+            padding: 10rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Moody, deep forest parallax image */
+        .parallax-bg {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            background: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=2500&auto=format&fit=crop') center/cover no-repeat;
+            filter: brightness(0.2) contrast(1.1) saturate(1.2);
+            z-index: 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, var(--forest-bg) 0%, rgba(5, 8, 6, 0.6) 40%, var(--forest-bg) 100%);
+            z-index: 1;
+        }
+
+        /* Elegant SVG Noise Texture */
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            z-index: 2;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        #fireflies {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .content-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1300px;
+        }
+
+        /* =========================================================
+           3. HEADER TYPOGRAPHY
+           ========================================================= */
+        .section-header {
+            text-align: center;
+            margin-bottom: 7rem;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 1.2rem;
+            background: rgba(74, 222, 128, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            font-weight: 400;
+            color: var(--text-main);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Withered word with organic strike-through */
+        .title span {
+            font-style: italic;
+            color: var(--text-muted);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title span::after {
+            content: '';
+            position: absolute;
+            left: -5%;
+            top: 55%;
+            width: 110%;
+            height: 3px;
+            background: var(--accent-green);
+            transform: rotate(-3deg);
+            box-shadow: 0 0 15px var(--accent-green);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* =========================================================
+           4. THE COMPARISON BOARD & FLEX HOVER INTERACTION
+           ========================================================= */
+        .comparison-board {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .compare-row {
+            display: flex;
+            height: 450px;
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            position: relative;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* Fluid masking logic */
+        .panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            transition: flex var(--transition-smooth), filter var(--transition-smooth);
+        }
+
+        .compare-row:hover .panel-them {
+            flex: 0.55;
+            filter: grayscale(100%) brightness(0.3) contrast(1.1);
+        }
+
+        .compare-row:hover .panel-us {
+            flex: 1.45;
+        }
+
+        /* Central VS Badge */
+        .vs-badge {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #0a0d0a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            z-index: 10;
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.15, 1);
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(74, 222, 128, 0.05);
+            animation: vsPulse 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes vsPulse {
+            0% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(74, 222, 128, 0.05);
+            }
+
+            100% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(74, 222, 128, 0.2);
+                color: #fff;
+            }
+        }
+
+        .compare-row:hover .vs-badge {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.2) rotate(-90deg);
+        }
+
+        /* Fixed Inner Content Wrappers */
+        .panel-inner {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 420px;
+            padding: 0;
+            transition: opacity 0.6s ease, transform var(--transition-smooth);
+            z-index: 5;
+        }
+
+        .panel-them .panel-inner {
+            left: 3.5rem;
+        }
+
+        .panel-us .panel-inner {
+            right: 3.5rem;
+        }
+
+        /* Subtle 3D inner translation on hover */
+        .compare-row:hover .panel-them .panel-inner {
+            transform: translateY(-50%) translateX(-25px);
+            opacity: 0.2;
+        }
+
+        .compare-row:hover .panel-us .panel-inner {
+            transform: translateY(-50%) translateX(-15px);
+        }
+
+        /* =========================================================
+           5. PANEL AESTHETICS (THEM VS US)
+           ========================================================= */
+
+        /* --- THEM: Rigid, Dead, Corporate --- */
+        .panel-them {
+            background: var(--them-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .grid-texture {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            transition: transform var(--transition-smooth);
+            pointer-events: none;
+        }
+
+        .compare-row:hover .panel-them .grid-texture {
+            transform: scale(1.1);
+        }
+
+        .panel-them .panel-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-them);
+        }
+
+        .panel-them .icon-wrapper {
+            background: #151816;
+            border: 1px solid #222623;
+            color: #666;
+        }
+
+        .panel-them .panel-title {
+            color: #88948b;
+        }
+
+        .panel-them .panel-desc {
+            color: var(--text-them);
+        }
+
+
+        /* --- US: Organic, Flowing, Alive --- */
+        .panel-us {
+            background: var(--us-bg);
+            border-left: 1px solid rgba(74, 222, 128, 0.05);
+            box-shadow: -15px 0 30px rgba(16, 34, 21, 0.8);
+            z-index: 2;
+        }
+
+        .compare-row:hover .panel-us {
+            border-left: 1px solid rgba(74, 222, 128, 0.2);
+            box-shadow: -30px 0 60px rgba(74, 222, 128, 0.15);
+        }
+
+        /* Ambient Glowing Core */
+        .blob-wrapper {
+            position: absolute;
+            top: 50%;
+            right: -10%;
+            transform: translateY(-50%);
+            transition: transform var(--transition-smooth);
+            width: 500px;
+            height: 500px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .compare-row:hover .blob-wrapper {
+            transform: translateY(-50%) scale(1.3);
+        }
+
+        .organic-blob {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(74, 222, 128, 0.12) 0%, transparent 60%);
+            filter: blur(40px);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: blobMorph 12s infinite alternate linear;
+        }
+
+        @keyframes blobMorph {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+                transform: rotate(0deg);
+            }
+
+            100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+                transform: rotate(90deg);
+            }
+        }
+
+        .panel-us .panel-eyebrow {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: var(--accent-green);
+        }
+
+        .panel-us .icon-wrapper {
+            background: rgba(74, 222, 128, 0.05);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.1);
+        }
+
+        .compare-row:hover .panel-us .icon-wrapper {
+            background: rgba(74, 222, 128, 0.1);
+            box-shadow: 0 0 35px rgba(74, 222, 128, 0.25);
+        }
+
+        .panel-us .panel-title {
+            color: var(--text-main);
+        }
+
+        .panel-us .panel-desc {
+            color: #a5b5aa;
+        }
+
+        /* Typography Utilities */
+        .panel-eyebrow {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+            display: block;
+        }
+
+        .icon-wrapper {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.5s ease;
+        }
+
+        .icon-wrapper svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .panel-title {
+            font-size: 2.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .panel-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        /* =========================================================
+           6. MICRO-ANIMATIONS (SVGs, Bars, Spores, Glitches)
+           ========================================================= */
+
+        /* SVG Path Drawing (Us) */
+        .draw-path {
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.25, 1, 0.15, 1);
+        }
+
+        .compare-row:hover .draw-path {
+            stroke-dashoffset: 0;
+        }
+
+        /* Glitch Effect (Them) */
+        @keyframes rigidGlitch {
+            0% {
+                transform: translate(0);
+                opacity: 1;
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+                opacity: 0.6;
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+                opacity: 0.8;
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+                opacity: 0.5;
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translate(0);
+                opacity: 1;
+            }
+        }
+
+        .compare-row:hover .rigid-icon {
+            animation: rigidGlitch 0.4s ease infinite;
+        }
+
+        /* Interactive Stats Bars */
+        .stats-bar {
+            width: 100%;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .stat-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .panel-them .stat-label {
+            color: var(--text-them);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .panel-them .stat-value {
+            color: #5a635c;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .panel-us .stat-label {
+            color: var(--accent-green);
+        }
+
+        .panel-us .stat-value {
+            color: #fff;
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            transition: width 1.5s cubic-bezier(0.25, 1, 0.15, 1) 0.2s;
+        }
+
+        .panel-them .bar-fill {
+            background: #3a423d;
+        }
+
+        .panel-us .bar-fill {
+            background: linear-gradient(90deg, var(--accent-emerald), var(--accent-green));
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+        }
+
+        /* Natural Growth Tip */
+        .panel-us .bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 7px;
+            height: 7px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--accent-green);
+            opacity: 0;
+            transition: opacity 0.5s 1s;
+        }
+
+        .compare-row.in-view .panel-us .bar-fill::after {
+            opacity: 1;
+        }
+
+        /* Floating Spores Effect */
+        .micro-spores {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 4;
+        }
+
+        .spore {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent-green);
+            opacity: 0;
+        }
+
+        .compare-row:hover .spore:nth-child(1) {
+            animation: floatSpore 2.5s ease-out forwards 0.1s;
+            top: 70%;
+            left: 30%;
+        }
+
+        .compare-row:hover .spore:nth-child(2) {
+            animation: floatSpore 3s ease-out forwards 0.3s;
+            top: 80%;
+            left: 70%;
+        }
+
+        .compare-row:hover .spore:nth-child(3) {
+            animation: floatSpore 2.2s ease-out forwards 0.5s;
+            top: 60%;
+            left: 50%;
+        }
+
+        .compare-row:hover .spore:nth-child(4) {
+            animation: floatSpore 2.8s ease-out forwards 0.2s;
+            top: 85%;
+            left: 15%;
+        }
+
+        .compare-row:hover .spore:nth-child(5) {
+            animation: floatSpore 2.4s ease-out forwards 0.4s;
+            top: 75%;
+            left: 85%;
+        }
+
+        @keyframes floatSpore {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 0.8;
+                transform: translateY(-30px) scale(1.5);
+            }
+
+            100% {
+                transform: translateY(-150px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* =========================================================
+           7. SCROLL REVEAL ANIMATIONS
+           ========================================================= */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.25, 1, 0.15, 1), transform 1s cubic-bezier(0.25, 1, 0.15, 1);
+        }
+
+        .scroll-reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .compare-row:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .compare-row:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .compare-row:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        /* =========================================================
+           8. RESPONSIVE DESIGN
+           ========================================================= */
+        @media (max-width: 1024px) {
+            .panel-inner {
+                width: 300px;
+                padding: 0 1.5rem;
+            }
+
+            .title {
+                font-size: 4rem;
+            }
+
+            .nature-comparison-section {
+                padding: 8rem 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .compare-row {
+                flex-direction: column;
+                height: auto;
+                border-radius: 16px;
+            }
+
+            .compare-row:hover .panel-them,
+            .compare-row:hover .panel-us {
+                flex: none;
+                filter: none;
+            }
+
+            .panel {
+                flex: none;
+                width: 100%;
+                filter: none !important;
+            }
+
+            .panel-them .panel-inner,
+            .panel-us .panel-inner {
+                position: relative;
+                top: auto;
+                transform: none;
+                left: auto;
+                right: auto;
+                width: 100%;
+                padding: 3rem 2rem;
+            }
+
+            .vs-badge {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+
+            .compare-row:hover .vs-badge {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+                rotate: 0;
+            }
+
+            .blob-wrapper {
+                display: none;
+            }
+
+            /* Better performance on mobile */
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="nature-comparison-section" id="comparison">
+        <div class="parallax-bg" id="parallax-bg"></div>
+        <div class="bg-overlay"></div>
+        <div class="noise-overlay"></div>
+
+        <canvas id="fireflies"></canvas>
+
+        <div class="content-container">
+
+            <header class="section-header scroll-reveal">
+                <div class="eyebrow-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round">
+                        <path d="M12 2c0 0-8 6-8 12a8 8 0 0 0 16 0c0-6-8-12-8-12z" />
+                        <path d="M12 2v20" />
+                    </svg>
+                    Natural Selection
+                </div>
+                <h2 class="title">Evolve Beyond the <span>Barren</span></h2>
+                <p class="subtitle">Witness how our living, breathing ecosystem effortlessly outgrows the rigid,
+                    artificial constraints of traditional legacy platforms.</p>
+            </header>
+
+            <div class="comparison-board">
+
+                <div class="compare-row scroll-reveal">
+                    <div class="panel panel-them">
+                        <div class="grid-texture"></div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">[ INDUSTRY STANDARD ]</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="rigid-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Fragmented Silos</h3>
+                            <p class="panel-desc">Rigid architectural blocks that trap data. Scaling requires painful,
+                                manual restructuring that halts your momentum entirely.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">System Agility</span>
+                                    <span class="stat-value">18%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="18%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vs-badge">VS</div>
+
+                    <div class="panel panel-us">
+                        <div class="blob-wrapper">
+                            <div class="organic-blob"></div>
+                        </div>
+                        <div class="micro-spores">
+                            <i class="spore"></i><i class="spore"></i><i class="spore"></i><i class="spore"></i><i
+                                class="spore"></i>
+                        </div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">~ OUR ECOSYSTEM ~</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="organic-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path class="draw-path" pathLength="1"
+                                        d="M12 2C12 2 4 10 4 15C4 18 7 22 12 22C17 22 20 18 20 15C20 10 12 2 12 2Z" />
+                                    <path class="draw-path" pathLength="1" d="M12 10C12 10 8 13 8 16" />
+                                    <path class="draw-path" pathLength="1" d="M12 14C12 14 15 16 15 19" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Living Architecture</h3>
+                            <p class="panel-desc">A mycelial network that intelligently routes resources. It naturally
+                                extends its roots to support your growth, requiring zero manual intervention.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">System Agility</span>
+                                    <span class="stat-value">99%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="99%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compare-row scroll-reveal">
+                    <div class="panel panel-them">
+                        <div class="grid-texture"></div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">[ INDUSTRY STANDARD ]</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="rigid-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path d="M2 8 L10 8 L10 16 L22 16" />
+                                    <line x1="10" y1="4" x2="10" y2="8" />
+                                    <line x1="10" y1="16" x2="10" y2="20" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Stagnant Workflows</h3>
+                            <p class="panel-desc">Batch processing systems that dam up your workflow. Critical insights
+                                are delayed, leaving you reacting to the market rather than leading.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">Data Velocity</span>
+                                    <span class="stat-value">24%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="24%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vs-badge">VS</div>
+
+                    <div class="panel panel-us">
+                        <div class="blob-wrapper">
+                            <div class="organic-blob"></div>
+                        </div>
+                        <div class="micro-spores">
+                            <i class="spore"></i><i class="spore"></i><i class="spore"></i><i class="spore"></i><i
+                                class="spore"></i>
+                        </div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">~ OUR ECOSYSTEM ~</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="organic-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path class="draw-path" pathLength="1" d="M2 12 Q7 4 12 12 T22 12" />
+                                    <path class="draw-path" pathLength="1" d="M2 16 Q7 8 12 16 T22 16"
+                                        style="transition-delay: 0.1s" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Flowing Currents</h3>
+                            <p class="panel-desc">Frictionless, real-time event streams. Data flows instantly through
+                                your ecosystem, nourishing your decision-making the precise moment events occur.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">Data Velocity</span>
+                                    <span class="stat-value">100%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="compare-row scroll-reveal">
+                    <div class="panel panel-them">
+                        <div class="grid-texture"></div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">[ INDUSTRY STANDARD ]</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="rigid-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <polygon points="12 2 22 7 22 17 12 22 2 17 2 7" />
+                                    <path d="M12 2 L10 10 L14 14 L12 22" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Brittle Defenses</h3>
+                            <p class="panel-desc">Static perimeters that crack under evolving threats. Patches are
+                                applied manually, leaving massive windows of vulnerability exposed.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">Threat Immunity</span>
+                                    <span class="stat-value">45%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="45%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vs-badge">VS</div>
+
+                    <div class="panel panel-us">
+                        <div class="blob-wrapper">
+                            <div class="organic-blob"></div>
+                        </div>
+                        <div class="micro-spores">
+                            <i class="spore"></i><i class="spore"></i><i class="spore"></i><i class="spore"></i><i
+                                class="spore"></i>
+                        </div>
+                        <div class="panel-inner">
+                            <span class="panel-eyebrow">~ OUR ECOSYSTEM ~</span>
+                            <div class="icon-wrapper">
+                                <svg viewBox="0 0 24 24" class="organic-icon" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path class="draw-path" pathLength="1" d="M12 22 V14" />
+                                    <path class="draw-path" pathLength="1"
+                                        d="M12 14 C12 14 7 12 7 8 C7 5 9 3 12 3 C15 3 17 5 17 8 C17 12 12 14 12 14Z" />
+                                    <path class="draw-path" pathLength="1" d="M3 22 A9 9 0 0 1 21 22"
+                                        stroke-dasharray="4 4" />
+                                </svg>
+                            </div>
+                            <h3 class="panel-title">Adaptive Canopy</h3>
+                            <p class="panel-desc">Self-healing protocols that actively learn from their environment. An
+                                impenetrable, dynamic canopy that automatically shields you from emerging threats.</p>
+
+                            <div class="stats-bar">
+                                <div class="stat-header">
+                                    <span class="stat-label">Threat Immunity</span>
+                                    <span class="stat-value">99.9%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" data-width="100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. Scroll Reveal & Bar Fill Trigger
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Animate stats bars inside the row
+                        entry.target.querySelectorAll('.bar-fill').forEach(fill => {
+                            fill.style.width = fill.getAttribute('data-width');
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+            // 2. Mouse Parallax for Deep Background
+            const bg = document.getElementById('parallax-bg');
+            let mouseX = 0, mouseY = 0;
+            let currentX = 0, currentY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) - 0.5;
+                mouseY = (e.clientY / window.innerHeight) - 0.5;
+            });
+
+            const lerp = (start, end, factor) => start + (end - start) * factor;
+
+            const animateParallax = () => {
+                currentX = lerp(currentX, mouseX, 0.05);
+                currentY = lerp(currentY, mouseY, 0.05);
+                bg.style.transform = `translate(${currentX * 25}px, ${currentY * 25}px) scale(1.05)`;
+                requestAnimationFrame(animateParallax);
+            };
+            animateParallax();
+
+            // 3. Immersive Canvas System (Fireflies/Pollen)
+            const canvas = document.getElementById('fireflies');
+            const ctx = canvas.getContext('2d');
+            const section = document.querySelector('.nature-comparison-section');
+            let width, height;
+            let fireflies = [];
+
+            const initCanvas = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = section.offsetHeight;
+                fireflies = [];
+
+                // Smart density allocation based on screen size
+                const count = Math.min(Math.floor(width / 15), 150);
+
+                for (let i = 0; i < count; i++) {
+                    fireflies.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        s: Math.random() * 2 + 0.5,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        vy: (Math.random() - 1) * 0.4,
+                        a: Math.random() * 0.8,
+                        da: (Math.random() - 0.5) * 0.015
+                    });
+                }
+            };
+
+            const animateFireflies = () => {
+                ctx.clearRect(0, 0, width, height);
+
+                fireflies.forEach(f => {
+                    // Update physics
+                    f.x += f.vx;
+                    f.y += f.vy;
+                    f.x += Math.sin(f.y * 0.015) * 0.3; // Organic horizontal wavering
+
+                    // Pulse alpha natively
+                    f.a += f.da;
+                    if (f.a > 0.8 || f.a < 0.1) f.da = -f.da;
+
+                    // Infinite loop wrapping
+                    if (f.y < -20) f.y = height + 20;
+                    if (f.x < -20) f.x = width + 20;
+                    if (f.x > width + 20) f.x = -20;
+
+                    // Draw
+                    ctx.beginPath();
+                    ctx.arc(f.x, f.y, f.s, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(74, 222, 128, ${f.a})`;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = 'rgba(74, 222, 128, 0.5)';
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(animateFireflies);
+            };
+
+            // Keep canvas mapped perfectly during resize
+            const resizeObserver = new ResizeObserver(() => initCanvas());
+            resizeObserver.observe(section);
+
+            initCanvas();
+            animateFireflies();
+        });
+    </script>
+</body>
+
+</html>

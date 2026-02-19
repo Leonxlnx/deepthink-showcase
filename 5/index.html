@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tharwa Protocol - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================
+           1. CSS VARIABLES & BASE SETUP
+           ========================================== */
+        :root {
+            --bg-color: #030303;
+            --surface: rgba(15, 15, 15, 0.6);
+            --surface-hover: rgba(25, 25, 25, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #ffffff;
+            --transition-smooth: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-fast: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Cinematic Noise Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Custom Premium Cursor */
+        .cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s, border-color 0.2s;
+        }
+
+        .cursor-hover .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(2px);
+            border-color: transparent;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(3rem, 7vw, 6.5rem);
+            letter-spacing: -0.04em;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 4rem);
+            letter-spacing: -0.03em;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: var(--text-muted);
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .tag::before {
+            content: '» ';
+            color: #444;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 4%;
+        }
+
+        .section-padding {
+            padding: 10rem 0;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: var(--text-main);
+            color: var(--bg-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 2px;
+            transition: var(--transition-fast);
+            border: 1px solid var(--text-main);
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border-color: var(--text-main);
+        }
+
+        /* Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: var(--transition-smooth);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* ==========================================
+           2. NAVIGATION & HERO (Ken Burns)
+           ========================================== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            transition: background 0.4s, backdrop-filter 0.4s;
+            border-bottom: 1px solid transparent;
+        }
+
+        nav.scrolled {
+            background: rgba(3, 3, 3, 0.75);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-radius: 2px;
+            border-top-color: transparent;
+        }
+
+        .menu-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 30px;
+        }
+
+        .menu-lines div {
+            height: 1px;
+            background: white;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: -5%;
+            width: 110%;
+            height: 110%;
+            background: url('https://images.unsplash.com/photo-1509316785289-025f5b846b35?q=80&w=2500&auto=format&fit=crop') center/cover;
+            z-index: -2;
+            animation: kenBurns 40s infinite alternate ease-in-out;
+        }
+
+        @keyframes kenBurns {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(3, 3, 3, 0.2) 0%, rgba(3, 3, 3, 0.8) 70%, var(--bg-color) 100%);
+            z-index: -1;
+        }
+
+        .hero-content {
+            margin-top: 10vh;
+            width: 100%;
+        }
+
+        .hero h1 span {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .hero-bottom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 4rem;
+            max-width: 1000px;
+        }
+
+        .hero-bottom p {
+            font-size: 1.1rem;
+        }
+
+        /* ==========================================
+           3. DESERT APY STATS (Parallax 3D Numbers)
+           ========================================== */
+        .stats-section {
+            position: relative;
+            height: 130vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .stats-bg {
+            position: absolute;
+            inset: -10%;
+            width: 120%;
+            height: 120%;
+            background: url('https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?q=80&w=2500&auto=format&fit=crop') center/cover;
+            opacity: 0.5;
+            z-index: -2;
+        }
+
+        .stats-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-color) 80%);
+            z-index: -1;
+        }
+
+        .floating-numbers {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .apy-item {
+            position: absolute;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            text-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .apy-item span {
+            font-size: clamp(4rem, 10vw, 10rem);
+            font-weight: 300;
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+        }
+
+        .apy-item p {
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 10px;
+        }
+
+        .glowing-door {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12vw;
+            height: 22vw;
+            min-width: 150px;
+            min-height: 280px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 100px 20px rgba(255, 255, 255, 0.6), 0 0 200px 50px rgba(255, 255, 255, 0.2);
+            filter: blur(2px);
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        /* Positions */
+        .apy-1 {
+            top: 15%;
+            left: 10%;
+        }
+
+        .apy-2 {
+            top: 25%;
+            right: 15%;
+            font-size: 0.8em;
+        }
+
+        .apy-3 {
+            top: 55%;
+            left: 20%;
+            font-size: 1.2em;
+        }
+
+        .apy-4 {
+            bottom: 15%;
+            right: 25%;
+            font-size: 0.6em;
+            opacity: 0.7;
+        }
+
+        .apy-5 {
+            bottom: 30%;
+            right: 10%;
+            font-size: 0.9em;
+        }
+
+        /* ==========================================
+           4. MARQUEE & ACCESS POINTS (Glow Cards)
+           ========================================== */
+        .marquee {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 0;
+            overflow: hidden;
+            display: flex;
+            background: var(--bg-color);
+            position: relative;
+            z-index: 10;
+        }
+
+        .marquee-track {
+            display: flex;
+            animation: scrollMarquee 30s linear infinite;
+            white-space: nowrap;
+        }
+
+        .marquee-item {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #555;
+            margin: 0 3rem;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .marquee-item:hover {
+            color: white;
+        }
+
+        @keyframes scrollMarquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .points-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* The Magic Spotlight Card */
+        .glow-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 4rem 3rem;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease;
+        }
+
+        .glow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-highlight);
+        }
+
+        .glow-card:hover::before {
+            opacity: 1;
+        }
+
+        .glow-card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .coin {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 80%);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            transition: transform 0.5s ease;
+        }
+
+        .glow-card:hover .coin {
+            transform: rotateY(180deg);
+        }
+
+        .list-styled {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .list-styled li {
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .list-styled li::before {
+            content: '+';
+            color: var(--text-main);
+        }
+
+        /* ==========================================
+           5. CORE TOKENS GRID
+           ========================================== */
+        .tokens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .token-item {
+            padding: 3rem 2.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge.dev {
+            color: #d4af37;
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* ==========================================
+           6. PRODUCTS & SERVICES (Interactive Tabs)
+           ========================================== */
+        .tabs-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            padding-top: 4rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 1.2rem 0;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            transition: var(--transition-fast);
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            color: var(--text-main);
+            border-bottom-color: var(--text-main);
+            padding-left: 15px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           7. SECURITY & FOOTER
+           ========================================== */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            padding-top: 4rem;
+        }
+
+        .sec-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 6rem 0 2rem;
+            margin-top: 6rem;
+        }
+
+        .footer-cta {
+            text-align: center;
+            margin-bottom: 8rem;
+        }
+
+        .footer-cta h2 {
+            font-size: clamp(3rem, 6vw, 5rem);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-col h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-col a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover {
+            color: var(--text-main);
+        }
+
+        @media (max-width: 900px) {
+
+            .hero-bottom,
+            .points-grid,
+            .tabs-wrapper,
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-wrapper {
+                border-top: none;
+                padding-top: 0;
+            }
+
+            .floating-numbers {
+                display: none;
+                /* Simplify on mobile */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <nav id="navbar">
+        <div class="logo interactable"><span></span> tharwa</div>
+        <div class="interactable menu-lines">
+            <div></div>
+            <div></div>
+        </div>
+        <a href="#" class="btn btn-outline interactable hidden-mobile" style="display: none;" id="nav-btn">Launch App
+            ↗</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg parallax-bg" data-speed="0.2"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1 class="reveal">Two Financial Systems.<br><span>One Protocol.</span></h1>
+
+            <div class="hero-bottom reveal delay-1">
+                <div>
+                    <p style="color: white; margin-bottom: 2rem;">Institutional-grade treasury infrastructure for global
+                        and Islamic finance markets.</p>
+                    <a href="#" class="btn interactable">Launch App</a>
+                </div>
+                <div>
+                    <p>Deploy capital across stablecoins, fixed-term vaults, yield products, and structured lending.
+                        Choose between conventional strategies or faith-aligned approaches — both powered by the same
+                        battle-tested infrastructure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-bg parallax-bg" data-speed="0.1"></div>
+        <div class="stats-overlay"></div>
+
+        <div class="glowing-door reveal"></div>
+
+        <div class="floating-numbers container">
+            <div class="apy-item apy-1 parallax-num reveal" data-speed="0.15">
+                <span>+20%</span>
+                <p>ethUSD Variable APY</p>
+            </div>
+            <div class="apy-item apy-2 parallax-num reveal delay-1" data-speed="-0.1">
+                <span>+6%</span>
+                <p>Top-Fixed Vault APY</p>
+            </div>
+            <div class="apy-item apy-3 parallax-num reveal delay-2" data-speed="0.25">
+                <span>+29%</span>
+                <p>sthUSD Variable APY</p>
+            </div>
+            <div class="apy-item apy-4 parallax-num reveal" data-speed="-0.05">
+                <span>+8%</span>
+                <p>Top-Fixed Vault APY</p>
+            </div>
+            <div class="apy-item apy-5 parallax-num reveal delay-1" data-speed="0.1">
+                <span style="font-size: 3rem;">Coming Soon</span>
+                <p>wthUSD Variable APY</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="marquee interactable">
+        <div class="marquee-track">
+            <span class="marquee-item">LAYERZERO</span><span class="marquee-item">PENDLE</span><span
+                class="marquee-item">GATE.IO</span><span class="marquee-item">DEFA</span><span
+                class="marquee-item">ORHAN LEGAL</span><span class="marquee-item">MEV CAPITAL</span><span
+                class="marquee-item">PRISMSEC</span><span class="marquee-item">MEXC</span>
+            <span class="marquee-item">LAYERZERO</span><span class="marquee-item">PENDLE</span><span
+                class="marquee-item">GATE.IO</span><span class="marquee-item">DEFA</span><span
+                class="marquee-item">ORHAN LEGAL</span><span class="marquee-item">MEV CAPITAL</span><span
+                class="marquee-item">PRISMSEC</span><span class="marquee-item">MEXC</span>
+        </div>
+    </div>
+
+    <section class="section-padding container">
+        <span class="tag reveal">Our Product</span>
+        <h2 class="reveal delay-1">One Protocol.<br><span style="color: var(--text-muted)">Two Access Points.</span>
+        </h2>
+
+        <div class="points-grid">
+            <div class="glow-card interactable reveal delay-1">
+                <div class="glow-card-content">
+                    <span class="tag">FAITH-ALIGNED LANE</span>
+                    <div class="coin">#</div>
+                    <h3 style="font-size: 3rem; margin-bottom: 2rem;">thUSD</h3>
+                    <p style="font-size: 0.8rem; letter-spacing: 1px; color: white;">BACKED BY:</p>
+                    <ul class="list-styled">
+                        <li>Sukuk (Islamic bonds)</li>
+                        <li>UAE Real Estate</li>
+                        <li>Gold</li>
+                        <li>Shariah-compliant asset selection</li>
+                    </ul>
+                    <p style="font-size: 0.9rem; margin-bottom: 2rem;">For faith-conscious investors, Islamic
+                        institutions, GCC family offices, halal-focused funds.</p>
+                    <a href="#" class="btn btn-outline" style="width: 100%; justify-content: center;">Explore
+                        Faith-Aligned Products</a>
+                </div>
+            </div>
+
+            <div class="glow-card interactable reveal delay-2">
+                <div class="glow-card-content">
+                    <span class="tag">GLOBAL MARKETS LANE</span>
+                    <div class="coin">W</div>
+                    <h3 style="font-size: 3rem; margin-bottom: 2rem;">wthUSD</h3>
+                    <p style="font-size: 0.8rem; letter-spacing: 1px; color: white;">BACKED BY:</p>
+                    <ul class="list-styled">
+                        <li>Shariah-compliant assets included</li>
+                        <li>Plus T-Bills and conventional fixed income</li>
+                        <li>Full portfolio access for maximum yield</li>
+                        <li>No restrictions - institutional-grade</li>
+                    </ul>
+                    <p style="font-size: 0.9rem; margin-bottom: 2rem;">For institutional investors, DeFi protocols,
+                        global retail investors, hedge funds, DAOs.</p>
+                    <a href="#" class="btn btn-outline" style="width: 100%; justify-content: center;">Explore Global
+                        Products</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding container">
+        <span class="tag reveal">Core Tokens</span>
+        <h2 class="reveal delay-1">The foundation of the<br><span style="color: var(--text-muted)">Tharwa
+                ecosystem.</span></h2>
+
+        <div class="tokens-grid">
+            <div class="glow-card token-item interactable reveal">
+                <div class="glow-card-content">
+                    <span class="tag">Governance Token</span>
+                    <h3>TRWA</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Listed On: Uniswap, Gate.com, MEXC</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>Protocol governance rights</li>
+                        <li>Enhanced vault access</li>
+                        <li>Yield multipliers</li>
+                    </ul>
+                    <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                </div>
+            </div>
+
+            <div class="glow-card token-item interactable reveal delay-1">
+                <div class="glow-card-content">
+                    <span class="tag">Smart Stablecoin</span>
+                    <h3>thUSD</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Market Access: Islamic Faith-Aligned</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>RWA-backed stability</li>
+                        <li>Dynamic portfolio management</li>
+                        <li>LayerZero cross-chain compatible</li>
+                    </ul>
+                    <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                </div>
+            </div>
+
+            <div class="glow-card token-item interactable reveal delay-2">
+                <div class="glow-card-content">
+                    <span class="tag">Global Market Stable</span>
+                    <h3>wthUSD</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Market Access: Global</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>Conventional finance lane</li>
+                        <li>Exposure to T-Bills and global markets</li>
+                        <li>Institutional focused</li>
+                    </ul>
+                    <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                </div>
+            </div>
+
+            <div class="glow-card token-item interactable reveal">
+                <div class="glow-card-content">
+                    <span class="tag">Staked Governance</span>
+                    <h3>sTRWA</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Yield: Coming Soon</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>Stake TRWA for rewards</li>
+                        <li>Enhanced governance rights</li>
+                    </ul>
+                    <span class="status-badge dev" style="margin-top: 2rem;">In Development</span>
+                </div>
+            </div>
+
+            <div class="glow-card token-item interactable reveal delay-1">
+                <div class="glow-card-content">
+                    <span class="tag">Yield-Bearing Token</span>
+                    <h3>sthUSD</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Current APY Variable</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>Instant liquidity</li>
+                        <li>Zero entry/exit fees</li>
+                        <li>Real RWA yield distribution</li>
+                    </ul>
+                    <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                </div>
+            </div>
+
+            <div class="glow-card token-item interactable reveal delay-2">
+                <div class="glow-card-content">
+                    <span class="tag">Wrapped Yield Token</span>
+                    <h3>wsthUSD</h3>
+                    <p style="font-size: 0.8rem; margin-bottom: 1.5rem;">Yield: Coming Soon</p>
+                    <ul class="list-styled" style="margin-bottom: 0;">
+                        <li>Global markets staked</li>
+                        <li>Compounding yield</li>
+                        <li>Full portfolio exposure</li>
+                    </ul>
+                    <span class="status-badge dev" style="margin-top: 2rem;">In Development</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding container">
+        <span class="tag reveal">What we offer</span>
+        <h2 class="reveal delay-1">Products & Services<br><span
+                style="font-size: 1.2rem; color: var(--text-muted);">Advanced financial products built on institutional
+                infrastructure</span></h2>
+
+        <div class="tabs-wrapper reveal delay-2">
+            <div class="tab-buttons">
+                <button class="tab-btn interactable active" data-tab="tab-1">Vaults</button>
+                <button class="tab-btn interactable" data-tab="tab-2">Faith-Aligned Lending</button>
+                <button class="tab-btn interactable" data-tab="tab-3">OTC Marketplace</button>
+                <button class="tab-btn interactable" data-tab="tab-4">Tharwa Gold Agent</button>
+            </div>
+
+            <div class="tab-content-container">
+                <div id="tab-1" class="tab-content active glow-card" style="padding: 3rem;">
+                    <div class="glow-card-content">
+                        <span class="tag">Fixed-Term Yield Strategies</span>
+                        <h3 style="font-size: 2.5rem; margin-bottom: 1rem;">Vaults</h3>
+                        <p style="margin-bottom: 2rem;">Audited: PrismSec (0 critical findings)</p>
+                        <ul class="list-styled" style="font-size: 1.1rem; line-height: 2;">
+                            <li>Multiple fixed-term strategies (90-360 days)</li>
+                            <li>Tradable ERC-1155 NFTs</li>
+                            <li>Early exit options</li>
+                            <li>Predictable returns</li>
+                        </ul>
+                        <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-content glow-card" style="padding: 3rem;">
+                    <div class="glow-card-content">
+                        <span class="tag">Asset-Based Borrowing</span>
+                        <h3 style="font-size: 2.5rem; margin-bottom: 1rem;">Faith-Aligned Lending</h3>
+                        <p style="margin-bottom: 2rem;">Status: Not Yet Certified</p>
+                        <ul class="list-styled" style="font-size: 1.1rem; line-height: 2;">
+                            <li>Designed to avoid interest (Riba)</li>
+                            <li>Asset-backed structures (Murabaha, Ijarah)</li>
+                            <li>Access thUSD during mint constraints</li>
+                            <li>Building toward Shariah certification</li>
+                        </ul>
+                        <span class="status-badge" style="margin-top: 2rem;">Live & Audited</span>
+                    </div>
+                </div>
+
+                <div id="tab-3" class="tab-content glow-card" style="padding: 3rem;">
+                    <div class="glow-card-content">
+                        <span class="tag">P2P Trading Hub</span>
+                        <h3 style="font-size: 2.5rem; margin-bottom: 1rem;">OTC Marketplace</h3>
+                        <p style="margin-bottom: 2rem;">Bond secondary markets</p>
+                        <ul class="list-styled" style="font-size: 1.1rem; line-height: 2;">
+                            <li>thUSD liquidity without DEX slippage</li>
+                            <li>TRWA exchange</li>
+                            <li>Custom order matching</li>
+                        </ul>
+                        <span class="status-badge dev" style="margin-top: 2rem;">In Development</span>
+                    </div>
+                </div>
+
+                <div id="tab-4" class="tab-content glow-card" style="padding: 3rem;">
+                    <div class="glow-card-content">
+                        <span class="tag">AI-Powered Gold Allocation</span>
+                        <h3 style="font-size: 2.5rem; margin-bottom: 1rem;">Tharwa Gold Agent</h3>
+                        <p style="margin-bottom: 2rem;">Autonomous gold trading agent</p>
+                        <ul class="list-styled" style="font-size: 1.1rem; line-height: 2;">
+                            <li>Multi-LLM market analysis</li>
+                            <li>Optimized entry/exit timing</li>
+                            <li>Part of Confluence Engine ecosystem</li>
+                        </ul>
+                        <span class="status-badge dev" style="margin-top: 2rem;">In Development</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding container">
+        <span class="tag reveal">Institutional-grade security</span>
+        <h2 class="reveal delay-1">Security & Trust<br><span
+                style="font-size: 1.2rem; color: var(--text-muted);">Battle-tested infrastructure with
+                institutional-grade security</span></h2>
+
+        <div class="security-grid reveal delay-2">
+            <div class="sec-item interactable">
+                <span class="tag">01</span>
+                <h3>Continuously Audited</h3>
+                <p style="font-size: 0.9rem;">All smart contracts audited by PrismSec with 0 critical findings.
+                    Additional audits planned with top-tier firms.</p>
+                <p style="color: white; font-size: 0.8rem; margin-top: 1.5rem;">+ Commitment to ongoing security
+                    validation</p>
+            </div>
+            <div class="sec-item interactable">
+                <span class="tag">02</span>
+                <h3>100% Collateralization</h3>
+                <p style="font-size: 0.9rem;">Mint thUSD with stablecoins—protocol converts them into diversified RWAs.
+                    All collateral is verifiable on-chain.</p>
+                <p style="color: white; font-size: 0.8rem; margin-top: 1.5rem;">+ 1:1 backing<br>+ Transparent reserves
+                </p>
+            </div>
+            <div class="sec-item interactable">
+                <span class="tag">03</span>
+                <h3>UAE-Based & Regulated</h3>
+                <p style="font-size: 0.9rem;">Operating from UAE with ADGM DLT license in progress.</p>
+                <p style="color: white; font-size: 0.8rem; margin-top: 1.5rem;">+ Building toward institutional
+                    compliance</p>
+            </div>
+            <div class="sec-item interactable">
+                <span class="tag">04</span>
+                <h3>Multi-Signature Control</h3>
+                <p style="font-size: 0.9rem;">Distributed key generation preventing any single point of failure.</p>
+                <p style="color: white; font-size: 0.8rem; margin-top: 1.5rem;">+ No single point of failure</p>
+            </div>
+            <div class="sec-item interactable">
+                <span class="tag">05</span>
+                <h3>Emergency Safeguards</h3>
+                <p style="font-size: 0.9rem;">Circuit breakers, emergency pause mechanisms, and automated risk
+                    monitoring protect against extreme market conditions.</p>
+                <p style="color: white; font-size: 0.8rem; margin-top: 1.5rem;">+ Stress-tested for worst-case scenarios
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-cta reveal">
+            <span class="tag" style="justify-content: center; margin-bottom: 2rem;">Get Started</span>
+            <h2>Start Earning<br>Real Yield Today</h2>
+            <p style="margin-bottom: 3rem;">Join thousands of users earning sustainable returns from diversified
+                real-world assets.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="#" class="btn interactable">Launch App</a>
+                <a href="#" class="btn btn-outline interactable">Join Discord</a>
+            </div>
+        </div>
+
+        <div class="container" style="border-top: 1px solid var(--border); padding-top: 4rem;">
+            <div class="footer-grid reveal">
+                <div>
+                    <div class="logo" style="margin-bottom: 1rem;"><span></span> tharwa</div>
+                    <p style="font-size: 0.9rem; max-width: 250px;">Making financial abundance stable, intelligent, and
+                        accessible.</p>
+                    <p style="font-size: 0.8rem; margin-top: 2rem; color: #555;">Headquarters: United Arab Emirates</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Products</h4>
+                    <a href="#" class="interactable">thUSD Stablecoin</a>
+                    <a href="#" class="interactable">sthUSD Yield Token</a>
+                    <a href="#" class="interactable">Tharwa Bonds</a>
+                    <a href="#" class="interactable">TRWA Governance</a>
+                    <a href="#" class="interactable">wthUSD <span style="font-size: 0.6rem; color: #555;">COMING
+                            SOON</span></a>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <a href="#" class="interactable">Documentation</a>
+                    <a href="#" class="interactable">Whitepaper</a>
+                    <a href="#" class="interactable">Audit Reports</a>
+                    <a href="#" class="interactable">Brand Assets</a>
+                    <a href="#" class="interactable">Developer Portal</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <a href="#" class="interactable">Discord</a>
+                    <a href="#" class="interactable">Twitter (X)</a>
+                    <a href="#" class="interactable">LinkedIn</a>
+                    <a href="#" class="interactable">GitHub</a>
+                </div>
+            </div>
+
+            <div
+                style="margin-top: 6rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 0.8rem; color: #555;">
+                <p>IMPORTANT DISCLAIMER: Tharwa Protocol is not currently Shariah-certified. Cryptocurrency investments
+                    involve risk.</p>
+                <p>TRWA Contract: 0x7b...Eca8 (Ethereum)</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- 1. Custom Smooth Cursor --- */
+            const cursorDot = document.getElementById('cursor-dot');
+            const cursorOutline = document.getElementById('cursor-outline');
+            const interactables = document.querySelectorAll('.interactable');
+
+            let mouseX = 0, mouseY = 0, outlineX = 0, outlineY = 0;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.left = `${mouseX}px`;
+                cursorDot.style.top = `${mouseY}px`;
+            });
+
+            // LERP for smooth lagging effect on outline
+            function animateCursor() {
+                outlineX += (mouseX - outlineX) * 0.15;
+                outlineY += (mouseY - outlineY) * 0.15;
+                cursorOutline.style.left = `${outlineX}px`;
+                cursorOutline.style.top = `${outlineY}px`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover effects
+            interactables.forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+            });
+
+            /* --- 2. Navbar Blur & Reveal --- */
+            const nav = document.getElementById('navbar');
+            const navBtn = document.getElementById('nav-btn');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                    navBtn.style.display = 'inline-flex';
+                } else {
+                    nav.classList.remove('scrolled');
+                    navBtn.style.display = 'none';
+                }
+            });
+
+            /* --- 3. Scroll Reveal Animation (Intersection Observer) --- */
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Only animate once
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+            /* --- 4. Parallax Scrolling Effect --- */
+            const parallaxElements = document.querySelectorAll('.parallax-bg, .parallax-num');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                parallaxElements.forEach(el => {
+                    const speed = el.getAttribute('data-speed');
+                    // Calculate relative to viewport for numbers
+                    if (el.classList.contains('parallax-num')) {
+                        const rect = el.parentElement.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom > 0) {
+                            const offset = (window.innerHeight - rect.top) * speed;
+                            el.style.transform = `translateY(${offset}px)`;
+                        }
+                    } else {
+                        // Backgrounds simply move with overall scroll
+                        el.style.transform = `translateY(${scrolled * speed}px)`;
+                    }
+                });
+            });
+
+            /* --- 5. Mouse-Tracking Glow Effect for Cards --- */
+            const glowCards = document.querySelectorAll('.glow-card');
+            glowCards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+
+            /* --- 6. Tab System Logic (Products & Services) --- */
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // Add active to clicked
+                    btn.classList.add('active');
+                    const targetId = btn.getAttribute('data-tab');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

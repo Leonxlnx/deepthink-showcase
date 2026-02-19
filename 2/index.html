@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium UI Components SaaS Features</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Base & Background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAFA;
+            /* Premium subtle mesh/glass gradient background */
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.03) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.03) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.03) 0, transparent 50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 3rem 1.5rem;
+            color: #171717;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Card Container Styling */
+        .bento-card {
+            background: #FFFFFF;
+            border: 1px solid #E5E5E5;
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 10px 15px -3px rgba(0, 0, 0, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .bento-card:hover {
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.02), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            transform: translateY(-4px);
+            border-color: #D4D4D4;
+        }
+
+        .visual-area {
+            height: 240px;
+            background: #F8FAFC;
+            border-radius: 16px;
+            margin: 1.25rem 1.25rem 0 1.25rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-area {
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+
+        /* ----------------------------------
+           Micro-animations & Specifics
+           ---------------------------------- */
+
+        /* Card 1: Vertical Marquee */
+        .mask-y {
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            height: 100%;
+            width: 80%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .scroll-track {
+            animation: scrollY 10s linear infinite;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 100%;
+        }
+
+        @keyframes scrollY {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        .c1-item {
+            background: #FFFFFF;
+            border: 1px solid #F1F5F9;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        /* Card 2 & 4: Typewriter Cursor */
+        .cursor-blink {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background-color: #9CA3AF;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Card 3: Calendar Active Bubble */
+        .cal-bubble {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: #4F46E5;
+            border-radius: 50%;
+            top: -4px;
+            z-index: 0;
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .cal-day {
+            width: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .cal-toast {
+            position: absolute;
+            top: -36px;
+            right: 0;
+            background: #10B981;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .cal-toast.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Card 5: Text Highlight & Tooltip */
+        .highlight-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .highlight-bg {
+            position: absolute;
+            inset: -2px -4px;
+            background: #E0E7FF;
+            border-radius: 4px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .highlight-bg.active {
+            transform: scaleX(1);
+        }
+
+        .highlight-text {
+            position: relative;
+            z-index: 1;
+            color: #171717;
+            font-weight: 600;
+            transition: color 0.4s;
+        }
+
+        .highlight-text.active {
+            color: #4338CA;
+        }
+
+        .c5-tooltip {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px) scale(0.95);
+            background: #111827;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .c5-tooltip.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .c5-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 8px;
+            height: 8px;
+            background: #111827;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="max-w-[1150px] w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+
+        <div class="bento-card lg:col-span-1">
+            <div class="visual-area">
+                <div class="mask-y">
+                    <div class="scroll-track">
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">App Dashboards</span>
+                        </div>
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Pricing Sections</span>
+                        </div>
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                                <i data-lucide="table-2" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Data Tables</span>
+                        </div>
+                        <div class="c1-item">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i data-lucide="app-window" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Hero Layouts</span>
+                        </div>
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">App Dashboards</span>
+                        </div>
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i data-lucide="credit-card" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Pricing Sections</span>
+                        </div>
+                        <div class="c1-item">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                                <i data-lucide="table-2" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Data Tables</span>
+                        </div>
+                        <div class="c1-item">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i data-lucide="app-window" class="w-4 h-4"></i>
+                            </div>
+                            <span class="text-[13px] font-semibold text-gray-700">Hero Layouts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-area">
+                <h3 class="text-[18px] font-bold text-gray-900 mb-1.5 tracking-tight">Extensive Library</h3>
+                <p class="text-[14px] text-gray-500 leading-relaxed font-medium">Access 500+ premium components,
+                    layouts, and sections to build faster and smarter.</p>
+            </div>
+        </div>
+
+        <div class="bento-card lg:col-span-1">
+            <div class="visual-area">
+                <div class="bg-white border border-gray-200 rounded-2xl w-[85%] p-5 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Theme Engine</span>
+                    </div>
+
+                    <div class="mb-5 h-[20px] flex items-center">
+                        <span class="text-[13px] font-semibold text-gray-600 mr-2">Color:</span>
+                        <span id="c2-typewriter" class="font-mono text-[13px] font-bold"></span><span
+                            class="cursor-blink"></span>
+                    </div>
+
+                    <div class="flex gap-2 mb-5" id="c2-pills">
+                        <div
+                            class="px-3 py-1 rounded-md text-[11px] font-semibold border transition-colors duration-300">
+                            Indigo</div>
+                        <div
+                            class="px-3 py-1 rounded-md text-[11px] font-semibold border transition-colors duration-300">
+                            Emerald</div>
+                        <div
+                            class="px-3 py-1 rounded-md text-[11px] font-semibold border transition-colors duration-300">
+                            Rose</div>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-2">
+                        <span class="text-[11px] font-semibold text-gray-400">Global Sync</span>
+                        <button
+                            class="text-[11px] font-bold bg-gray-900 hover:bg-gray-800 transition-colors text-white px-3 py-1.5 rounded-lg shadow-sm">Apply
+                            Theme</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-area">
+                <h3 class="text-[18px] font-bold text-gray-900 mb-1.5 tracking-tight">Themeable Design</h3>
+                <p class="text-[14px] text-gray-500 leading-relaxed font-medium">Easily adapt colors, typography, and
+                    spacing to match your unique brand identity perfectly.</p>
+            </div>
+        </div>
+
+        <div class="bento-card lg:col-span-1">
+            <div class="visual-area">
+                <div class="bg-white border border-gray-200 rounded-2xl w-[85%] p-5 shadow-sm relative">
+                    <div class="flex justify-between items-center mb-5">
+                        <span class="text-[14px] font-bold text-gray-800">New Drops</span>
+                        <span
+                            class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md uppercase tracking-wide">Every
+                            Friday</span>
+                    </div>
+
+                    <div class="relative flex justify-between items-center mb-6 px-1 h-[28px]">
+                        <div class="cal-bubble" id="cal-bubble"></div>
+                        <div class="cal-day text-[12px] font-bold text-gray-400">M</div>
+                        <div class="cal-day text-[12px] font-bold text-gray-400">T</div>
+                        <div class="cal-day text-[12px] font-bold text-gray-400">W</div>
+                        <div class="cal-day text-[12px] font-bold text-gray-400">T</div>
+                        <div class="cal-day text-[12px] font-bold text-gray-400">F</div>
+                    </div>
+
+                    <div class="flex justify-between items-center border-t border-gray-100 pt-4 relative">
+                        <div class="cal-toast" id="cal-toast">Downloaded!</div>
+                        <button
+                            class="text-[11px] font-bold text-gray-400 hover:text-gray-600 transition-colors">Dismiss</button>
+                        <button
+                            class="text-[11px] font-bold bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg transition-colors"
+                            id="sync-btn">Update Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-area">
+                <h3 class="text-[18px] font-bold text-gray-900 mb-1.5 tracking-tight">Continuous Updates</h3>
+                <p class="text-[14px] text-gray-500 leading-relaxed font-medium">Stay ahead of the curve with fresh,
+                    modern UI components added every single week.</p>
+            </div>
+        </div>
+
+        <div class="bento-card lg:col-span-2">
+            <div class="visual-area flex-col p-6 !items-stretch">
+                <div class="grid grid-cols-3 gap-4 mb-auto">
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">React</span>
+                            <i data-lucide="atom" class="w-4 h-4 text-sky-500"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-gray-800">100%</span>
+                    </div>
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between h-[95px] hidden sm:flex">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Vue</span>
+                            <i data-lucide="triangle" class="w-4 h-4 text-emerald-500 fill-emerald-500/20"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-gray-800">100%</span>
+                    </div>
+                    <div
+                        class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col justify-between h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">HTML</span>
+                            <i data-lucide="file-code-2" class="w-4 h-4 text-orange-500"></i>
+                        </div>
+                        <span class="text-xl font-extrabold text-gray-800">100%</span>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-4 bg-white border border-gray-200 rounded-xl p-2 pl-4 flex items-center justify-between shadow-sm">
+                    <div class="font-mono text-[13px] font-medium text-gray-600 flex items-center">
+                        <span class="text-indigo-500 font-bold mr-2">❯</span>
+                        <span id="cli-typewriter"></span><span class="cursor-blink"></span>
+                    </div>
+                    <button
+                        class="bg-indigo-600 hover:bg-indigo-700 transition-colors text-white text-[12px] font-bold px-5 py-2 rounded-lg shadow-sm"
+                        id="cli-copy">Copy</button>
+                </div>
+            </div>
+            <div class="text-area">
+                <h3 class="text-[18px] font-bold text-gray-900 mb-1.5 tracking-tight">Framework Agnostic</h3>
+                <p class="text-[14px] text-gray-500 leading-relaxed font-medium">Export seamlessly to React, Vue,
+                    Svelte, or vanilla HTML. Skip the boilerplate and start building instantly.</p>
+            </div>
+        </div>
+
+        <div class="bento-card lg:col-span-1">
+            <div class="visual-area">
+                <div class="w-[85%] relative">
+                    <div class="h-2 w-3/4 bg-gray-200 rounded-full mb-4"></div>
+                    <div class="h-2 w-full bg-gray-200 rounded-full mb-4"></div>
+
+                    <div class="mb-4">
+                        <span class="text-[14px] text-gray-500 font-medium">Built with </span>
+                        <span class="highlight-wrapper">
+                            <div class="highlight-bg" id="hl-bg"></div>
+                            <span class="highlight-text px-1" id="hl-text">strict WAI-ARIA standards</span>
+
+                            <div class="c5-tooltip" id="c5-tooltip">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                WCAG 2.1 AAA Compliant
+                            </div>
+                        </span>
+                        <span class="text-[14px] text-gray-500 font-medium"> in mind.</span>
+                    </div>
+
+                    <div class="h-2 w-5/6 bg-gray-200 rounded-full mb-4"></div>
+                    <div class="h-2 w-1/2 bg-gray-200 rounded-full"></div>
+                </div>
+            </div>
+            <div class="text-area">
+                <h3 class="text-[18px] font-bold text-gray-900 mb-1.5 tracking-tight">Accessible by Default</h3>
+                <p class="text-[14px] text-gray-500 leading-relaxed font-medium">Keyboard navigation, screen-reader
+                    support, and focus management are baked right in.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Icons
+            lucide.createIcons();
+
+            // Generic Typewriter Function
+            function typeWriter(elementId, texts, typeSpeed, deleteSpeed, pauseDuration, onComplete) {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+
+                let textIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+
+                function type() {
+                    const currentText = texts[textIndex];
+
+                    if (isDeleting) {
+                        el.innerText = currentText.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        el.innerText = currentText.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+
+                    let speed = isDeleting ? deleteSpeed : typeSpeed;
+
+                    if (!isDeleting && charIndex === currentText.length) {
+                        speed = pauseDuration;
+                        if (onComplete) onComplete(textIndex);
+                        isDeleting = true;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        textIndex = (textIndex + 1) % texts.length;
+                        speed = typeSpeed;
+                    }
+
+                    setTimeout(type, speed);
+                }
+                setTimeout(type, 1000);
+            }
+
+            // --- Card 2: Theme Configurator ---
+            const themeColors = [
+                { hex: '#4F46E5', text: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200' },
+                { hex: '#10B981', text: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+                { hex: '#E11D48', text: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200' }
+            ];
+            const pills = document.getElementById('c2-pills').children;
+            const c2Typewriter = document.getElementById('c2-typewriter');
+
+            typeWriter('c2-typewriter', ['Indigo', 'Emerald', 'Rose'], 80, 40, 2000, (index) => {
+                const color = themeColors[index];
+                c2Typewriter.className = `font-mono text-[13px] font-bold ${color.text}`;
+
+                // Reset pills
+                Array.from(pills).forEach(p => {
+                    p.className = 'px-3 py-1 rounded-md text-[11px] font-semibold border border-gray-200 text-gray-400 transition-colors duration-300 bg-white';
+                });
+                // Active pill
+                pills[index].className = `px-3 py-1 rounded-md text-[11px] font-bold border transition-colors duration-300 ${color.bg} ${color.text} ${color.border}`;
+            });
+
+            // Init pill 0
+            pills[0].className = `px-3 py-1 rounded-md text-[11px] font-bold border transition-colors duration-300 ${themeColors[0].bg} ${themeColors[0].text} ${themeColors[0].border}`;
+            c2Typewriter.className = `font-mono text-[13px] font-bold ${themeColors[0].text}`;
+
+
+            // --- Card 3: Calendar Animation ---
+            const bubble = document.getElementById('cal-bubble');
+            const calDays = document.querySelectorAll('.cal-day');
+            const calToast = document.getElementById('cal-toast');
+            const syncBtn = document.getElementById('sync-btn');
+            let calStep = 0;
+
+            function moveCalendar() {
+                // Reset text color
+                calDays.forEach(day => day.style.color = '#9CA3AF');
+
+                // Calculate position: (step * 25%) - adjustment for bubble width
+                bubble.style.left = `calc(${calStep * 25}% - ${(calStep * 28) / 4}px)`;
+
+                // Delay text color change to sync with bubble arrival
+                setTimeout(() => {
+                    calDays[calStep].style.color = '#FFFFFF';
+                }, 150);
+
+                if (calStep === 4) { // Friday reached
+                    setTimeout(() => {
+                        syncBtn.innerText = 'Downloading...';
+                        setTimeout(() => {
+                            syncBtn.innerText = 'Installed';
+                            syncBtn.classList.replace('bg-gray-100', 'bg-indigo-600');
+                            syncBtn.classList.replace('text-gray-600', 'text-white');
+                            calToast.classList.add('active');
+
+                            setTimeout(() => {
+                                syncBtn.innerText = 'Update Now';
+                                syncBtn.classList.replace('bg-indigo-600', 'bg-gray-100');
+                                syncBtn.classList.replace('text-white', 'text-gray-600');
+                                calToast.classList.remove('active');
+                                calStep = 0;
+                                setTimeout(moveCalendar, 500);
+                            }, 2000);
+                        }, 800);
+                    }, 500);
+                } else {
+                    calStep++;
+                    setTimeout(moveCalendar, 800);
+                }
+            }
+            setTimeout(moveCalendar, 500);
+
+
+            // --- Card 4: CLI Typewriter ---
+            const cliBtn = document.getElementById('cli-copy');
+            typeWriter('cli-typewriter', [
+                'npx premium-ui init',
+                'npm install @premium-ui/core',
+                'pnpm add @premium-ui/core'
+            ], 60, 30, 2500, () => {
+                cliBtn.innerText = 'Copied!';
+                cliBtn.classList.replace('bg-indigo-600', 'bg-emerald-500');
+                cliBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-600');
+
+                setTimeout(() => {
+                    cliBtn.innerText = 'Copy';
+                    cliBtn.classList.replace('bg-emerald-500', 'bg-indigo-600');
+                    cliBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-indigo-700');
+                }, 1500);
+            });
+
+
+            // --- Card 5: Text Highlight Animation ---
+            const hlBg = document.getElementById('hl-bg');
+            const hlText = document.getElementById('hl-text');
+            const c5Tooltip = document.getElementById('c5-tooltip');
+
+            function animateHighlight() {
+                hlBg.classList.remove('active');
+                hlText.classList.remove('active');
+                c5Tooltip.classList.remove('active');
+
+                setTimeout(() => {
+                    hlBg.classList.add('active');
+                    hlText.classList.add('active');
+
+                    setTimeout(() => {
+                        c5Tooltip.classList.add('active');
+                    }, 400);
+
+                }, 1000);
+            }
+
+            animateHighlight();
+            setInterval(animateHighlight, 4000);
+        });
+    </script>
+</body>
+
+</html>
