@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Voices - Cinematic Anthology</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* Artistic Museum Palette */
+            --bg-base: #0a0a0b;
+            --text-main: #f2f2f0;
+            --text-muted: #8c8c8a;
+            --accent: #c2a382;
+            /* Muted Oxidized Gold */
+            --radius: 42vw;
+            /* Radius of the 3D cylinder */
+        }
+
+        /* Responsive 3D Radius adjustments */
+        @media (max-width: 1024px) {
+            :root {
+                --radius: 65vw;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --radius: 110vw;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Custom interactive cursor used instead */
+        }
+
+        body {
+            background-color: var(--bg-base);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Scroll & Viewport Setup --- */
+        .scroll-container {
+            height: 500vh;
+            /* Provides plenty of scroll room for the orbital rotation */
+            width: 100vw;
+        }
+
+        .sticky-viewport {
+            position: sticky;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Ambient Background Effects --- */
+        .ambient-background {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            right: -10%;
+            bottom: -10%;
+            /* High-end architectural abstract image */
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2500&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) brightness(0.15) contrast(1.1);
+            z-index: -3;
+            will-change: transform;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 20%, var(--bg-base) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22vw;
+            color: rgba(255, 255, 255, 0.015);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: -1;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- UI Elements --- */
+        .section-title {
+            position: absolute;
+            top: 4vh;
+            left: 4vw;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .section-title span {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .section-title h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .progress-container {
+            position: absolute;
+            top: 50%;
+            left: 4vw;
+            transform: translateY(-50%);
+            height: 30vh;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            z-index: 100;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: var(--accent);
+            height: 0%;
+            box-shadow: 0 0 10px var(--accent);
+            will-change: height;
+        }
+
+        .progress-numbers,
+        .progress-total {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        .progress-numbers {
+            top: -2.5rem;
+            color: #fff;
+        }
+
+        .progress-total {
+            bottom: -2.5rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 4vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+            z-index: 100;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            animation: scrollDrop 2s infinite cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        @keyframes scrollDrop {
+            0% {
+                top: -100%;
+            }
+
+            50% {
+                top: 100%;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        /* --- 3D Scene & Orbital Carousel --- */
+        .scene {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2200px;
+            transform-style: preserve-3d;
+            transform: rotateX(-2deg);
+            /* Slight downward architectural camera angle */
+        }
+
+        .carousel {
+            position: relative;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            /* JS updates var(--angle) smoothly on scroll */
+            transform: translateZ(calc(var(--radius) * -1)) rotateY(var(--angle, 0deg));
+            will-change: transform;
+        }
+
+        /* --- The Feature/Testimonial Card --- */
+        .card {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 34vw;
+            height: 68vh;
+            margin-left: -17vw;
+            margin-top: -34vh;
+            transform-style: preserve-3d;
+            /* Position in cylinder based on index */
+            transform: rotateY(calc(var(--i) * 60deg)) translateZ(var(--radius));
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            opacity: 0.1;
+            transition: opacity 0.8s ease;
+            will-change: opacity;
+        }
+
+        .card.active {
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 14, 15, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(242, 242, 240, 0.06);
+            border-radius: 4px;
+            padding: 4.5rem 4rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.85);
+            transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.9s ease;
+        }
+
+        /* Dynamic 3D mouse tilt applied only to the active card */
+        .card.active .card-inner {
+            transform: scale(1) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+        }
+
+        /* Dynamic glare layer reacting to mouse */
+        .glare {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.12), transparent 60%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            mix-blend-mode: overlay;
+            transition: opacity 0.6s ease;
+        }
+
+        .card.active .glare {
+            opacity: 1;
+        }
+
+        /* --- Card Content & Micro-Animations --- */
+        .card-feature {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 2.5rem;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .card.active .card-feature {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.2s;
+        }
+
+        .feature-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(194, 163, 130, 0.8);
+        }
+
+        .card-feature span {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .quote-mark {
+            position: absolute;
+            top: 6rem;
+            right: 3rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14rem;
+            line-height: 0;
+            color: rgba(242, 242, 240, 0.03);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .quote-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 2.5vw, 3rem);
+            line-height: 1.25;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Split-Text Animation Engine */
+        .word-wrap {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+            padding-bottom: 0.15em;
+            margin-right: 0.2em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform: translateY(110%) rotate(5deg);
+            opacity: 0;
+            transform-origin: top left;
+            transition: transform 0.9s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.9s ease;
+        }
+
+        .card.active .word-inner {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+
+        .author-block {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: opacity 0.7s ease, transform 0.7s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card.active .author-block {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.5s;
+        }
+
+        .author-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .author-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.8s ease, transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .card.active .author-image img {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+            transition-delay: 0.6s;
+        }
+
+        .author-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .author-info p {
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* --- Custom Interactive Cursor --- */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 5px;
+            background: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 45px;
+            height: 45px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1), height 0.4s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.4s ease, background 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-text {
+            font-size: 8px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--bg-base);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        body.hovering .cursor-ring {
+            width: 80px;
+            height: 80px;
+            border-color: var(--text-main);
+            background: var(--text-main);
+        }
+
+        body.hovering .cursor-text {
+            opacity: 1;
+        }
+
+        body.hovering .cursor-dot {
+            opacity: 0;
+        }
+
+        /* --- Mobile Adaptations --- */
+        @media (max-width: 1024px) {
+            .card {
+                width: 50vw;
+                height: 60vh;
+                margin-left: -25vw;
+                margin-top: -30vh;
+            }
+
+            .card-inner {
+                padding: 3.5rem 3rem;
+            }
+
+            .watermark {
+                font-size: 28vw;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                width: 85vw;
+                height: 65vh;
+                margin-left: -42.5vw;
+                margin-top: -32.5vh;
+            }
+
+            .card-inner {
+                padding: 3rem 2rem;
+            }
+
+            .quote-mark {
+                font-size: 8rem;
+                top: 2rem;
+                right: 1rem;
+            }
+
+            .progress-container,
+            .scroll-indicator,
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            .section-title {
+                top: 2rem;
+                left: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring">
+        <span class="cursor-text">DRAG</span>
+    </div>
+
+    <div class="scroll-container">
+        <div class="sticky-viewport">
+
+            <div class="ambient-background" id="bg"></div>
+            <div class="noise-overlay"></div>
+            <div class="vignette"></div>
+            <div class="watermark">EXCELLENCE</div>
+
+            <div class="section-title">
+                <span>Features & Feedback</span>
+                <h1>Client Anthology</h1>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-numbers" id="prog-current">01</div>
+                <div class="progress-bar" id="prog-bar"></div>
+                <div class="progress-total">06</div>
+            </div>
+
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+
+            <div class="scene">
+                <div class="carousel" id="carousel">
+
+                    <div class="card" style="--i: 0;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Spatial Harmony</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">They possess a rare ability to translate abstract emotion into
+                                structural reality. The environment now breathes, commanding a silent yet absolute
+                                authority.</div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80"
+                                        alt="Elena Rostova" /></div>
+                                <div class="author-info">
+                                    <h4>Elena Rostova</h4>
+                                    <p>Curator, Avant Gallery</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="--i: 1;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Timeless Aesthetics</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">We required an atmosphere that defied transient trends. The
+                                resulting aesthetic is deeply immersive, rooted in classic proportions yet radically
+                                modern.</div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80"
+                                        alt="Clara Vane" /></div>
+                                <div class="author-info">
+                                    <h4>Clara Vane</h4>
+                                    <p>Editor-in-Chief, Construct</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="--i: 2;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Architectural Precision</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">They didn't just design a brand; they engineered a structural
+                                masterpiece. Every touchpoint feels meticulously calculated and flawlessly executed.
+                            </div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+                                        alt="Julian Thorne" /></div>
+                                <div class="author-info">
+                                    <h4>Julian Thorne</h4>
+                                    <p>Principal, Thorne Architects</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="--i: 3;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Kinetic Interactions</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">The motion and fluidity injected into our digital presence
+                                transformed it into a living, breathing entity. It is nothing short of hypnotic
+                                artistry.</div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80"
+                                        alt="Victor Cahn" /></div>
+                                <div class="author-info">
+                                    <h4>Victor Cahn</h4>
+                                    <p>Creative Director, Overture</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="--i: 4;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Unparalleled Polish</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">From the initial monolithic concept to the final execution, the
+                                polish was staggering. It is not just design; it is a profound artistic statement.</div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80"
+                                        alt="Marcus Wei" /></div>
+                                <div class="author-info">
+                                    <h4>Marcus Wei</h4>
+                                    <p>Industrial Designer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="--i: 5;">
+                        <div class="card-inner interactive">
+                            <div class="glare"></div>
+                            <div class="card-feature">
+                                <div class="feature-dot"></div><span>Visionary Strategy</span>
+                            </div>
+                            <div class="quote-mark">”</div>
+                            <div class="quote-text">A rare paradigm of modern art and functionality. Their ability to
+                                distill complex ideas into pure, elegant visual languages is completely unmatched.</div>
+                            <div class="author-block">
+                                <div class="author-image"><img
+                                        src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80"
+                                        alt="Sophia Laurent" /></div>
+                                <div class="author-info">
+                                    <h4>Sophia Laurent</h4>
+                                    <p>Founder, Maison Laurent</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Split Text Engine for Micro-Animations ---
+        document.querySelectorAll('.quote-text').forEach(quote => {
+            const text = quote.textContent.trim();
+            quote.innerHTML = '';
+            const words = text.split(/\s+/);
+
+            words.forEach((word, index) => {
+                const wrap = document.createElement('span');
+                wrap.className = 'word-wrap';
+
+                const inner = document.createElement('span');
+                inner.className = 'word-inner';
+                inner.textContent = word;
+
+                // Calculate staggered delay (cap to prevent excessive waiting)
+                const delay = Math.min(0.25 + (index * 0.03), 1.2);
+                inner.style.transitionDelay = `${delay}s`;
+
+                wrap.appendChild(inner);
+                quote.appendChild(wrap);
+            });
+        });
+
+        // --- 2. 3D Scroll Orbital Logic ---
+        const carousel = document.getElementById('carousel');
+        const bg = document.getElementById('bg');
+        const cards = document.querySelectorAll('.card');
+        const progBar = document.getElementById('prog-bar');
+        const progCurrent = document.getElementById('prog-current');
+
+        const maxCards = cards.length;
+        const anglePerCard = 60; // 360deg / 6 cards
+        const maxAngle = (maxCards - 1) * anglePerCard;
+
+        let targetAngle = 0;
+        let currentAngle = 0;
+        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        });
+
+        window.addEventListener('scroll', () => {
+            const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+            targetAngle = progress * maxAngle;
+        });
+
+        // --- 3. Magnetic Cursor & Interactive 3D Tilt Logic ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+
+        let targetTiltX = 0, targetTiltY = 0;
+        let currentTiltX = 0, currentTiltY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Normalize mouse coordinates for tilt mapping (-1 to 1)
+            const x = (mouseX / window.innerWidth - 0.5) * 2;
+            const y = (mouseY / window.innerHeight - 0.5) * 2;
+
+            targetTiltX = y * -8; // Max 8deg tilt
+            targetTiltY = x * 8;
+
+            // Glare highlight tracking
+            const gx = ((x + 1) / 2) * 100;
+            const gy = ((y + 1) / 2) * 100;
+            document.body.style.setProperty('--glare-x', `${gx}%`);
+            document.body.style.setProperty('--glare-y', `${gy}%`);
+        });
+
+        // Add hover classes for custom cursor scale
+        document.querySelectorAll('.interactive').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // --- 4. 60FPS Render Loop ---
+        function loop() {
+            // Lerp Scroll Angle
+            currentAngle += (targetAngle - currentAngle) * 0.08;
+
+            // Update Carousel Rotation 
+            carousel.style.setProperty('--angle', `${-currentAngle}deg`);
+
+            // Ambient Parallax Background (moves up subtly as you scroll down)
+            const bgTranslateY = (currentAngle / maxAngle) * -10; // moves up to 10%
+            bg.style.transform = `translateY(${bgTranslateY}%) scale(1.15)`;
+
+            // Card Activation Check
+            const activeIndex = Math.round(currentAngle / anglePerCard);
+            cards.forEach((card, index) => {
+                if (index === activeIndex) {
+                    if (!card.classList.contains('active')) card.classList.add('active');
+                } else {
+                    if (card.classList.contains('active')) card.classList.remove('active');
+                }
+            });
+
+            // Lerp 3D Mouse Tilt for Active Card (applied globally via CSS vars)
+            currentTiltX += (targetTiltX - currentTiltX) * 0.12;
+            currentTiltY += (targetTiltY - currentTiltY) * 0.12;
+            document.body.style.setProperty('--tilt-x', `${currentTiltX}deg`);
+            document.body.style.setProperty('--tilt-y', `${currentTiltY}deg`);
+
+            // Lerp Custom Cursor
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+
+            // Update cursor DOM directly
+            cursorDot.style.left = `${mouseX}px`;
+            cursorDot.style.top = `${mouseY}px`;
+            cursorRing.style.left = `${ringX}px`;
+            cursorRing.style.top = `${ringY}px`;
+
+            // Update Vertical Progress Indicators
+            const progressPercent = (currentAngle / maxAngle) * 100;
+            progBar.style.height = `${Math.max(0, Math.min(100, progressPercent))}%`;
+            progCurrent.textContent = `0${Math.min(maxCards, activeIndex + 1)}`;
+
+            requestAnimationFrame(loop);
+        }
+
+        // Initialize state
+        cards[0].classList.add('active');
+        requestAnimationFrame(loop);
+    </script>
+</body>
+
+</html>

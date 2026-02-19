@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avant-Garde Voices | Curated Features</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Syne:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* =========================================================
+           CORE VARIABLES & RESET (Editorial / Museum Aesthetic)
+           ========================================================= */
+        :root {
+            --bg-base: #E8E5E1;
+            /* Warm Alabaster */
+            --text-dark: #121212;
+            /* Graphite */
+            --text-light: #F7F5F0;
+            --accent: #B25A38;
+            /* Raw Terracotta / Rust */
+            --border: rgba(18, 18, 18, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-dark);
+            font-family: 'Syne', sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Subtle Artistic Grain Overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)"/%3E%3C/svg%3E');
+        }
+
+        /* =========================================================
+           CUSTOM CURSOR
+           ========================================================= */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(18, 18, 18, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s, background 0.4s, border-color 0.4s;
+        }
+
+        /* Cursor Hover States */
+        body.hover-img .cursor-dot {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: invert(1) grayscale(1);
+            mix-blend-mode: difference;
+        }
+
+        body.hover-img .cursor-follower {
+            width: 0;
+            height: 0;
+            opacity: 0;
+        }
+
+        body.hover-btn .cursor-follower {
+            width: 80px;
+            height: 80px;
+            background: rgba(178, 90, 56, 0.05);
+            border-color: var(--accent);
+        }
+
+        body.hover-btn .cursor-dot {
+            background: var(--accent);
+        }
+
+        /* =========================================================
+           KINETIC BACKGROUND TEXT
+           ========================================================= */
+        .bg-feature-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22vw;
+            font-weight: 800;
+            white-space: nowrap;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(18, 18, 18, 0.03);
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: -0.03em;
+            will-change: transform;
+        }
+
+        /* =========================================================
+           MAIN LAYOUT GRID
+           ========================================================= */
+        .layout-grid {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            z-index: 10;
+        }
+
+        /* --- LEFT COLUMN: TYPOGRAPHY & QUOTE --- */
+        .content-col {
+            padding: 12vh 6vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 20;
+        }
+
+        .quote-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 8rem;
+            line-height: 0;
+            color: var(--accent);
+            opacity: 0.3;
+            margin-bottom: 2rem;
+            transform: translateY(30px);
+        }
+
+        .testimonial-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 3.2vw, 4rem);
+            font-style: italic;
+            font-weight: 300;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: 3.5rem;
+            min-height: 280px;
+            color: var(--text-dark);
+        }
+
+        /* Split-text masking */
+        .word-wrap {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+            margin-right: 0.2em;
+            padding-bottom: 0.1em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform: translateY(115%);
+            will-change: transform;
+        }
+
+        /* Author Details */
+        .author-block {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .author-line {
+            width: 40px;
+            height: 1px;
+            background: var(--text-dark);
+            transition: width 0.6s ease;
+        }
+
+        .author-block:hover .author-line {
+            width: 80px;
+        }
+
+        .author-meta h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.02em;
+        }
+
+        .author-meta p {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+        }
+
+        /* --- RIGHT COLUMN: THE ARCHITECTURAL SLICE ENGINE --- */
+        .visual-col {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-right: 4vw;
+            perspective: 1000px;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 80%;
+            height: 75%;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+            border-radius: 4px;
+            transform-style: preserve-3d;
+        }
+
+        /* Slice Layers */
+        .slice-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
+        .slice {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: filter 0.5s ease;
+        }
+
+        .slice:last-child {
+            border-right: none;
+        }
+
+        .slice-inner {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            will-change: transform, filter;
+            filter: grayscale(20%);
+        }
+
+        /* Feature Badge Floating over image */
+        .feature-badge {
+            position: absolute;
+            bottom: 8%;
+            left: -5%;
+            background: var(--text-dark);
+            color: var(--bg-base);
+            padding: 16px 32px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        /* =========================================================
+           MAGNETIC ORB (Next Button) & PAGINATION
+           ========================================================= */
+        .controls-wrapper {
+            position: absolute;
+            bottom: 6vh;
+            left: 6vw;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            z-index: 50;
+        }
+
+        .magnetic-orb {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 1px solid rgba(18, 18, 18, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .magnetic-orb::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: var(--text-dark);
+            transform: scale(0);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .magnetic-orb:hover::before {
+            transform: scale(1);
+        }
+
+        .magnetic-orb:hover .orb-text {
+            color: var(--bg-base);
+        }
+
+        .orb-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-dark);
+            z-index: 2;
+            transition: color 0.4s;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .pagination {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            color: rgba(18, 18, 18, 0.4);
+        }
+
+        .pagination .current {
+            color: var(--accent);
+            font-size: 2.2rem;
+            font-style: italic;
+        }
+
+        /* Autoplay Progress Line */
+        .progress-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(18, 18, 18, 0.05);
+            z-index: 50;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--text-dark);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 1024px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            .canvas-container {
+                width: 90%;
+                height: 90%;
+            }
+
+            .content-col {
+                padding: 5vh 6vw;
+                text-align: center;
+                align-items: center;
+            }
+
+            .author-line {
+                display: none;
+            }
+
+            .feature-badge {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: -20px;
+            }
+
+            .bg-feature-text {
+                font-size: 15vw;
+                top: 30%;
+            }
+
+            .controls-wrapper {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 3vh;
+                gap: 2rem;
+            }
+
+            .cursor-dot,
+            .cursor-follower {
+                display: none;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-follower" id="cursor-follower"></div>
+
+    <div class="bg-feature-text" id="bg-text">AESTHETICS</div>
+
+    <div class="layout-grid">
+
+        <div class="content-col">
+            <div class="quote-mark">“</div>
+            <div class="testimonial-text" id="quote-container">
+            </div>
+
+            <div class="author-block" id="author-block">
+                <div class="author-line"></div>
+                <div class="author-meta">
+                    <h4 id="author-name">Loading...</h4>
+                    <p id="author-role">...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="visual-col">
+            <div class="canvas-container target-img" id="canvas-container">
+                <div class="feature-badge" id="feature-badge">
+                    <div class="badge-dot"></div>
+                    <span id="feature-name">Feature</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls-wrapper">
+        <div class="pagination">
+            <span class="current" id="page-current">01</span> — <span id="page-total">04</span>
+        </div>
+
+        <div class="magnetic-orb target-btn" id="next-btn">
+            <span class="orb-text">Next<br>Vision</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // =========================================================
+            // 1. DATA ARRAY (Curated High-End Concepts)
+            // =========================================================
+            const data = [
+                {
+                    quote: "They deconstructed our complex infrastructure into a visual language that is devastatingly simple and profoundly effective.",
+                    author: "Julian Vance",
+                    role: "Creative Director, KINETIC",
+                    feature: "Structural Clarity",
+                    bgText: "CLARITY",
+                    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop" // Architectural abstract
+                },
+                {
+                    quote: "The interface doesn't just respond, it breathes. Every micro-interaction is choreographed with absolute precision.",
+                    author: "Elena Rostova",
+                    role: "Head of Product, OMNIA",
+                    feature: "Kinetic Harmony",
+                    bgText: "HARMONY",
+                    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop" // Smooth concrete curves
+                },
+                {
+                    quote: "A masterclass in restraint. They stripped away the noise, leaving a digital sculpture that commands immediate attention.",
+                    author: "Marcus Thorne",
+                    role: "Founder, AURA DESIGN",
+                    feature: "Obsidian Minimalism",
+                    bgText: "MINIMALISM",
+                    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop" // Brutalist clean interior
+                },
+                {
+                    quote: "Form and function fused flawlessly. The visual depth they achieved completely redefined our brand’s spatial narrative.",
+                    author: "Sylvia Wright",
+                    role: "Chief Architect, MONOLITH",
+                    feature: "Spatial Fluidity",
+                    bgText: "FLUIDITY",
+                    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop" // Glass facade reflection
+                }
+            ];
+
+            const CONFIG = { slices: 5, duration: 1.4, ease: "power4.inOut" };
+            let currentIndex = 0;
+            let isAnimating = false;
+            let autoPlayTimer;
+
+            // DOM Elements
+            const quoteContainer = document.getElementById('quote-container');
+            const bgText = document.getElementById('bg-text');
+            const canvasContainer = document.getElementById('canvas-container');
+            const progressBar = document.getElementById('progress-bar');
+            const featureBadge = document.getElementById('feature-badge');
+
+            // =========================================================
+            // 2. CUSTOM SPLIT-TEXT LOGIC (For stagger animations)
+            // =========================================================
+            function splitTextToSpans(text) {
+                quoteContainer.innerHTML = '';
+                const words = text.split(' ');
+                words.forEach(word => {
+                    const wrap = document.createElement('span');
+                    wrap.className = 'word-wrap';
+                    const inner = document.createElement('span');
+                    inner.className = 'word-inner';
+                    inner.innerHTML = word + '&nbsp;';
+                    wrap.appendChild(inner);
+                    quoteContainer.appendChild(wrap);
+                });
+                return document.querySelectorAll('.word-inner');
+            }
+
+            // =========================================================
+            // 3. THE CRAZY SLICE ENGINE SETUP
+            // =========================================================
+            function createSliceLayer(imageSrc, isInitial = false) {
+                const layer = document.createElement('div');
+                layer.className = 'slice-layer';
+
+                for (let i = 0; i < CONFIG.slices; i++) {
+                    const slice = document.createElement('div');
+                    slice.className = 'slice';
+                    slice.style.width = `${100 / CONFIG.slices}%`;
+
+                    const inner = document.createElement('div');
+                    inner.className = 'slice-inner';
+                    // The inner image is the full width of the container, offset physically to stitch together
+                    inner.style.width = `${CONFIG.slices * 100}%`;
+                    inner.style.left = `-${i * 100}%`;
+                    inner.style.backgroundImage = `url(${imageSrc})`;
+
+                    if (!isInitial) {
+                        // Prepare positions for incoming animation (Alternating up/down)
+                        gsap.set(slice, { y: i % 2 === 0 ? '100%' : '-100%' });
+                        // Counter-parallax the inner image opposite to the slice
+                        gsap.set(inner, { y: i % 2 === 0 ? '-100%' : '100%', scale: 1.3, filter: 'grayscale(100%)' });
+                    }
+
+                    slice.appendChild(inner);
+                    layer.appendChild(slice);
+                }
+                return layer;
+            }
+
+            // =========================================================
+            // 4. INITIALIZATION
+            // =========================================================
+            function init() {
+                document.getElementById('page-total').innerText = `0${data.length}`;
+
+                updateMeta(0);
+                splitTextToSpans(data[0].quote);
+
+                // Initial Entry Animations
+                gsap.to('.word-inner', { y: '0%', duration: 1.2, stagger: 0.04, ease: 'power4.out', delay: 0.2 });
+                gsap.to('#author-block', { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.6 });
+                gsap.from(featureBadge, { x: -40, opacity: 0, duration: 1, ease: 'back.out(1.5)', delay: 0.8 });
+
+                // Inject first slice layer
+                const initialLayer = createSliceLayer(data[0].image, true);
+                initialLayer.id = 'current-layer';
+                canvasContainer.insertBefore(initialLayer, featureBadge);
+
+                initPhysicsAndCursor();
+                startAutoPlay();
+            }
+
+            function updateMeta(index) {
+                document.getElementById('author-name').innerText = data[index].author;
+                document.getElementById('author-role').innerText = data[index].role;
+                document.getElementById('feature-name').innerText = data[index].feature;
+                document.getElementById('page-current').innerText = `0${index + 1}`;
+
+                // Animate huge background text
+                gsap.to(bgText, {
+                    opacity: 0, y: -50, duration: 0.5, onComplete: () => {
+                        bgText.innerText = data[index].bgText;
+                        gsap.fromTo(bgText, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out' });
+                    }
+                });
+            }
+
+            // =========================================================
+            // 5. THE CORE TRANSITION (Slicing & Typography)
+            // =========================================================
+            function gotoTestimonial(index) {
+                if (isAnimating || index === currentIndex) return;
+                isAnimating = true;
+                resetAutoPlay();
+
+                currentIndex = index;
+
+                // --- A. Text Animations Out ---
+                gsap.to('.word-inner', { y: '-115%', duration: 0.5, stagger: 0.015, ease: 'power2.in' });
+                gsap.to(['#author-block', featureBadge], { opacity: 0, y: -20, duration: 0.4 });
+
+                // --- B. The Architectural Slice Animation ---
+                const oldLayer = document.getElementById('current-layer');
+                const newLayer = createSliceLayer(data[currentIndex].image, false);
+                newLayer.id = 'new-layer';
+                canvasContainer.insertBefore(newLayer, featureBadge);
+
+                const oldSlices = oldLayer.querySelectorAll('.slice');
+                const oldInners = oldLayer.querySelectorAll('.slice-inner');
+                const newSlices = newLayer.querySelectorAll('.slice');
+                const newInners = newLayer.querySelectorAll('.slice-inner');
+
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        oldLayer.remove();
+                        newLayer.id = 'current-layer';
+                        isAnimating = false;
+                    }
+                });
+
+                // Outgoing Slices (Alternate up and down)
+                tl.to(oldSlices, {
+                    y: (i) => i % 2 === 0 ? '-100%' : '100%',
+                    duration: CONFIG.duration, ease: CONFIG.ease, stagger: 0.04
+                }, 0);
+
+                // Outgoing Inner Counter-Parallax
+                tl.to(oldInners, {
+                    y: (i) => i % 2 === 0 ? '50%' : '-50%',
+                    filter: 'grayscale(100%)',
+                    duration: CONFIG.duration, ease: CONFIG.ease, stagger: 0.04
+                }, 0);
+
+                // Incoming Slices
+                tl.to(newSlices, {
+                    y: '0%',
+                    duration: CONFIG.duration, ease: CONFIG.ease, stagger: 0.04
+                }, 0.1);
+
+                // Incoming Inner Counter-Parallax & Descale
+                tl.to(newInners, {
+                    y: '0%', scale: 1, filter: 'grayscale(20%)',
+                    duration: CONFIG.duration, ease: CONFIG.ease, stagger: 0.04
+                }, 0.1);
+
+                // --- C. Text Animations In ---
+                setTimeout(() => {
+                    updateMeta(currentIndex);
+                    splitTextToSpans(data[currentIndex].quote);
+                    gsap.to('.word-inner', { y: '0%', duration: 1, stagger: 0.02, ease: 'power4.out' });
+                    gsap.to(['#author-block', featureBadge], { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1 });
+                }, 600);
+            }
+
+            // =========================================================
+            // 6. AUTOPLAY LOGIC
+            // =========================================================
+            function startAutoPlay() {
+                gsap.fromTo(progressBar, { width: "0%" }, { width: "100%", duration: 7, ease: "none" });
+                autoPlayTimer = setTimeout(() => {
+                    gotoTestimonial((currentIndex + 1) % data.length);
+                }, 7000);
+            }
+
+            function resetAutoPlay() {
+                clearTimeout(autoPlayTimer);
+                gsap.killTweensOf(progressBar);
+                startAutoPlay();
+            }
+
+            // =========================================================
+            // 7. CURSOR, MAGNETIC ORB & PARALLAX PHYSICS
+            // =========================================================
+            function initPhysicsAndCursor() {
+                const dot = document.getElementById('cursor-dot');
+                const follower = document.getElementById('cursor-follower');
+                const orb = document.getElementById('next-btn');
+
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let folX = mouseX, folY = mouseY;
+
+                // Click Trigger
+                orb.addEventListener('click', () => gotoTestimonial((currentIndex + 1) % data.length));
+                canvasContainer.addEventListener('click', () => gotoTestimonial((currentIndex + 1) % data.length));
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+
+                    // Instant dot tracking
+                    gsap.set(dot, { x: mouseX, y: mouseY });
+
+                    // 3D Parallax on background text & image container (Creates immense depth)
+                    if (window.innerWidth > 1024) {
+                        const xNorm = (mouseX / window.innerWidth - 0.5) * 2;
+                        const yNorm = (mouseY / window.innerHeight - 0.5) * 2;
+
+                        // Text moves opposite
+                        gsap.to(bgText, { x: `-50% + ${xNorm * -40}px`, y: `-50% + ${yNorm * -20}px`, duration: 2, ease: "power2.out" });
+
+                        // 3D tilt on the canvas image
+                        gsap.to(canvasContainer, {
+                            rotationY: xNorm * 8, rotationX: -yNorm * 8,
+                            duration: 1.5, ease: "power2.out"
+                        });
+                    }
+                });
+
+                // Smooth Linear Interpolation (Lerp) for the cursor follower
+                gsap.ticker.add(() => {
+                    folX += (mouseX - folX) * 0.15;
+                    folY += (mouseY - folY) * 0.15;
+                    gsap.set(follower, { x: folX, y: folY });
+                });
+
+                // Magnetic Physics for the Orb
+                orb.addEventListener('mousemove', (e) => {
+                    const rect = orb.getBoundingClientRect();
+                    const x = (e.clientX - rect.left - rect.width / 2) * 0.5;
+                    const y = (e.clientY - rect.top - rect.height / 2) * 0.5;
+                    gsap.to(orb, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+                    gsap.to(orb.querySelector('.orb-text'), { x: x * 0.5, y: y * 0.5, duration: 0.3 });
+                });
+
+                orb.addEventListener('mouseleave', () => {
+                    gsap.to(orb, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+                    gsap.to(orb.querySelector('.orb-text'), { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" });
+                });
+
+                // Custom Hover States
+                document.querySelectorAll('.target-img').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hover-img'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hover-img'));
+                });
+
+                document.querySelectorAll('.target-btn').forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hover-btn'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hover-btn'));
+                });
+            }
+
+            // Ignite
+            init();
+        });
+    </script>
+</body>
+
+</html>

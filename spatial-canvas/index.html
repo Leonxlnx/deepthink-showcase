@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features & Perspectives - Spatial Canvas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* =======================================================
+           ROOT & AESTHETIC VARIABLES
+        ======================================================= */
+        :root {
+            /* Avant-Garde / Fine Art Palette */
+            --bg-base: #EAE6DF;
+            --text-dark: #191817;
+            --accent: #A65D43;
+            /* Muted Terracotta */
+            --card-bg: rgba(245, 243, 238, 0.55);
+            --card-border: rgba(255, 255, 255, 0.5);
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Manrope', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom cursor */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+            overflow: hidden;
+            /* Canvas logic handles movement */
+        }
+
+        /* =======================================================
+           ENVIRONMENTAL DEPTH & NOISE
+        ======================================================= */
+        .fixed-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background: var(--bg-base);
+        }
+
+        .ambient-glow {
+            position: fixed;
+            top: 10vh;
+            left: 10vw;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(166, 93, 67, 0.05) 0%, transparent 70%);
+            z-index: -2;
+            pointer-events: none;
+            filter: blur(60px);
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            opacity: 0.04;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* =======================================================
+           CUSTOM CURSOR
+        ======================================================= */
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-dark);
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid rgba(25, 24, 23, 0.3);
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9998;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s, border-color 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-text {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: transparent;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        /* Dragging & Hover States */
+        body.is-dragging .cursor-ring {
+            width: 30px;
+            height: 30px;
+            background: rgba(25, 24, 23, 0.1);
+        }
+
+        .cursor-ring.hover-card {
+            width: 85px;
+            height: 85px;
+            background: var(--text-dark);
+            border-color: transparent;
+            mix-blend-mode: exclusion;
+        }
+
+        .cursor-ring.hover-card .cursor-text {
+            color: var(--bg-base);
+        }
+
+        /* =======================================================
+           STATIC UI OVERLAYS (Nav & Hints)
+        ======================================================= */
+        .ui-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            padding: 3.5vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            margin-bottom: 0.5rem;
+            pointer-events: auto;
+        }
+
+        .page-title {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            position: absolute;
+            left: 3.5vw;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            pointer-events: auto;
+        }
+
+        .nav-header {
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            outline: none;
+            text-align: left;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            color: var(--text-dark);
+            opacity: 0.4;
+            padding: 5px 0 5px 25px;
+            position: relative;
+            transition: opacity 0.4s;
+            display: inline-block;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 5px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.4s;
+        }
+
+        .nav-btn.active {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .nav-btn.active::before {
+            transform: translateY(-50%) scale(1);
+        }
+
+        .drag-hint {
+            position: absolute;
+            bottom: 3.5vw;
+            right: 3.5vw;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.5;
+        }
+
+        .drag-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(25, 24, 23, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(25, 24, 23, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(25, 24, 23, 0);
+            }
+        }
+
+        .drag-hint span {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* =======================================================
+           3D SPATIAL CANVAS
+        ======================================================= */
+        .camera-lens {
+            width: 100vw;
+            height: 100vh;
+            perspective: 1500px;
+            perspective-origin: center center;
+            position: relative;
+        }
+
+        .world {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5000px;
+            height: 5000px;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* SVG Connection Lines */
+        .spatial-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateZ(-150px);
+            pointer-events: none;
+        }
+
+        .path-line {
+            stroke: rgba(25, 24, 23, 0.08);
+            stroke-width: 2;
+            stroke-dasharray: 6 12;
+            fill: none;
+        }
+
+        .traveler-dot {
+            fill: var(--accent);
+        }
+
+        /* =======================================================
+           ARCHITECTURAL CLUSTERS (Features + Testimonials)
+        ======================================================= */
+        .cluster {
+            position: absolute;
+            width: 0;
+            height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            transition: opacity 0.8s, filter 0.8s;
+        }
+
+        .cluster:not(.active) {
+            opacity: 0.25;
+            filter: blur(6px) grayscale(40%);
+        }
+
+        .cluster:not(.active) .cluster-card {
+            pointer-events: none;
+        }
+
+        /* Deep Background Typography */
+        .cluster-bg-text {
+            position: absolute;
+            font-family: var(--font-serif);
+            font-size: 260px;
+            font-weight: 500;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(25, 24, 23, 0.07);
+            letter-spacing: -0.02em;
+            pointer-events: none;
+            white-space: nowrap;
+            transform: translate(-50%, -50%) translateZ(-400px);
+            /* Pushed deep for parallax */
+        }
+
+        /* Feature Abstract Visual */
+        .cluster-visual-wrapper {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .cluster-visual {
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.12);
+            position: relative;
+            animation: float 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .cluster-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Specific Visual Shapes */
+        .style-arch {
+            width: 340px;
+            height: 500px;
+            border-radius: 170px 170px 0 0;
+        }
+
+        .style-circle {
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+        }
+
+        .style-pill {
+            width: 300px;
+            height: 520px;
+            border-radius: 150px;
+        }
+
+        .style-square {
+            width: 400px;
+            height: 400px;
+            border-radius: 2px;
+        }
+
+        .style-land {
+            width: 540px;
+            height: 340px;
+            border-radius: 2px;
+        }
+
+        /* Glassmorphic Testimonial Card */
+        .cluster-card {
+            position: absolute;
+            width: 480px;
+            padding: 4rem;
+            border-radius: 2px;
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+            pointer-events: auto;
+            transform-style: preserve-3d;
+        }
+
+        .quote-mark {
+            position: absolute;
+            top: 4rem;
+            left: 1.5rem;
+            font-family: var(--font-serif);
+            font-size: 9rem;
+            line-height: 0;
+            color: var(--accent);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .feature-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transform: translateZ(20px);
+        }
+
+        .feature-tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .quote {
+            font-family: var(--font-serif);
+            font-size: 1.7rem;
+            line-height: 1.35;
+            font-style: italic;
+            margin-bottom: 3.5rem;
+            transform: translateZ(40px);
+        }
+
+        /* Word Splitting Utility Styles */
+        .word {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+            padding-bottom: 0.1em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform-origin: left bottom;
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            border-top: 1px solid rgba(25, 24, 23, 0.1);
+            padding-top: 2rem;
+            transform: translateZ(30px);
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s;
+        }
+
+        .cluster-card:hover .avatar {
+            filter: grayscale(0%);
+        }
+
+        .info h4 {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .info span {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.6;
+        }
+
+        /* Floating SVG Micro-Animations */
+        .micro-wrapper {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .micro-spin {
+            animation: spin 20s linear infinite;
+        }
+
+        .micro-spin-reverse {
+            animation: spin 30s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =======================================================
+           MOBILE FALLBACK
+        ======================================================= */
+        @media (max-width: 1024px) {
+            body {
+                overflow-y: auto;
+                overflow-x: hidden;
+                cursor: auto;
+            }
+
+            .camera-lens {
+                height: auto;
+                perspective: none;
+            }
+
+            .world {
+                position: relative;
+                width: 100vw;
+                height: auto;
+                transform: none !important;
+                padding: 4rem 1.5rem;
+            }
+
+            .spatial-connections {
+                display: none;
+            }
+
+            .cluster {
+                position: relative;
+                left: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                width: 100%;
+                margin-bottom: 6rem;
+                opacity: 1 !important;
+                filter: none !important;
+                flex-direction: column;
+            }
+
+            .cluster-bg-text {
+                display: none;
+            }
+
+            .cluster-visual-wrapper,
+            .cluster-card,
+            .micro-wrapper {
+                position: relative;
+                transform: none !important;
+                width: 100%;
+                left: 0;
+                top: 0;
+            }
+
+            .cluster-visual {
+                width: 100%;
+                border-radius: 2px !important;
+                height: 350px;
+                animation: none;
+            }
+
+            .cluster-card {
+                margin-top: -60px;
+                padding: 2.5rem;
+                width: 95%;
+                align-self: center;
+            }
+
+            .ui-overlay,
+            .cursor-dot,
+            .cursor-ring {
+                display: none;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fixed-bg"></div>
+    <div class="ambient-glow"></div>
+    <div class="noise"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"><span class="cursor-text"></span></div>
+
+    <div class="ui-overlay">
+        <header>
+            <div class="brand">ATELIER</div>
+            <div class="page-title">Curated Perspectives</div>
+        </header>
+        <nav class="nav-links">
+            <div class="nav-header">Explore Features</div>
+            <button class="nav-btn active" data-index="0">01 / Precision</button>
+            <button class="nav-btn" data-index="1">02 / Harmony</button>
+            <button class="nav-btn" data-index="2">03 / Curation</button>
+            <button class="nav-btn" data-index="3">04 / Elevation</button>
+            <button class="nav-btn" data-index="4">05 / Timeless</button>
+        </nav>
+        <div class="drag-hint">
+            <div class="drag-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M5 9l-3 3 3 3M9 5l3-3 3 3M19 9l3 3-3 3M9 19l3 3 3-3" />
+                </svg>
+            </div>
+            <span>Drag Canvas</span>
+        </div>
+    </div>
+
+    <div class="camera-lens">
+        <div class="world" id="world">
+
+            <svg class="spatial-connections" viewBox="0 0 5000 5000">
+                <path class="path-line" d="M2500,2500 L3600,2000 L3000,3500 L1600,3000 L2000,1600" />
+                <circle id="traveler" class="traveler-dot" cx="2500" cy="2500" r="8" />
+            </svg>
+
+            <div class="cluster" style="left: 2500px; top: 2500px;">
+                <div class="cluster-bg-text">PRECISION</div>
+                <div class="cluster-visual-wrapper" style="transform: translate(-300px, -150px) translateZ(-80px);">
+                    <div class="cluster-visual style-arch">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop"
+                            alt="Precision">
+                    </div>
+                </div>
+                <div class="micro-wrapper" style="transform: translate(-380px, -50px) translateZ(20px);">
+                    <svg class="micro-spin" width="80" height="80" viewBox="0 0 100 100">
+                        <path d="M50 0 L55 45 L100 50 L55 55 L50 100 L45 55 L0 50 L45 45 Z" fill="var(--accent)"
+                            opacity="0.6" />
+                    </svg>
+                </div>
+                <div class="cluster-card" style="transform: translate(80px, 80px) translateZ(120px);">
+                    <div class="quote-mark">“</div>
+                    <div class="feature-tag">Feature — Aesthetic Precision</div>
+                    <p class="quote">"An absolute masterclass in spatial curation. They didn't just design an interior;
+                        they breathed a profound, poetic soul into every corner."</p>
+                    <div class="author">
+                        <img class="avatar"
+                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                            alt="Elena">
+                        <div class="info">
+                            <h4>Elena Rostova</h4><span>Gallery Director</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cluster" style="left: 3600px; top: 2000px;">
+                <div class="cluster-bg-text">HARMONY</div>
+                <div class="cluster-visual-wrapper" style="transform: translate(150px, -200px) translateZ(-100px);">
+                    <div class="cluster-visual style-circle">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop"
+                            alt="Harmony">
+                    </div>
+                </div>
+                <div class="cluster-card" style="transform: translate(-220px, 60px) translateZ(150px);">
+                    <div class="quote-mark">“</div>
+                    <div class="feature-tag">Feature — Spatial Harmony</div>
+                    <p class="quote">"The sheer elegance and uncompromising minimalism achieved here is staggering.
+                        Every texture and shadow feels meticulously intentional and resolved."</p>
+                    <div class="author">
+                        <img class="avatar"
+                            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&auto=format&fit=crop"
+                            alt="Julian">
+                        <div class="info">
+                            <h4>Julian Vance</h4><span>Principal Architect</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cluster" style="left: 3000px; top: 3500px;">
+                <div class="cluster-bg-text">CURATION</div>
+                <div class="cluster-visual-wrapper" style="transform: translate(-100px, -280px) translateZ(-60px);">
+                    <div class="cluster-visual style-pill">
+                        <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop"
+                            alt="Curation">
+                    </div>
+                </div>
+                <div class="micro-wrapper" style="transform: translate(150px, -300px) translateZ(-10px);">
+                    <svg class="micro-spin-reverse" width="120" height="120" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="48" fill="none" stroke="var(--text-dark)" stroke-dasharray="4 8"
+                            stroke-width="1" />
+                    </svg>
+                </div>
+                <div class="cluster-card" style="transform: translate(-150px, 120px) translateZ(100px);">
+                    <div class="quote-mark">“</div>
+                    <div class="feature-tag">Feature — Editorial Curation</div>
+                    <p class="quote">"Working with them was an artistic revelation. Their ability to fuse raw
+                        functionality with high-end, editorial aesthetics sets an entirely new standard."</p>
+                    <div class="author">
+                        <img class="avatar"
+                            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+                            alt="Clara">
+                        <div class="info">
+                            <h4>Clara Valmont</h4><span>Editorial Curator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cluster" style="left: 1600px; top: 3000px;">
+                <div class="cluster-bg-text">ELEVATION</div>
+                <div class="cluster-visual-wrapper" style="transform: translate(-250px, 80px) translateZ(-120px);">
+                    <div class="cluster-visual style-square">
+                        <img src="https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=800&auto=format&fit=crop"
+                            alt="Elevation">
+                    </div>
+                </div>
+                <div class="cluster-card" style="transform: translate(120px, -150px) translateZ(80px);">
+                    <div class="quote-mark">“</div>
+                    <div class="feature-tag">Feature — Brand Elevation</div>
+                    <p class="quote">"A symphony of form and material. The space now commands a quiet respect, offering
+                        an experiential journey that lingers long after you depart."</p>
+                    <div class="author">
+                        <img class="avatar"
+                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+                            alt="Marcus">
+                        <div class="info">
+                            <h4>Marcus Thorne</h4><span>Boutique Hotelier</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cluster" style="left: 2000px; top: 1600px;">
+                <div class="cluster-bg-text">TIMELESS</div>
+                <div class="cluster-visual-wrapper" style="transform: translate(-380px, 180px) translateZ(-50px);">
+                    <div class="cluster-visual style-land">
+                        <img src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop"
+                            alt="Timeless">
+                    </div>
+                </div>
+                <div class="cluster-card" style="transform: translate(-50px, -150px) translateZ(140px);">
+                    <div class="quote-mark">“</div>
+                    <div class="feature-tag">Feature — Timeless Identity</div>
+                    <p class="quote">"A distinct paradigm shift in our physical presence. They crafted an identity that
+                        honors classic proportions while feeling entirely avant-garde."</p>
+                    <div class="author">
+                        <img class="avatar"
+                            src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=200&auto=format&fit=crop"
+                            alt="Sophia">
+                        <div class="info">
+                            <h4>Sophia Lin</h4><span>Creative Founder</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth <= 1024) return; // Disable complex logic for mobile block layout
+
+            // --- 1. System Variables ---
+            const world = document.getElementById('world');
+            const traveler = document.getElementById('traveler');
+            let currentX = 0, currentY = 0;
+            let isDragging = false, startMouseX, startMouseY;
+            let activeClusterIndex = -1;
+
+            // Cluster World Coordinates (Match CSS inline left/top)
+            const coords = [
+                { x: 2500, y: 2500 },
+                { x: 3600, y: 2000 },
+                { x: 3000, y: 3500 },
+                { x: 1600, y: 3000 },
+                { x: 2000, y: 1600 }
+            ];
+
+            // --- 2. Custom Cursor ---
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.querySelector('.cursor-ring');
+            let mX = window.innerWidth / 2, mY = window.innerHeight / 2;
+            let rX = mX, rY = mY;
+
+            window.addEventListener('mousemove', e => {
+                mX = e.clientX; mY = e.clientY;
+                dot.style.transform = `translate(${mX}px, ${mY}px) translate(-50%, -50%)`;
+            });
+            gsap.ticker.add(() => {
+                rX += (mX - rX) * 0.15; rY += (mY - rY) * 0.15;
+                ring.style.transform = `translate(${rX}px, ${rY}px) translate(-50%, -50%)`;
+            });
+
+            // --- 3. Text Splitting Utility ---
+            function splitText(element) {
+                if (element.classList.contains('splitted')) return;
+                const words = element.innerText.trim().split(/\s+/);
+                element.innerHTML = '';
+                words.forEach(word => {
+                    const wrap = document.createElement('span'); wrap.className = 'word';
+                    const inner = document.createElement('span'); inner.className = 'word-inner';
+                    inner.innerHTML = word; wrap.appendChild(inner);
+                    element.appendChild(wrap); element.appendChild(document.createTextNode(' '));
+                });
+                element.classList.add('splitted');
+            }
+            document.querySelectorAll('.quote').forEach(splitText);
+
+            // --- 4. Core Camera & Activation Logic ---
+            function setActiveCluster(index, forcePan = false) {
+                if (index === activeClusterIndex) return;
+                activeClusterIndex = index;
+
+                // Sync UI Nav
+                document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+
+                // Update Clusters & Trigger Micro-animations
+                document.querySelectorAll('.cluster').forEach((c, i) => {
+                    if (i === index) {
+                        c.classList.add('active');
+                        // Staggered Text Reveal
+                        gsap.killTweensOf(c.querySelectorAll('.word-inner'));
+                        gsap.fromTo(c.querySelectorAll('.word-inner'),
+                            { y: '110%', rotationZ: 8, opacity: 0 },
+                            { y: '0%', rotationZ: 0, opacity: 1, stagger: 0.015, duration: 0.8, ease: "back.out(1.2)", delay: 0.2 }
+                        );
+                        // Image Bloom
+                        gsap.fromTo(c.querySelector('img'),
+                            { scale: 1.15, filter: 'grayscale(80%)' },
+                            { scale: 1, filter: 'grayscale(0%)', duration: 1.5, ease: "power3.out" }
+                        );
+                    } else {
+                        c.classList.remove('active');
+                    }
+                });
+
+                // Move SVG Traveler
+                gsap.to(traveler, { attr: { cx: coords[index].x, cy: coords[index].y }, duration: 1.2, ease: "power3.inOut" });
+
+                // Smooth Pan Camera (if clicked via Nav)
+                if (forcePan) {
+                    const tx = -(coords[index].x - window.innerWidth / 2);
+                    const ty = -(coords[index].y - window.innerHeight / 2);
+                    gsap.to(world, {
+                        x: tx, y: ty, duration: 1.5, ease: "power4.inOut",
+                        onUpdate: () => { currentX = gsap.getProperty(world, "x"); currentY = gsap.getProperty(world, "y"); }
+                    });
+                }
+            }
+
+            // --- 5. Infinite Dragging (Creates the 3D Parallax automatically via CSS perspective) ---
+            window.addEventListener('mousedown', e => {
+                if (e.target.closest('button') || e.target.closest('.cluster-card')) return;
+                isDragging = true; document.body.classList.add('is-dragging');
+                startMouseX = e.clientX - currentX; startMouseY = e.clientY - currentY;
+            });
+
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                let tx = e.clientX - startMouseX; let ty = e.clientY - startMouseY;
+                // Boundaries (World is 5000x5000)
+                tx = Math.max(-5000 + window.innerWidth, Math.min(0, tx));
+                ty = Math.max(-5000 + window.innerHeight, Math.min(0, ty));
+
+                gsap.to(world, { x: tx, y: ty, duration: 0.6, ease: "power2.out" });
+                currentX = tx; currentY = ty;
+            });
+
+            window.addEventListener('mouseup', () => { isDragging = false; document.body.classList.remove('is-dragging'); });
+
+            // Automatically detect closest cluster during drag to update UI
+            gsap.ticker.add(() => {
+                if (isDragging) {
+                    const camX = -currentX + window.innerWidth / 2;
+                    const camY = -currentY + window.innerHeight / 2;
+                    let minDist = Infinity, closest = 0;
+                    coords.forEach((c, i) => {
+                        const dist = Math.hypot(c.x - camX, c.y - camY);
+                        if (dist < minDist) { minDist = dist; closest = i; }
+                    });
+                    if (minDist < 800) setActiveCluster(closest, false); // Active threshold
+                }
+            });
+
+            // --- 6. Interactive Magnetic Effects ---
+            // Nav Buttons Magnetism
+            document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+                btn.addEventListener('click', () => setActiveCluster(index, true));
+                btn.addEventListener('mousemove', e => {
+                    const r = btn.getBoundingClientRect();
+                    gsap.to(btn, { x: (e.clientX - r.left - r.width / 2) * 0.2, y: (e.clientY - r.top - r.height / 2) * 0.2, duration: 0.3 });
+                });
+                btn.addEventListener('mouseleave', () => gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1,0.3)" }));
+                btn.addEventListener('mouseenter', () => ring.classList.add('hover-card'));
+                btn.addEventListener('mouseleave', () => ring.classList.remove('hover-card'));
+            });
+
+            // Glassmorphic Cards 3D Tilt Magnetism
+            document.querySelectorAll('.cluster-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    ring.classList.add('hover-card');
+                    document.querySelector('.cursor-text').innerText = "READ";
+                });
+                card.addEventListener('mouseleave', () => {
+                    ring.classList.remove('hover-card');
+                    document.querySelector('.cursor-text').innerText = "";
+                    gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.8, ease: "power3.out" });
+                    gsap.to(card.querySelector('.avatar'), { x: 0, y: 0, duration: 0.8 });
+                });
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    const x = e.clientX - r.left, y = e.clientY - r.top;
+                    const cx = r.width / 2, cy = r.height / 2;
+
+                    // Elegant subtle tilt
+                    gsap.to(card, { rotateX: ((y - cy) / cy) * -4, rotateY: ((x - cx) / cx) * 4, scale: 1.02, duration: 0.4, ease: "power2.out" });
+                    // Inner avatar pulls towards cursor
+                    gsap.to(card.querySelector('.avatar'), { x: (x - cx) * 0.1, y: (y - cy) * 0.1, duration: 0.4 });
+                });
+            });
+
+            // --- Boot ---
+            setActiveCluster(0, true);
+        });
+    </script>
+</body>
+
+</html>

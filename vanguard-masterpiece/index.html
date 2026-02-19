@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avant-Garde | Masterpiece</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600&family=Syne:wght@400;600;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+
+    <style>
+        /* =========================================
+           CORE VARIABLES & FOUNDATION
+        ========================================= */
+        :root {
+            --bg-primary: #EBE6DF;
+            /* Warm Alabaster */
+            --bg-secondary: #0D0C0B;
+            /* Deepest Onyx */
+            --text-dark: #1C1A17;
+            /* Charcoal */
+            --text-light: #F4F2EC;
+            /* Parchment */
+            --accent: #A34830;
+            /* Editorial Rust */
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Manrope', sans-serif;
+            --font-display: 'Syne', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: var(--text-light);
+        }
+
+        /* Cinematic Film Grain Overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 0.05;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)"/%3E%3C/svg%3E');
+        }
+
+        /* =========================================
+           CUSTOM MAGNETIC CURSOR
+        ========================================= */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 100000;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 99999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sans);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--bg-primary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .cursor-ring.active {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+        }
+
+        /* =========================================
+           SECTION 01: THE METHODOLOGY (FEATURES)
+        ========================================= */
+        .features {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg-primary);
+        }
+
+        .f-panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(28, 26, 23, 0.1);
+            transition: flex 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(100px);
+            animation: fadeUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Staggered load */
+        .f-panel:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .f-panel:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .f-panel:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .f-panel:nth-child(4) {
+            animation-delay: 0.4s;
+            border-right: none;
+        }
+
+        .f-panel:hover {
+            flex: 4;
+        }
+
+        .f-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(0.9);
+            opacity: 0;
+            transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 0;
+        }
+
+        .f-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.8s;
+            background: linear-gradient(to top, rgba(13, 12, 11, 0.95) 0%, rgba(13, 12, 11, 0) 60%);
+        }
+
+        .f-panel:hover .f-bg {
+            opacity: 1;
+            transform: scale(1);
+            filter: grayscale(20%) brightness(0.6);
+        }
+
+        .f-panel:hover .f-overlay {
+            opacity: 1;
+        }
+
+        .f-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3vw;
+            color: var(--text-dark);
+            transition: color 0.4s;
+        }
+
+        .f-panel:hover .f-content {
+            color: var(--text-light);
+        }
+
+        .f-number {
+            position: absolute;
+            top: 3vw;
+            left: 3vw;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .f-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 4vw, 5.5rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            white-space: nowrap;
+            margin-bottom: 0.5rem;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .f-title em {
+            display: block;
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 400;
+            text-transform: lowercase;
+            color: var(--text-dark);
+            transition: color 0.4s;
+        }
+
+        .f-panel:hover .f-title {
+            transform: translateY(-10px);
+        }
+
+        .f-panel:hover .f-title em {
+            color: var(--accent);
+        }
+
+        /* Butter-smooth grid height animation for description */
+        .f-desc-wrap {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .f-panel:hover .f-desc-wrap {
+            grid-template-rows: 1fr;
+        }
+
+        .f-desc-inner {
+            overflow: hidden;
+        }
+
+        .f-desc-inner p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 300;
+            max-width: 420px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            padding-top: 1.5rem;
+        }
+
+        .f-panel:hover .f-desc-inner p {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
+        }
+
+
+        /* =========================================
+           SECTION 02: THE ECHOES (3D TESTIMONIALS)
+        ========================================= */
+        .testimonials {
+            position: relative;
+            background: var(--bg-secondary);
+            color: var(--text-light);
+        }
+
+        /* Ambient Parallax Background Typography */
+        .t-bg-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-display);
+            font-size: 26vw;
+            font-weight: 800;
+            color: rgba(244, 242, 236, 0.02);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .t-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .t-header {
+            position: absolute;
+            top: 10vh;
+            left: 5vw;
+            z-index: 10;
+        }
+
+        .t-eyebrow {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .t-eyebrow::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--accent);
+        }
+
+        .t-header h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .t-header em {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-weight: 400;
+            text-transform: lowercase;
+            color: rgba(244, 242, 236, 0.5);
+        }
+
+        .t-cards-container {
+            position: relative;
+            width: 850px;
+            max-width: 90vw;
+            height: 500px;
+            z-index: 2;
+            perspective: 2000px;
+            margin-top: 5vh;
+        }
+
+        .t-card {
+            position: absolute;
+            inset: 0;
+            border-radius: 2px;
+            background: rgba(20, 19, 18, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            transform-style: preserve-3d;
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        .t-card-dimmer {
+            position: absolute;
+            inset: 0;
+            background: #000;
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .t-card-content {
+            transform: translateZ(40px);
+            position: relative;
+            z-index: 10;
+        }
+
+        .t-quote-mark {
+            position: absolute;
+            top: -5rem;
+            left: 0;
+            font-family: var(--font-serif);
+            font-size: 18rem;
+            color: var(--accent);
+            opacity: 0.08;
+            line-height: 1;
+            pointer-events: none;
+            transform: translateZ(-20px);
+        }
+
+        .t-text {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+            line-height: 1.35;
+            font-style: italic;
+            font-weight: 300;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        .t-author {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+        }
+
+        .t-author-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .t-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .t-author-info h4 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .t-author-info span {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .t-indicator {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--accent);
+            opacity: 0.6;
+        }
+
+        /* Scroll Progress Line */
+        .t-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 100;
+        }
+
+        .t-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+        }
+
+        /* =========================================
+           MOBILE RESPONSIVENESS
+        ========================================= */
+        @media (max-width: 900px) {
+            .features {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .f-panel {
+                height: 35vh;
+                border-right: none;
+                border-bottom: 1px solid rgba(28, 26, 23, 0.1);
+            }
+
+            .f-panel:hover {
+                flex: 1;
+            }
+
+            .f-bg {
+                opacity: 0.5;
+                filter: grayscale(50%) brightness(0.6);
+            }
+
+            .f-content {
+                color: var(--text-light);
+                padding: 2rem;
+                justify-content: center;
+            }
+
+            .f-title {
+                font-size: 2.5rem;
+                transform: none !important;
+                margin-top: 2rem;
+            }
+
+            .f-title em {
+                display: inline;
+                color: var(--accent);
+            }
+
+            .f-desc-wrap {
+                grid-template-rows: 1fr;
+            }
+
+            .f-desc-inner p {
+                opacity: 1;
+                transform: translateY(0);
+                padding-top: 1rem;
+            }
+
+            .testimonials {
+                height: auto;
+            }
+
+            .t-sticky {
+                height: auto;
+                position: relative;
+                padding: 15vh 5vw;
+                display: block;
+            }
+
+            .t-header {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 4rem;
+            }
+
+            .t-bg-text,
+            .t-progress {
+                display: none;
+            }
+
+            .t-cards-container {
+                width: 100%;
+                height: auto;
+                perspective: none;
+                margin-top: 0;
+            }
+
+            .t-card {
+                position: relative;
+                height: auto;
+                padding: 3rem 2rem;
+                margin-bottom: 2rem;
+                transform: none !important;
+                opacity: 1 !important;
+            }
+
+            .t-card-dimmer {
+                display: none;
+            }
+
+            .t-card-content {
+                transform: none !important;
+            }
+
+            .t-quote-mark {
+                font-size: 10rem;
+                top: -1rem;
+                left: 1rem;
+            }
+
+            .t-text {
+                font-size: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .t-author {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .t-indicator {
+                display: none;
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="features">
+
+        <div class="f-panel hover-target" data-cursor="EXPLORE">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop"
+                class="f-bg" alt="Architecture">
+            <div class="f-overlay"></div>
+            <div class="f-content">
+                <span class="f-number">01</span>
+                <h2 class="f-title">Spatial<br><em>Curation</em></h2>
+                <div class="f-desc-wrap">
+                    <div class="f-desc-inner">
+                        <p>We do not merely design; we sculpt negative space. Every pixel and margin is a calculated
+                            breath of air, shaping the narrative before a single word is read.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="f-panel hover-target" data-cursor="EXPLORE">
+            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop"
+                class="f-bg" alt="Interior">
+            <div class="f-overlay"></div>
+            <div class="f-content">
+                <span class="f-number">02</span>
+                <h2 class="f-title">Kinetic<br><em>Elegance</em></h2>
+                <div class="f-desc-wrap">
+                    <div class="f-desc-inner">
+                        <p>Motion with unwavering purpose. We reject the superfluous, employing physics-driven
+                            choreography that feels instinctively human and profoundly luxurious.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="f-panel hover-target" data-cursor="EXPLORE">
+            <img src="https://images.unsplash.com/photo-1618220179428-22790b46a0eb?q=80&w=1200&auto=format&fit=crop"
+                class="f-bg" alt="Abstract">
+            <div class="f-overlay"></div>
+            <div class="f-content">
+                <span class="f-number">03</span>
+                <h2 class="f-title">Chromatic<br><em>Restraint</em></h2>
+                <div class="f-desc-wrap">
+                    <div class="f-desc-inner">
+                        <p>A beautiful rebellion against the loud. Our palettes are whisper-quiet, commanding authority
+                            through stark contrast, muted undertones, and dramatic lighting.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="f-panel hover-target" data-cursor="EXPLORE">
+            <img src="https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=1200&auto=format&fit=crop"
+                class="f-bg" alt="Minimal">
+            <div class="f-overlay"></div>
+            <div class="f-content">
+                <span class="f-number">04</span>
+                <h2 class="f-title">Sensory<br><em>Resonance</em></h2>
+                <div class="f-desc-wrap">
+                    <div class="f-desc-inner">
+                        <p>Moving beyond the visual plane. We engineer digital environments that evoke a tactile
+                            response, blending brutally clean grids with fluid transitions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="testimonials">
+        <div class="t-bg-text">VANGUARD</div>
+
+        <div class="t-sticky">
+            <div class="t-header">
+                <span class="t-eyebrow">Client Perspectives</span>
+                <h2>Echoes of<br><em>Excellence.</em></h2>
+            </div>
+
+            <div class="t-cards-container">
+
+                <div class="t-card hover-target" data-cursor="READ">
+                    <div class="t-card-dimmer"></div>
+                    <div class="t-card-content">
+                        <div class="t-quote-mark">“</div>
+                        <p class="t-text">A masterclass in restraint and absolute power. They stripped away the noise
+                            and delivered a monument that completely redefined our brand's global trajectory.</p>
+                        <div class="t-author">
+                            <div class="t-author-left">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                                    class="t-avatar" alt="Avatar">
+                                <div class="t-author-info">
+                                    <h4>Evelyn St. James</h4>
+                                    <span>Founder, AURA Maison</span>
+                                </div>
+                            </div>
+                            <div class="t-indicator">I</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card hover-target" data-cursor="READ">
+                    <div class="t-card-dimmer"></div>
+                    <div class="t-card-content">
+                        <div class="t-quote-mark">“</div>
+                        <p class="t-text">Working with them feels less like hiring an agency and more like commissioning
+                            fine art. The precision is borderline obsessive, and the outcome is flawless.</p>
+                        <div class="t-author">
+                            <div class="t-author-left">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+                                    class="t-avatar" alt="Avatar">
+                                <div class="t-author-info">
+                                    <h4>Julian Vance</h4>
+                                    <span>Creative Director, OBLIQUE</span>
+                                </div>
+                            </div>
+                            <div class="t-indicator">II</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card hover-target" data-cursor="READ">
+                    <div class="t-card-dimmer"></div>
+                    <div class="t-card-content">
+                        <div class="t-quote-mark">“</div>
+                        <p class="t-text">They understand the unspoken language of luxury. Every interaction, every
+                            scroll feels exactly like running your hand over brushed silk and cold, polished steel.</p>
+                        <div class="t-author">
+                            <div class="t-author-left">
+                                <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&auto=format&fit=crop"
+                                    class="t-avatar" alt="Avatar">
+                                <div class="t-author-info">
+                                    <h4>Margot Lin</h4>
+                                    <span>Chief Vision Officer, KINFOLK</span>
+                                </div>
+                            </div>
+                            <div class="t-indicator">III</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="t-card hover-target" data-cursor="READ">
+                    <div class="t-card-dimmer"></div>
+                    <div class="t-card-content">
+                        <div class="t-quote-mark">“</div>
+                        <p class="t-text">An absolute paradigm shift. The interface isn't just a functional tool; it is
+                            a living, breathing ecosystem that anticipates the user's aesthetic desires.</p>
+                        <div class="t-author">
+                            <div class="t-author-left">
+                                <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=200&auto=format&fit=crop"
+                                    class="t-avatar" alt="Avatar">
+                                <div class="t-author-info">
+                                    <h4>Damian Cross</h4>
+                                    <span>Principal Architect</span>
+                                </div>
+                            </div>
+                            <div class="t-indicator">IV</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="t-progress">
+            <div class="t-progress-fill"></div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+            const isDesktop = window.innerWidth > 900;
+
+            // ==========================================
+            // LENIS SMOOTH SCROLL (Physics based scrolling)
+            // ==========================================
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smooth: true,
+            });
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+
+            // ==========================================
+            // CUSTOM MAGNETIC CURSOR
+            // ==========================================
+            if (isDesktop) {
+                const dot = document.querySelector('.cursor-dot');
+                const ring = document.querySelector('.cursor-ring');
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let ringX = mouseX, ringY = mouseY;
+
+                window.addEventListener('mousemove', e => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    gsap.set(dot, { x: mouseX, y: mouseY });
+                });
+
+                gsap.ticker.add(() => {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    gsap.set(ring, { x: ringX, y: ringY });
+                });
+
+                document.querySelectorAll('.hover-target').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        ring.classList.add('active');
+                        ring.innerText = el.getAttribute('data-cursor') || 'VIEW';
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        ring.classList.remove('active');
+                        ring.innerText = '';
+                    });
+                });
+            }
+
+            // ==========================================
+            // 3D TESTIMONIALS "Z-STACK" DECK ANIMATION
+            // ==========================================
+            let mm = gsap.matchMedia();
+
+            mm.add("(min-width: 901px)", () => {
+                const cards = gsap.utils.toArray('.t-card');
+
+                // Master Timeline mapped to Scroll
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: '.testimonials',
+                        start: 'top top',
+                        end: `+=${cards.length * 100}%`,
+                        pin: true,
+                        scrub: 1,
+                    }
+                });
+
+                // Build the Stack Sequence
+                cards.forEach((card, index) => {
+                    if (index === 0) return; // First card is already visible
+
+                    // Set subsequent cards initially out of bounds at the bottom
+                    gsap.set(card, { y: window.innerHeight, scale: 1 });
+
+                    // 1. Bring the new card UP into the center
+                    tl.to(card, {
+                        y: 0,
+                        duration: 1,
+                        ease: "power2.out"
+                    }, index * 1);
+
+                    // 2. Simultaneously push ALL PREVIOUS cards BACK and UP into the depth
+                    for (let j = 0; j < index; j++) {
+                        tl.to(cards[j], {
+                            scale: "-=0.06",
+                            y: "-=40",
+                            duration: 1,
+                            ease: "power2.out"
+                        }, index * 1);
+
+                        // Darken them via the dimmer overlay (highly performant)
+                        tl.to(cards[j].querySelector('.t-card-dimmer'), {
+                            opacity: "+=0.35",
+                            duration: 1,
+                            ease: "power2.out"
+                        }, index * 1);
+                    }
+                });
+
+                // Parallax Ambient Background Text
+                gsap.to('.t-bg-text', {
+                    x: "-=30vw",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: ".testimonials",
+                        start: "top bottom",
+                        end: `+=${cards.length * 100 + 100}%`,
+                        scrub: 1
+                    }
+                });
+
+                // Scroll Progress Bar
+                tl.to('.t-progress-fill', { width: "100%", ease: "none", duration: cards.length - 1 }, 0);
+
+                // ==========================================
+                // MAGNETIC 3D TILT ON ACTIVE CARD
+                // ==========================================
+                cards.forEach((card) => {
+                    card.addEventListener('mousemove', (e) => {
+                        // Only apply 3D effect if this card is currently at the front of the stack
+                        if (gsap.getProperty(card, "y") > 10 || gsap.getProperty(card, "scale") < 0.95) return;
+
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+
+                        const rotateX = ((y - centerY) / centerY) * -5;
+                        const rotateY = ((x - centerX) / centerX) * 5;
+
+                        gsap.to(card, {
+                            rotationX: rotateX,
+                            rotationY: rotateY,
+                            duration: 0.5,
+                            ease: "power2.out"
+                        });
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        gsap.to(card, {
+                            rotationX: 0,
+                            rotationY: 0,
+                            duration: 0.8,
+                            ease: "elastic.out(1, 0.3)"
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier | Features & Voices</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Manrope:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =========================================
+           01. GLOBAL VARIABLES & RESET
+           ========================================= */
+        :root {
+            --bg-light: #F3F2ED;
+            /* Noble Alabaster */
+            --text-dark: #1A1A1A;
+            /* Deep Anthracite */
+            --bg-dark: #0A0A0A;
+            /* Deepest Black */
+            --text-light: #F3F2ED;
+            --accent: #8C6A53;
+            /* Artisan Terracotta */
+            --accent-gold: #C0A988;
+            /* Muted Gold */
+
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Manrope', sans-serif;
+
+            --transition-smooth: 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Replaced by custom cursor */
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Artistic Noise Overlay */
+        .noise-texture {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* =========================================
+           02. CUSTOM CURSOR
+           ========================================= */
+        .cursor-dot,
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(26, 26, 26, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: transparent;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: width 0.4s ease, height 0.4s ease, background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+            transform-origin: center;
+            text-transform: uppercase;
+        }
+
+        body.hovering .cursor-dot {
+            opacity: 0;
+        }
+
+        body.hovering .cursor-ring {
+            width: 85px;
+            height: 85px;
+            background: rgba(140, 106, 83, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        body.dark-mode .cursor-ring {
+            border-color: rgba(243, 242, 237, 0.2);
+        }
+
+        body.dark-mode.hovering .cursor-ring {
+            background: rgba(192, 169, 136, 0.1);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* =========================================
+           03. FEATURES SECTION (Slanted Accordion)
+           ========================================= */
+        .features-wrapper {
+            position: relative;
+            min-height: 100vh;
+            padding: 12vh 5vw 10vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .section-head {
+            margin-bottom: 6vh;
+            padding-left: 2vw;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .title {
+            font-family: var(--font-serif);
+            font-size: clamp(3.5rem, 6vw, 5.5rem);
+            line-height: 1.1;
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        .slanted-accordion {
+            display: flex;
+            width: 90vw;
+            height: 65vh;
+            margin: 0 auto;
+            transform: skewX(-8deg);
+            /* The slant magic */
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            background: #000;
+        }
+
+        .slanted-item {
+            flex: 1;
+            position: relative;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            transition: flex var(--transition-smooth);
+            overflow: hidden;
+        }
+
+        .slanted-item:last-child {
+            border-right: none;
+        }
+
+        .slanted-item:hover {
+            flex: 3.5;
+        }
+
+        .slanted-bg {
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transform: skewX(8deg) scale(1.15);
+            /* Counter-skew */
+            filter: grayscale(100%) opacity(0.5) brightness(0.8);
+            transition: filter var(--transition-smooth), transform var(--transition-smooth);
+        }
+
+        .slanted-item:hover .slanted-bg {
+            filter: grayscale(10%) opacity(0.95) brightness(1);
+            transform: skewX(8deg) scale(1);
+        }
+
+        .slanted-content {
+            position: absolute;
+            bottom: 0;
+            left: -10%;
+            width: 120%;
+            padding: 4rem 15% 3rem 15%;
+            transform: skewX(8deg);
+            color: #fff;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        }
+
+        .slanted-num {
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .slanted-title {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            margin-bottom: 0.5rem;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            font-weight: 400;
+        }
+
+        .slanted-text {
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(243, 242, 237, 0.7);
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        /* Hover Reveal Dynamics */
+        .slanted-item:hover .slanted-num,
+        .slanted-item:hover .slanted-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slanted-item:hover .slanted-text {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 120px;
+            margin-top: 1rem;
+            transition-delay: 0.1s;
+        }
+
+        /* =========================================
+           04. VOICES SECTION (Curated Canvas)
+           ========================================= */
+        .testimonials-section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow: hidden;
+            clip-path: polygon(0 4vw, 100% 0, 100% 100%, 0 100%);
+            margin-top: -4vw;
+            padding-top: 4vw;
+        }
+
+        .bg-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-serif);
+            font-size: clamp(8rem, 20vw, 22rem);
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+            letter-spacing: 0.08em;
+            pointer-events: none;
+            z-index: 0;
+            text-transform: uppercase;
+        }
+
+        .testi-header {
+            position: absolute;
+            top: 15vh;
+            left: 5vw;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .testi-header .subtitle {
+            color: var(--accent-gold);
+        }
+
+        .testi-header .title {
+            color: #fff;
+        }
+
+        .canvas-area {
+            position: absolute;
+            inset: -5%;
+            width: 110%;
+            height: 110%;
+            z-index: 5;
+        }
+
+        /* Portrait Wrapper for JS Floating */
+        .portrait-wrapper {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            /* Fixed anchor origin */
+            will-change: transform;
+            z-index: 5;
+        }
+
+        /* Inner node for CSS Hover Styling */
+        .portrait-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.6s ease, filter 0.6s ease;
+        }
+
+        .portrait-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(0.6);
+            transition: filter 0.6s ease, transform 0.6s ease;
+            transform: scale(1.05);
+        }
+
+        /* Focus & Blur Effect (When canvas is hovered) */
+        .canvas-area.is-hovering .portrait-inner {
+            filter: brightness(0.3) blur(3px);
+        }
+
+        .portrait-wrapper:hover {
+            z-index: 50 !important;
+        }
+
+        .canvas-area.is-hovering .portrait-wrapper:hover .portrait-inner {
+            filter: brightness(1) blur(0px);
+            transform: scale(1.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .portrait-wrapper:hover .portrait-inner img {
+            filter: grayscale(0%) brightness(1.1);
+            transform: scale(1.15);
+        }
+
+        /* Golden border on hover */
+        .portrait-inner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid transparent;
+            transition: border 0.6s ease;
+            pointer-events: none;
+        }
+
+        .canvas-area.is-hovering .portrait-wrapper:hover .portrait-inner::after {
+            border: 1px solid var(--accent-gold);
+        }
+
+        /* Name tag micro-interaction */
+        .node-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 6px 16px;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            color: var(--accent-gold);
+            border: 1px solid rgba(192, 169, 136, 0.2);
+            border-radius: 30px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 10;
+            text-transform: uppercase;
+        }
+
+        .portrait-wrapper:hover .node-label {
+            bottom: -20px;
+            opacity: 1;
+        }
+
+        /* =========================================
+           05. CINEMATIC OVERLAY (Clip-Path Animation)
+           ========================================= */
+        .overlay-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #050505;
+            z-index: 1000;
+            -webkit-clip-path: circle(0% at 50% 50%);
+            clip-path: circle(0% at 50% 50%);
+            transition: clip-path var(--transition-smooth), -webkit-clip-path var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .overlay-panel.active {
+            pointer-events: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5vh;
+            right: 5vw;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: #fff;
+            color: #000;
+            transform: rotate(90deg);
+        }
+
+        .close-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .overlay-layout {
+            display: flex;
+            width: 90vw;
+            height: 80vh;
+            gap: 5vw;
+        }
+
+        .overlay-text-col {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding-left: 2vw;
+        }
+
+        .huge-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(10rem, 15vw, 18rem);
+            color: rgba(192, 169, 136, 0.04);
+            position: absolute;
+            top: -10%;
+            left: -5%;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .quote-reveal {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 3.5vw, 3.5rem);
+            line-height: 1.25;
+            color: #fff;
+            margin-bottom: 3rem;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.15em 0.3em;
+            font-style: italic;
+        }
+
+        .quote-word {
+            overflow: hidden;
+            display: inline-flex;
+            padding-bottom: 0.1em;
+        }
+
+        .quote-word span {
+            display: inline-block;
+            transform: translateY(110%) rotate(5deg);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s;
+            transform-origin: top left;
+        }
+
+        .overlay-panel.active .quote-word span {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+
+        .author-details {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1) 0.6s;
+            border-left: 2px solid var(--accent-gold);
+            padding-left: 1.5rem;
+            z-index: 2;
+        }
+
+        .overlay-panel.active .author-details {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .author-name {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .author-role {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-gold);
+        }
+
+        .overlay-img-col {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-mask {
+            width: 100%;
+            height: 90%;
+            overflow: hidden;
+            border-radius: 4px;
+            -webkit-clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+            transition: -webkit-clip-path 1.2s cubic-bezier(0.19, 1, 0.22, 1) 0.3s, clip-path 1.2s cubic-bezier(0.19, 1, 0.22, 1) 0.3s;
+        }
+
+        .overlay-panel.active .img-mask {
+            -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .img-mask img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.2);
+            filter: grayscale(40%);
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.3s;
+        }
+
+        .overlay-panel.active .img-mask img {
+            transform: scale(1);
+        }
+
+        /* =========================================
+           06. RESPONSIVE DESIGN (Mobile)
+           ========================================= */
+        @media (max-width: 900px) {
+            .slanted-accordion {
+                flex-direction: column;
+                transform: skewX(0deg);
+                height: auto;
+            }
+
+            .slanted-item {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                height: 220px;
+            }
+
+            .slanted-bg {
+                transform: skewX(0deg) scale(1.15);
+                width: 100%;
+                left: 0;
+            }
+
+            .slanted-content {
+                transform: skewX(0deg);
+                width: 100%;
+                left: 0;
+                padding: 2rem;
+            }
+
+            .slanted-item:hover {
+                flex: 1;
+                height: 350px;
+            }
+
+            .slanted-item:hover .slanted-bg {
+                transform: skewX(0deg) scale(1);
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none !important;
+            }
+
+            * {
+                cursor: auto !important;
+            }
+
+            .testimonials-section {
+                height: auto;
+            }
+
+            .bg-watermark {
+                display: none;
+            }
+
+            .canvas-area {
+                position: relative;
+                width: 100%;
+                height: auto;
+                inset: 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                padding: 15vh 0 10vh;
+                transform: none !important;
+            }
+
+            .portrait-wrapper {
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+                width: 40vw !important;
+                height: 55vw !important;
+                margin: 2vw;
+            }
+
+            .node-label {
+                bottom: -30px !important;
+                opacity: 1 !important;
+            }
+
+            .overlay-layout {
+                flex-direction: column;
+                height: 100vh;
+                gap: 2rem;
+                overflow-y: auto;
+                padding: 12vh 0 5vh;
+            }
+
+            .overlay-text-col {
+                padding: 0 5vw;
+                flex: none;
+            }
+
+            .huge-quote {
+                font-size: 8rem;
+                left: 0;
+            }
+
+            .overlay-img-col {
+                height: 40vh;
+                flex: none;
+                padding: 0 5vw;
+            }
+
+            .img-mask {
+                height: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="noise-texture"></div>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <section class="features-wrapper" id="features">
+        <header class="section-head">
+            <p class="subtitle">01 &mdash; The Philosophy</p>
+            <h2 class="title">Architectural Poetry</h2>
+        </header>
+
+        <div class="slanted-accordion">
+
+            <div class="slanted-item interactive" data-cursor="EXPLORE">
+                <div class="slanted-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2000')">
+                </div>
+                <div class="slanted-content">
+                    <div class="slanted-num">I.</div>
+                    <h3 class="slanted-title">Spatial Harmony</h3>
+                    <p class="slanted-text">Every void and volume is finely calibrated to create environments that
+                        resonate with profound silence and deliberate purpose.</p>
+                </div>
+            </div>
+
+            <div class="slanted-item interactive" data-cursor="EXPLORE">
+                <div class="slanted-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000')">
+                </div>
+                <div class="slanted-content">
+                    <div class="slanted-num">II.</div>
+                    <h3 class="slanted-title">Structural Truth</h3>
+                    <p class="slanted-text">We expose the absolute truth of materials. Nothing is concealed,
+                        highlighting the raw, undeniable beauty.</p>
+                </div>
+            </div>
+
+            <div class="slanted-item interactive" data-cursor="EXPLORE">
+                <div class="slanted-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000')">
+                </div>
+                <div class="slanted-content">
+                    <div class="slanted-num">III.</div>
+                    <h3 class="slanted-title">Curated Light</h3>
+                    <p class="slanted-text">Light is treated as a physical material. We sculpt natural sources to define
+                        the essence and mood of the space.</p>
+                </div>
+            </div>
+
+            <div class="slanted-item interactive" data-cursor="EXPLORE">
+                <div class="slanted-bg"
+                    style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000')">
+                </div>
+                <div class="slanted-content">
+                    <div class="slanted-num">IV.</div>
+                    <h3 class="slanted-title">Timeless Form</h3>
+                    <p class="slanted-text">We reject the ephemeral. Our designs are anchored in an aesthetic that
+                        matures elegantly over decades.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="testimonials-section interactive-dark" id="voices">
+
+        <div class="bg-watermark">ECHOES</div>
+
+        <header class="testi-header">
+            <p class="subtitle">02 &mdash; The Voices</p>
+            <h2 class="title">Partners in Excellence</h2>
+        </header>
+
+        <div class="canvas-area" id="canvasArea">
+        </div>
+
+    </section>
+
+    <div class="overlay-panel" id="overlayPanel">
+        <button class="close-btn interactive" data-cursor="CLOSE">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="overlay-layout">
+            <div class="overlay-text-col">
+                <span class="huge-quote">"</span>
+                <div class="quote-reveal" id="quoteText"></div>
+                <div class="author-details">
+                    <h4 class="author-name font-sans" id="authorName">Name</h4>
+                    <p class="author-role" id="authorRole">Position</p>
+                </div>
+            </div>
+
+            <div class="overlay-img-col">
+                <div class="img-mask">
+                    <img id="overlayImg" src="" alt="Project Reference">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            /* --- Custom Cursor & Global Parallax Logic --- */
+            const cursorDot = document.querySelector('.cursor-dot');
+            const cursorRing = document.querySelector('.cursor-ring');
+            const canvasArea = document.getElementById('canvasArea');
+
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY;
+            let canvasX = 0, canvasY = 0;
+
+            const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+
+            if (!isTouch) {
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    cursorDot.style.transform = `translate(-50%, -50%) translate(${mouseX}px, ${mouseY}px)`;
+                });
+            }
+
+            /* --- Hover States --- */
+            function bindInteractive(el) {
+                if (isTouch) return;
+                el.addEventListener('mouseenter', () => {
+                    document.body.classList.add('hovering');
+                    if (el.dataset.cursor) cursorRing.innerText = el.dataset.cursor;
+                });
+                el.addEventListener('mouseleave', () => {
+                    document.body.classList.remove('hovering');
+                    cursorRing.innerText = '';
+                });
+            }
+            document.querySelectorAll('.interactive').forEach(bindInteractive);
+
+            let isOverlayOpen = false;
+            const darkSection = document.querySelector('.interactive-dark');
+
+            darkSection.addEventListener('mouseenter', () => document.body.classList.add('dark-mode'));
+            darkSection.addEventListener('mouseleave', () => {
+                if (!isOverlayOpen) document.body.classList.remove('dark-mode');
+            });
+
+            /* --- Curated Floating Nodes Data --- 
+               Instead of random positions, these are explicitly mapped 
+               to look beautiful and avoid clumping. 
+               x, y = positions in % (anchors)
+               w, h = size in px
+            */
+            const nodesData = [
+                {
+                    x: 18, y: 35, w: 140, h: 190,
+                    img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400',
+                    name: 'Elena Rostova', role: 'Art Director',
+                    quote: 'Their spatial intelligence is profound. Every single element serves an exquisite, silent purpose.',
+                    project: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1200'
+                },
+                {
+                    x: 82, y: 28, w: 150, h: 210,
+                    img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400',
+                    name: 'Julian Vance', role: 'Lead Architect',
+                    quote: 'A flawless convergence of structural honesty and poetic design. A true masterpiece.',
+                    project: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1200'
+                },
+                {
+                    x: 50, y: 65, w: 180, h: 250, /* Hero node, slightly larger, bottom center-right */
+                    img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400',
+                    name: 'Sophia Lin', role: 'Gallerist',
+                    quote: 'They stripped away the transient, leaving behind a breathtaking, timeless architectural narrative.',
+                    project: 'https://images.unsplash.com/photo-1600566752355-3221975e1140?q=80&w=1200'
+                },
+                {
+                    x: 22, y: 78, w: 130, h: 170,
+                    img: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?q=80&w=400',
+                    name: 'Marcus Thorne', role: 'Founder',
+                    quote: 'The aesthetic rigor displayed here establishes an entirely new benchmark for curated spaces.',
+                    project: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200'
+                },
+                {
+                    x: 78, y: 75, w: 120, h: 160,
+                    img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400',
+                    name: 'Amira Hassan', role: 'Editor in Chief',
+                    quote: 'An environment that commands absolute respect. The micro-details speak volumes of their dedication.',
+                    project: 'https://images.unsplash.com/photo-1600210491369-e753d80a41f3?q=80&w=1200'
+                }
+            ];
+
+            // Preload large images
+            nodesData.forEach(data => { const img = new Image(); img.src = data.project; });
+
+            const nodesElements = [];
+
+            // Initialize Nodes
+            nodesData.forEach((data, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'portrait-wrapper interactive';
+                wrapper.dataset.cursor = "READ";
+
+                wrapper.innerHTML = `
+                    <div class="portrait-inner">
+                        <img src="${data.img}" alt="${data.name}">
+                    </div>
+                    <div class="node-label">${data.name}</div>
+                `;
+
+                // Base positioning and sizing
+                wrapper.style.width = `${data.w}px`;
+                wrapper.style.height = `${data.h}px`;
+                wrapper.style.left = `${data.x}%`;
+                wrapper.style.top = `${data.y}%`;
+
+                // Math-based animation offsets
+                wrapper.animationData = {
+                    offsetX: Math.random() * 100,
+                    offsetY: Math.random() * 100,
+                    speed: 0.5 + Math.random() * 0.5
+                };
+
+                canvasArea.appendChild(wrapper);
+                bindInteractive(wrapper);
+
+                // Add dimming effect for the other nodes when hovering
+                wrapper.addEventListener('mouseenter', () => canvasArea.classList.add('is-hovering'));
+                wrapper.addEventListener('mouseleave', () => canvasArea.classList.remove('is-hovering'));
+
+                wrapper.addEventListener('click', () => openOverlay(data, wrapper));
+
+                nodesElements.push(wrapper);
+            });
+
+            /* --- Unified Render Loop (Cursor, Parallax & Floating Nodes) --- */
+            function renderLoop() {
+                if (!isTouch) {
+                    // Cursor interpolation
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    cursorRing.style.transform = `translate(-50%, -50%) translate(${ringX}px, ${ringY}px)`;
+
+                    // Canvas area gentle parallax
+                    const targetCX = (mouseX / window.innerWidth - 0.5) * -40;
+                    const targetCY = (mouseY / window.innerHeight - 0.5) * -40;
+                    canvasX += (targetCX - canvasX) * 0.05;
+                    canvasY += (targetCY - canvasY) * 0.05;
+                    canvasArea.style.transform = `translate(${canvasX}px, ${canvasY}px)`;
+                }
+
+                // Smooth sine-wave floating for portraits (Desktop Only)
+                if (!isOverlayOpen && window.innerWidth > 900) {
+                    const time = Date.now() * 0.001;
+                    nodesElements.forEach(el => {
+                        const d = el.animationData;
+                        // Organic math floating (replaces the chaotic bouncing physics)
+                        const floatX = Math.sin(time * d.speed + d.offsetX) * 15;
+                        const floatY = Math.cos(time * d.speed * 0.8 + d.offsetY) * 15;
+                        el.style.transform = `translate(calc(-50% + ${floatX}px), calc(-50% + ${floatY}px))`;
+                    });
+                }
+
+                requestAnimationFrame(renderLoop);
+            }
+            requestAnimationFrame(renderLoop);
+
+            /* --- Cinematic Overlay Logic --- */
+            const overlay = document.getElementById('overlayPanel');
+            const closeBtn = document.querySelector('.close-btn');
+            const quoteText = document.getElementById('quoteText');
+            const authorName = document.getElementById('authorName');
+            const authorRole = document.getElementById('authorRole');
+            const overlayImg = document.getElementById('overlayImg');
+
+            let lastOriginX = window.innerWidth / 2;
+            let lastOriginY = window.innerHeight / 2;
+
+            function openOverlay(data, element) {
+                isOverlayOpen = true;
+
+                // Get origin for expanding clip-path
+                const rect = element.getBoundingClientRect();
+                lastOriginX = rect.left + rect.width / 2;
+                lastOriginY = rect.top + rect.height / 2;
+
+                // Inject Data
+                authorName.innerText = data.name;
+                authorRole.innerText = data.role;
+                overlayImg.src = data.project;
+
+                // Split words for stagger reveal
+                quoteText.innerHTML = '';
+                const words = data.quote.split(' ');
+                words.forEach((word, index) => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.className = 'quote-word';
+                    const span = document.createElement('span');
+                    span.innerText = word + '\u00A0';
+                    span.style.transitionDelay = `${0.3 + index * 0.035}s`;
+                    wordDiv.appendChild(span);
+                    quoteText.appendChild(wordDiv);
+                });
+
+                // Set origin and force reflow
+                overlay.style.webkitClipPath = `circle(0% at ${lastOriginX}px ${lastOriginY}px)`;
+                overlay.style.clipPath = `circle(0% at ${lastOriginX}px ${lastOriginY}px)`;
+                void overlay.offsetWidth;
+
+                // Open overlay
+                overlay.classList.add('active');
+                overlay.style.webkitClipPath = `circle(150% at ${lastOriginX}px ${lastOriginY}px)`;
+                overlay.style.clipPath = `circle(150% at ${lastOriginX}px ${lastOriginY}px)`;
+
+                document.body.style.overflow = 'hidden';
+                document.body.classList.add('dark-mode');
+            }
+
+            closeBtn.addEventListener('click', () => {
+                isOverlayOpen = false;
+                overlay.classList.remove('active');
+
+                // Close back to origin point
+                overlay.style.webkitClipPath = `circle(0% at ${lastOriginX}px ${lastOriginY}px)`;
+                overlay.style.clipPath = `circle(0% at ${lastOriginX}px ${lastOriginY}px)`;
+
+                document.body.style.overflow = '';
+
+                if (!darkSection.matches(':hover')) {
+                    document.body.classList.remove('dark-mode');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

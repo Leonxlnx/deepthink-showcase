@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avant-Garde Features & Voices</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Syne:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           ROOT VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg: #F2EFE9;
+            /* Warm Alabaster */
+            --text: #1C1A17;
+            /* Deep Charcoal */
+            --accent: #9E6746;
+            /* Muted Terracotta / Bronze */
+            --border: rgba(28, 26, 23, 0.15);
+
+            --f-serif: 'Cormorant Garamond', serif;
+            --f-sans: 'Syne', sans-serif;
+
+            --wheel-radius: 35vw;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Custom cursor override */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--f-sans);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==========================================================================
+           AMBIENT BACKGROUND
+           ========================================================================== */
+        .testimonial-section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .bg-image {
+            position: absolute;
+            inset: -5%;
+            width: 110%;
+            height: 110%;
+            background: url('https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08;
+            filter: grayscale(100%) contrast(1.1);
+            z-index: -2;
+            will-change: transform;
+        }
+
+        .ambient-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 60% 50%, transparent 0%, var(--bg) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           CUSTOM CURSOR
+           ========================================================================== */
+        .cursor-dot {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            letter-spacing: 2px;
+            color: transparent;
+        }
+
+        body.dragging .cursor-ring {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+        }
+
+        body.hovering-avatar .cursor-dot {
+            opacity: 0;
+        }
+
+        body.hovering-avatar .cursor-ring {
+            width: 70px;
+            height: 70px;
+            background: var(--bg);
+            border-color: transparent;
+            color: var(--text);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body.hovering-avatar .cursor-ring::after {
+            content: "VIEW";
+        }
+
+        /* ==========================================================================
+           ORBITAL WHEEL (Left Side)
+           ========================================================================== */
+        .wheel-container {
+            position: absolute;
+            left: -35vw;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 70vw;
+            height: 70vw;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .wheel-border {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px dashed var(--border);
+            pointer-events: none;
+        }
+
+        .wheel {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .wheel-node {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            pointer-events: auto;
+        }
+
+        .wheel-node-rotation {
+            position: absolute;
+            will-change: transform;
+        }
+
+        .wheel-node-magnetic {
+            position: absolute;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .wheel-node-inner {
+            position: absolute;
+            top: -45px;
+            left: -45px;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(158, 103, 70, 0.3);
+            transition: filter 0.6s, box-shadow 0.6s, border 0.6s, transform 0.4s;
+            filter: grayscale(100%) opacity(0.5);
+        }
+
+        .wheel-node-inner.active {
+            filter: grayscale(0%) opacity(1);
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 40px rgba(158, 103, 70, 0.3);
+        }
+
+        /* ==========================================================================
+           CONTENT (Right Side)
+           ========================================================================== */
+        .content-container {
+            margin-left: 45vw;
+            width: 45vw;
+            padding-right: 5vw;
+            z-index: 10;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .quote-bg-mark {
+            position: absolute;
+            top: 10%;
+            left: 35vw;
+            font-family: var(--f-serif);
+            font-size: 35vw;
+            color: var(--accent);
+            opacity: 0.03;
+            z-index: -1;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-family: var(--f-serif);
+            font-size: clamp(1.8rem, 3.2vw, 3.5rem);
+            line-height: 1.25;
+            margin-bottom: 3rem;
+            min-height: 220px;
+        }
+
+        /* KINETIC SPLIT TEXT */
+        .word-wrap {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: top;
+            margin-right: 0.25em;
+            padding-bottom: 0.1em;
+        }
+
+        .word-inner {
+            display: inline-block;
+            transform: translateY(110%) rotate(6deg);
+            transform-origin: top left;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: opacity 0.5s;
+        }
+
+        .author-role {
+            font-family: var(--f-serif);
+            font-size: 1.2rem;
+            color: var(--accent);
+            font-style: italic;
+            transition: opacity 0.5s;
+        }
+
+        .controls {
+            margin-top: 4rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-text {
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            font-weight: 500;
+        }
+
+        .progress-wrap {
+            width: 150px;
+            height: 1px;
+            background: var(--border);
+            position: relative;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        /* ==========================================================================
+           RESPONSIVE (MOBILE)
+           ========================================================================== */
+        @media (max-width: 900px) {
+            :root {
+                --wheel-radius: 60vw;
+            }
+
+            .testimonial-section {
+                flex-direction: column;
+                justify-content: flex-end;
+                padding-bottom: 10vh;
+            }
+
+            .wheel-container {
+                left: -60vw;
+                top: 25%;
+                transform: translateY(-50%);
+                width: 120vw;
+                height: 120vw;
+            }
+
+            .content-container {
+                margin-left: 10vw;
+                width: 80vw;
+                padding-right: 0;
+                margin-top: 40vh;
+            }
+
+            .quote-text {
+                font-size: 2.2rem;
+                min-height: 200px;
+            }
+
+            .quote-bg-mark {
+                left: 10vw;
+                top: 30%;
+                font-size: 50vw;
+            }
+
+            .wheel-node-inner {
+                width: 70px;
+                height: 70px;
+                top: -35px;
+                left: -35px;
+            }
+
+            .cursor-dot,
+            .cursor-ring {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="noise"></div>
+
+    <section class="testimonial-section">
+        <div class="bg-image"></div>
+        <div class="ambient-gradient"></div>
+
+        <div class="quote-bg-mark">“</div>
+
+        <div class="wheel-container">
+            <div class="wheel-border"></div>
+            <div class="wheel" id="wheel">
+            </div>
+        </div>
+
+        <div class="content-container">
+            <div class="section-label">Features & Voices</div>
+            <div class="quote-text" id="quote-text"></div>
+            <div class="author-info">
+                <div class="author-name" id="author-name"></div>
+                <div class="author-role" id="author-role"></div>
+            </div>
+            <div class="controls">
+                <div class="progress-wrap">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="nav-text"><span id="current-index">01</span> &nbsp;/&nbsp; <span id="total-index">06</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DATA SOURCE ---
+            const testimonials = [
+                {
+                    quote: "An absolute masterclass in visual storytelling. They stripped away the noise and delivered an architectural marvel for our brand.",
+                    name: "Elena Rostova", role: "Creative Director, Vangard",
+                    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop"
+                },
+                {
+                    quote: "The aesthetic purity and structural elegance they bring is unmatched. Our digital presence now feels like a high-end curated gallery.",
+                    name: "Julian Mercer", role: "Founder, Mercer Maison",
+                    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop"
+                },
+                {
+                    quote: "Every micro-interaction is purposeful. It is rare to find an agency that balances profound artistic vision with such flawless execution.",
+                    name: "Sophia Lin", role: "Lead Architect, Forme Studio",
+                    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=400&auto=format&fit=crop"
+                },
+                {
+                    quote: "They redefined our identity entirely. The clean, avant-garde design language resonates deeply with our affluent demographic.",
+                    name: "Arthur Pendelton", role: "CEO, Oakhaven Editorial",
+                    image: "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?q=80&w=400&auto=format&fit=crop"
+                },
+                {
+                    quote: "Minimalist yet overwhelmingly powerful. Their work defies generic digital trends and establishes a timeless visual permanence.",
+                    name: "Isabella Cruz", role: "Chief Curator, Arte Modern",
+                    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop"
+                },
+                {
+                    quote: "A symphony of form and function. They translate abstract concepts into tangible digital experiences that leave a lasting imprint.",
+                    name: "David Orellana", role: "Filmmaker & Artist",
+                    image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=400&auto=format&fit=crop"
+                }
+            ];
+
+            // --- WHEEL STATE ---
+            const wheel = document.getElementById('wheel');
+            const N = testimonials.length;
+            const angleStep = 360 / N;
+
+            let currentAngle = 0;
+            let targetAngle = 0;
+            let activeIndex = 0;
+
+            // --- INITIALIZATION ---
+            function initWheel() {
+                testimonials.forEach((t, i) => {
+                    const node = document.createElement('div');
+                    node.className = 'wheel-node';
+                    const baseAngle = i * angleStep;
+
+                    // Radius scales based on CSS Variable directly.
+                    node.style.transform = `rotate(${baseAngle}deg) translateX(var(--wheel-radius))`;
+
+                    const rotater = document.createElement('div');
+                    rotater.className = 'wheel-node-rotation';
+
+                    const mag = document.createElement('div');
+                    mag.className = 'wheel-node-magnetic';
+
+                    const inner = document.createElement('div');
+                    inner.className = 'wheel-node-inner';
+                    inner.style.backgroundImage = `url(${t.image})`;
+
+                    mag.appendChild(inner);
+                    rotater.appendChild(mag);
+                    node.appendChild(rotater);
+                    wheel.appendChild(node);
+
+                    // Magnetic Hover Micro-animation
+                    mag.addEventListener('mousemove', (e) => {
+                        const rect = mag.getBoundingClientRect();
+                        const mx = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                        const my = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                        mag.style.transform = `translate(${mx}px, ${my}px)`;
+                        inner.style.transform = 'scale(1.15)';
+                        document.body.classList.add('hovering-avatar');
+                    });
+
+                    mag.addEventListener('mouseleave', () => {
+                        mag.style.transform = `translate(0px, 0px)`;
+                        inner.style.transform = 'scale(1)';
+                        document.body.classList.remove('hovering-avatar');
+                    });
+
+                    // Click to rotate
+                    mag.addEventListener('click', () => goToIndex(i));
+                });
+
+                document.getElementById('total-index').innerText = String(N).padStart(2, '0');
+                updateText(true);
+            }
+
+            // --- INTERACTION LOGIC ---
+            function goToIndex(i) {
+                let target = -i * angleStep;
+                let diff = (target - targetAngle) % 360;
+
+                // Shortest path calculation
+                if (diff > 180) diff -= 360;
+                if (diff < -180) diff += 360;
+
+                targetAngle += diff;
+
+                if (activeIndex !== i) {
+                    activeIndex = i;
+                    updateText();
+                }
+            }
+
+            // Text Splitter for Spring Reveal
+            const splitText = (text) => {
+                return text.split(' ').map(word => {
+                    return `<span class="word-wrap"><span class="word-inner">${word}</span></span>`;
+                }).join(' ');
+            };
+
+            function updateText(isInit = false) {
+                const quoteEl = document.getElementById('quote-text');
+                const nameEl = document.getElementById('author-name');
+                const roleEl = document.getElementById('author-role');
+                const progressEl = document.getElementById('progress-bar');
+
+                // Update Progress Line
+                progressEl.style.width = `${(activeIndex / (N - 1)) * 100}%`;
+
+                if (isInit) {
+                    const t = testimonials[activeIndex];
+                    quoteEl.innerHTML = splitText(t.quote);
+                    nameEl.innerText = t.name;
+                    roleEl.innerText = t.role;
+                    document.getElementById('current-index').innerText = String(activeIndex + 1).padStart(2, '0');
+
+                    void quoteEl.offsetWidth; // Force Reflow
+                    quoteEl.querySelectorAll('.word-inner').forEach((w, i) => {
+                        w.style.transitionDelay = `${i * 0.015}s`;
+                        w.style.transform = 'translateY(0) rotate(0)';
+                    });
+                    return;
+                }
+
+                if (window.textUpdateTimeout) clearTimeout(window.textUpdateTimeout);
+
+                // Animate Out
+                quoteEl.querySelectorAll('.word-inner').forEach((w) => {
+                    w.style.transitionDelay = '0s';
+                    w.style.transform = 'translateY(-110%) rotate(-6deg)';
+                });
+                nameEl.style.opacity = '0';
+                roleEl.style.opacity = '0';
+
+                // Animate In New Content
+                window.textUpdateTimeout = setTimeout(() => {
+                    const t = testimonials[activeIndex];
+                    quoteEl.innerHTML = splitText(t.quote);
+                    nameEl.innerText = t.name;
+                    roleEl.innerText = t.role;
+                    document.getElementById('current-index').innerText = String(activeIndex + 1).padStart(2, '0');
+
+                    void quoteEl.offsetWidth; // Force Reflow
+
+                    quoteEl.querySelectorAll('.word-inner').forEach((w, i) => {
+                        w.style.transitionDelay = `${i * 0.015}s`;
+                        w.style.transform = 'translateY(0) rotate(0)';
+                    });
+                    nameEl.style.opacity = '1';
+                    roleEl.style.opacity = '1';
+                }, 400);
+            }
+
+            // --- DRAG & SCROLL BEHAVIOR ---
+            let isDragging = false, startY = 0, startAngle = 0, velocity = 0, lastY = 0;
+
+            function startDrag(y) {
+                isDragging = true;
+                startY = y;
+                startAngle = targetAngle;
+                lastY = y;
+                document.body.classList.add('dragging');
+            }
+
+            function processDrag(y) {
+                if (!isDragging) return;
+                const dy = y - startY;
+                targetAngle = startAngle + dy * 0.3;
+                velocity = y - lastY;
+                lastY = y;
+            }
+
+            function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                document.body.classList.remove('dragging');
+                targetAngle += velocity * 2; // Inertia
+                snapToNearest();
+            }
+
+            function snapToNearest() {
+                const indexFloat = -targetAngle / angleStep;
+                let nearest = Math.round(indexFloat);
+                let actualIndex = ((nearest % N) + N) % N;
+                goToIndex(actualIndex);
+            }
+
+            window.addEventListener('mousedown', (e) => { if (!e.target.closest('.content-container')) startDrag(e.clientY); });
+            window.addEventListener('mousemove', (e) => processDrag(e.clientY));
+            window.addEventListener('mouseup', endDrag);
+
+            window.addEventListener('touchstart', (e) => { if (!e.target.closest('.content-container')) startDrag(e.touches[0].clientY); }, { passive: true });
+            window.addEventListener('touchmove', (e) => processDrag(e.touches[0].clientY), { passive: true });
+            window.addEventListener('touchend', endDrag);
+
+            let wheelTimeout;
+            window.addEventListener('wheel', (e) => {
+                targetAngle -= Math.sign(e.deltaY) * 12;
+                clearTimeout(wheelTimeout);
+                wheelTimeout = setTimeout(snapToNearest, 150);
+            }, { passive: true });
+
+            // --- RENDER LOOP (Physics & Parallax) ---
+            let cursorX = window.innerWidth / 2, cursorY = window.innerHeight / 2;
+            let mouseX = cursorX, mouseY = cursorY;
+
+            window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+            function animate() {
+                // Smooth Wheel Rotation Interpolation
+                currentAngle += (targetAngle - currentAngle) * 0.05;
+                wheel.style.transform = `rotate(${currentAngle}deg)`;
+
+                // Avatar Math & Counter-rotation
+                document.querySelectorAll('.wheel-node').forEach((node, i) => {
+                    const baseAngle = i * angleStep;
+                    const rotater = node.querySelector('.wheel-node-rotation');
+                    const inner = node.querySelector('.wheel-node-inner');
+
+                    let wAngle = (baseAngle + currentAngle) % 360;
+                    if (wAngle > 180) wAngle -= 360;
+                    if (wAngle < -180) wAngle += 360;
+
+                    const dist = Math.abs(wAngle);
+                    const scale = Math.max(0.5, 1.25 - (dist / 140));
+                    const opacity = Math.max(0.2, 1 - (dist / 90));
+
+                    rotater.style.transform = `rotate(${-baseAngle - currentAngle}deg) scale(${scale})`;
+                    rotater.style.opacity = opacity;
+
+                    if (dist < 5) inner.classList.add('active');
+                    else inner.classList.remove('active');
+                });
+
+                // Ambient Parallax Background
+                const bg = document.querySelector('.bg-image');
+                if (bg) {
+                    const px = (mouseX / window.innerWidth - 0.5) * 25;
+                    const py = (mouseY / window.innerHeight - 0.5) * 25;
+                    bg.style.transform = `translate(${px}px, ${py}px)`;
+                }
+
+                // Custom Cursor Follower Physics
+                cursorX += (mouseX - cursorX) * 0.15;
+                cursorY += (mouseY - cursorY) * 0.15;
+                const dot = document.querySelector('.cursor-dot');
+                const ring = document.querySelector('.cursor-ring');
+
+                if (dot && ring) {
+                    dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+                    ring.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // Boot
+            initWheel();
+            animate();
+        });
+    </script>
+</body>
+
+</html>
