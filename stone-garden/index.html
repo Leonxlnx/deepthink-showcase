@@ -600,6 +600,257 @@
                 align-items: center;
             }
         }
+
+        /* =================================================================
+           8. NAVBAR
+           ================================================================= */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: calc(100% - 60px);
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(35, 42, 37, 0.08);
+        }
+
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-logo span {
+            color: var(--accent-clay);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-cta {
+            background: var(--text-main);
+            color: var(--bg-base) !important;
+            padding: 9px 22px;
+            border-radius: 50px;
+            font-size: 0.85rem !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase;
+            transition: background 0.3s, transform 0.3s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-clay) !important;
+            color: #fff !important;
+            transform: scale(1.04);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links li:not(:last-child) {
+                display: none;
+            }
+
+            .navbar {
+                width: calc(100% - 30px);
+                padding: 12px 20px;
+            }
+        }
+
+        /* =================================================================
+           9. HERO SECTION
+           ================================================================= */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5vw;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent-clay);
+            font-weight: 600;
+            margin-bottom: 30px;
+            background: rgba(184, 142, 101, 0.1);
+            border: 1px solid rgba(184, 142, 101, 0.25);
+            padding: 8px 20px;
+            border-radius: 50px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.9s 0.2s forwards;
+        }
+
+        .hero-eyebrow::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-clay);
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: clamp(3.8rem, 8vw, 9rem);
+            line-height: 1.0;
+            color: var(--text-main);
+            font-weight: 400;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s 0.45s forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent-clay);
+        }
+
+        .hero-sub {
+            max-width: 560px;
+            font-size: clamp(1rem, 1.4vw, 1.15rem);
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s 0.7s forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s 0.9s forwards;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: var(--bg-base);
+            padding: 15px 36px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-clay);
+            transform: scale(1.04);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 15px 36px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.75);
+            transform: scale(1.04);
+        }
+
+        .hero-scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: fadeUp 1s 1.3s forwards;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--accent-clay), transparent);
+            animation: scrollLine 2s infinite;
+        }
+
+        @keyframes scrollLine {
+            0% {
+                transform: scaleY(0);
+                transform-origin: top;
+            }
+
+            50% {
+                transform: scaleY(1);
+                transform-origin: top;
+            }
+
+            51% {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+
+            100% {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -613,6 +864,32 @@
 
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-logo">Stone<span>Garden</span></div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#testimonials">Stories</a></li>
+            <li><a href="#" class="nav-cta interactable-view">Begin</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <span class="hero-eyebrow">Natural Digital Ecosystem</span>
+        <h1 class="hero-title">Where Nature<br>Meets <em>Design.</em></h1>
+        <p class="hero-sub">An organic digital experience built on the principles of stillness, flow, and deep-rooted
+            clarity. No noise. Just nature.</p>
+        <div class="hero-actions">
+            <a href="#features" class="btn-primary interactable-view">Explore Features</a>
+            <a href="#testimonials" class="btn-secondary interactable-view">Read Stories</a>
+        </div>
+        <div class="hero-scroll-hint">
+            <div class="scroll-line"></div>
+            Scroll
+        </div>
+    </section>
 
     <main>
         <section class="features-fan" id="features">
@@ -664,7 +941,7 @@
                     <div class="fan-wrapper" id="wrap-2">
                         <div class="fan-card interactable-view">
                             <div class="fc-img"><img
-                                    src="https://images.unsplash.com/photo-1516803622262-4217730e2fbf?q=80&w=600&auto=format&fit=crop"
+                                    src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=600&auto=format&fit=crop"
                                     alt="Smooth Stone" /></div>
                             <div class="fc-icon"><i data-lucide="shield-check"></i></div>
                             <div class="fc-body">
