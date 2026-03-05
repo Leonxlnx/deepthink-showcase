@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Solutions Section</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@1,500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ========================================================
+           01. VARIABLES & RESET
+           ======================================================== */
+        :root {
+            --bg-color: #ffffff;
+            --text-dark: #111111;
+            --text-muted: #666666;
+            --card-bg: #f4f4f5;
+            /* Extrem elegantes, helles Grau */
+            --accent-orange: #f85032;
+            /* Das kräftige Korall-Orange */
+            /* Eine butterweiche, "Apple-like" Animationskurve */
+            --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5%;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* ========================================================
+           02. HEADER BEREICH
+           ======================================================== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-sans {
+            font-size: clamp(3.2rem, 6vw, 5.5rem);
+            font-weight: 300;
+            /* Sehr clean und leicht */
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            color: var(--text-dark);
+        }
+
+        .title-serif {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(3.5rem, 6.5vw, 6rem);
+            font-weight: 500;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--text-dark);
+            margin-top: -5px;
+        }
+
+        /* --- VIEW ALL BUTTON --- */
+        .btn-view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--text-dark);
+            color: #ffffff;
+            padding: 16px 36px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05rem;
+            transition: all 0.5s var(--ease-premium);
+            margin-bottom: 10px;
+            /* Optische Ausrichtung zur Text-Baseline */
+        }
+
+        .btn-view-all svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.5s var(--ease-premium);
+        }
+
+        .btn-view-all:hover {
+            background-color: var(--accent-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(248, 80, 50, 0.25);
+        }
+
+        .btn-view-all:hover svg {
+            transform: translate(4px, -4px);
+            /* Pfeil fliegt geschmeidig nach oben rechts */
+        }
+
+        /* ========================================================
+           03. CARDS GRID
+           ======================================================== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 48px 36px;
+            border-radius: 4px;
+            /* Minimal abgerundet für hochmodernen Look */
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+            text-decoration: none;
+            color: var(--text-dark);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
+            cursor: pointer;
+        }
+
+        /* Der magische Hover-Hintergrund (Fill-Effekt flüssig von unten) */
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--accent-orange);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.6s var(--ease-premium);
+            z-index: 0;
+            will-change: transform;
+        }
+
+        /* Inhalt zwingend über dem farbigen Hintergrund halten */
+        .card-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-icon {
+            width: 38px;
+            height: 38px;
+            margin-bottom: auto;
+            /* Pusht den Text fließend nach unten, wie in der Vorlage */
+            color: var(--text-dark);
+            transition: color 0.4s ease;
+        }
+
+        .card-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 1.5;
+        }
+
+        .card h3 {
+            font-size: 1.75rem;
+            font-weight: 500;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            transition: color 0.4s ease;
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            transition: color 0.4s ease;
+        }
+
+        /* --- HOVER AKTIONEN --- */
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(248, 80, 50, 0.2);
+        }
+
+        .card:hover::before {
+            transform: scaleY(1);
+            /* Füllt die Karte beim Hover elegant mit Orange auf */
+        }
+
+        /* Text & Icon erben automatisch Weiß, sobald das Orange drunter liegt */
+        .card:hover .card-icon,
+        .card:hover h3 {
+            color: #ffffff;
+        }
+
+        .card:hover p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* ========================================================
+           04. SMOOTH EINFADING (Scroll Animation)
+           ======================================================== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s var(--ease-premium), transform 1s var(--ease-premium);
+            will-change: opacity, transform;
+        }
+
+        .fade-up.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================================
+           05. RESPONSIVE DESIGN
+           ======================================================== */
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card {
+                min-height: 340px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 40px;
+                gap: 20px;
+            }
+
+            .title-sans {
+                font-size: 2.8rem;
+            }
+
+            .title-serif {
+                font-size: 3.2rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                min-height: 300px;
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="section-container">
+
+        <header class="section-header">
+            <div class="title-group">
+                <h1 class="title-sans fade-up" style="transition-delay: 0.1s;">Creative Solutions</h1>
+                <h2 class="title-serif fade-up" style="transition-delay: 0.2s;">Modern Brands &mdash;</h2>
+            </div>
+
+            <a href="#" class="btn-view-all fade-up" style="transition-delay: 0.3s;">
+                View All
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+            </a>
+        </header>
+
+        <div class="cards-grid">
+
+            <a href="#" class="card fade-up" style="transition-delay: 0.4s;">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>UI/UX Design</h3>
+                        <p>We design modern, responsive websites that do more than look great they drive results.</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="card fade-up" style="transition-delay: 0.5s;">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 5l7 14H5l7-14z"></path>
+                            <circle cx="12" cy="5" r="2"></circle>
+                            <circle cx="19" cy="19" r="2"></circle>
+                            <circle cx="5" cy="19" r="2"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Brand Design</h3>
+                        <p>Whether you're launching a brand, refreshing your presence, or scaling your business</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="card fade-up" style="transition-delay: 0.6s;">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <polyline points="8 10 5 13 8 16"></polyline>
+                            <polyline points="16 10 19 13 16 16"></polyline>
+                            <line x1="14" y1="8" x2="10" y2="18"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>Web Design</h3>
+                        <p>Our UI/UX process blends strategy, storytelling, and user psychology to create seamless</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="card fade-up" style="transition-delay: 0.7s;">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <rect x="4" y="3" width="16" height="18" rx="2" ry="2"></rect>
+                            <rect x="8" y="7" width="8" height="3"></rect>
+                            <line x1="8" y1="13" x2="16" y2="13"></line>
+                            <line x1="8" y1="16" x2="12" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3>App Design</h3>
+                        <p>From wireframes and prototypes to pixel-perfect interfaces, we ensure every click swipe.</p>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50px 0px', // Startet leicht verzögert, erst wenn das Element etwas im Bild ist
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Klasse hinzufügen, um die CSS-Animation abzufeuern
+                        entry.target.classList.add('is-visible');
+                        // Element nicht mehr beobachten, damit Animation nur einmal abspielt
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Alle .fade-up Elemente schnappen und überwachen
+            const fadeElements = document.querySelectorAll('.fade-up');
+            fadeElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+
+</html>
