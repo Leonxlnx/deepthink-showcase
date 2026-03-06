@@ -35,6 +35,9 @@
 
             --gold-glow: #e8af48;
             --ring-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+
+            /* Bubble ripple */
+            --bubble-color: rgba(255, 255, 255, 0.06);
         }
 
         body.light {
@@ -61,6 +64,8 @@
 
             --gold-glow: #e8c15a;
             --ring-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+
+            --bubble-color: rgba(0, 0, 0, 0.04);
         }
 
         /* 
@@ -311,7 +316,7 @@
 
         /* 
       ========================================================
-      6. THEME TOGGLE (SUN / MOON)
+      6. THEME TOGGLE (SUN / MOON) — Bubbly Soft Switch
       ========================================================
     */
         .theme-toggle {
@@ -327,17 +332,59 @@
             color: var(--item-active-color);
             transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
             outline: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .theme-toggle:active .theme-toggle-inner {
             transform: scale(0.85);
         }
 
+        /* Bubble ripple element — grows from center on click */
+        .theme-bubble {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: var(--bubble-color);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .theme-bubble.pop {
+            animation: bubblePop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes bubblePop {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+
+            50% {
+                width: 200px;
+                height: 200px;
+                opacity: 0.6;
+            }
+
+            100% {
+                width: 260px;
+                height: 260px;
+                opacity: 0;
+            }
+        }
+
         .theme-toggle-inner {
             position: relative;
             width: 26px;
             height: 26px;
-            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
         }
 
         .sun-icon,
@@ -347,10 +394,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.5s ease;
+            transition:
+                transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.45s ease;
         }
 
-        /* Default (Dark Mode) states */
+        /* Default (Dark Mode) states — Sun visible */
         .sun-icon {
             opacity: 1;
             transform: rotate(0deg) scale(1);
@@ -358,18 +407,45 @@
 
         .moon-icon {
             opacity: 0;
-            transform: rotate(-90deg) scale(0.4);
+            transform: rotate(-90deg) scale(0.3);
         }
 
-        /* Light Mode states */
+        /* Light Mode states — Moon visible */
         body.light .sun-icon {
             opacity: 0;
-            transform: rotate(90deg) scale(0.4);
+            transform: rotate(90deg) scale(0.3);
         }
 
         body.light .moon-icon {
             opacity: 1;
             transform: rotate(0deg) scale(1);
+        }
+
+        /* Bounce-in effect on the entire toggle button during switch */
+        .theme-toggle.switching {
+            animation: toggleBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes toggleBounce {
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.25);
+            }
+
+            50% {
+                transform: scale(0.92);
+            }
+
+            75% {
+                transform: scale(1.06);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
     </style>
 </head>
@@ -392,41 +468,32 @@
                 </div>
             </div>
 
+            <!-- Icon 1: Home -->
             <button class="nav-item active">
                 <svg class="icon" viewBox="0 0 24 24">
-                    <rect x="4.5" y="4.5" width="6" height="6" rx="1.5"></rect>
-                    <rect x="13.5" y="4.5" width="6" height="6" rx="1.5"></rect>
-                    <rect x="4.5" y="13.5" width="6" height="6" rx="1.5"></rect>
-                    <rect x="13.5" y="13.5" width="6" height="6" rx="1.5"></rect>
+                    <path
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1">
+                    </path>
                 </svg>
             </button>
 
             <div class="separator"></div>
 
+            <!-- Icon 2: Search -->
             <button class="nav-item">
                 <svg class="icon" viewBox="0 0 24 24">
-                    <line x1="7" y1="17" x2="7" y2="11"></line>
-                    <line x1="12" y1="17" x2="12" y2="5"></line>
-                    <line x1="17" y1="17" x2="17" y2="8"></line>
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
                 </svg>
             </button>
 
             <div class="separator"></div>
 
+            <!-- Icon 3: User -->
             <button class="nav-item">
                 <svg class="icon" viewBox="0 0 24 24">
-                    <polygon points="12 4 4 8 12 12 20 8"></polygon>
-                    <polyline points="4 12 12 16 20 12"></polyline>
-                    <polyline points="4 16 12 20 20 16"></polyline>
-                </svg>
-            </button>
-
-            <div class="separator"></div>
-
-            <button class="nav-item">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <rect x="3" y="6" width="18" height="12" rx="2"></rect>
-                    <path d="M16 10h3.5a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5H16"></path>
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </button>
 
@@ -434,7 +501,9 @@
 
         <div class="spacer"></div>
 
+        <!-- Theme Toggle with Bubble Animation -->
         <button class="theme-toggle" id="themeBtn">
+            <div class="theme-bubble" id="themeBubble"></div>
             <div class="theme-toggle-inner">
                 <svg class="icon sun-icon" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="4.5"></circle>
@@ -449,10 +518,6 @@
                 </svg>
                 <svg class="icon moon-icon" viewBox="0 0 24 24">
                     <path d="M19 15.5A8.5 8.5 0 1 1 9.5 4.5 7.5 7.5 0 0 0 19 15.5z"></path>
-                    <line x1="17" y1="3" x2="17" y2="7"></line>
-                    <line x1="15" y1="5" x2="19" y2="5"></line>
-                    <line x1="21" y1="8" x2="21" y2="10"></line>
-                    <line x1="20" y1="9" x2="22" y2="9"></line>
                 </svg>
             </div>
         </button>
@@ -466,7 +531,6 @@
 
             // Calculate and execute hardware-accelerated slide 
             function moveIndicator(item) {
-                // Automatically syncs to the physical DOM location of the button
                 indicator.style.transform = `translateX(${item.offsetLeft}px)`;
             }
 
@@ -476,7 +540,6 @@
                 setTimeout(() => {
                     indicator.style.transition = 'none';
                     moveIndicator(activeItem);
-                    // Force layout reflow before re-enabling smooth physics
                     void indicator.offsetWidth;
                     indicator.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.2, 0.64, 1)';
                 }, 0);
@@ -484,7 +547,6 @@
 
             // Core Interaction Engine
             navItems.forEach(item => {
-                // Connect the "jelly" push down effect for the heavy gold plate natively to pointer events
                 item.addEventListener('pointerdown', () => indicatorScale.style.setProperty('--scale', '0.9'));
                 item.addEventListener('pointerup', () => indicatorScale.style.setProperty('--scale', '1'));
                 item.addEventListener('pointerleave', () => indicatorScale.style.setProperty('--scale', '1'));
@@ -498,7 +560,7 @@
                 });
             });
 
-            // Keep UI locked onto the correct button gracefully during window resizes
+            // Keep UI locked onto the correct button during window resizes
             window.addEventListener('resize', () => {
                 const currentActive = document.querySelector('.nav-item.active');
                 if (currentActive) {
@@ -509,10 +571,29 @@
                 }
             });
 
-            // Smooth Theme Swap
+            // ═══ Bubbly Smooth Theme Switch ═══
             const themeBtn = document.getElementById('themeBtn');
+            const themeBubble = document.getElementById('themeBubble');
+
             themeBtn.addEventListener('click', () => {
+                // 1. Fire the bubble ripple
+                themeBubble.classList.remove('pop');
+                void themeBubble.offsetWidth; // reflow to restart animation
+                themeBubble.classList.add('pop');
+
+                // 2. Bounce the entire toggle button
+                themeBtn.classList.remove('switching');
+                void themeBtn.offsetWidth;
+                themeBtn.classList.add('switching');
+
+                // 3. Toggle theme
                 document.body.classList.toggle('light');
+
+                // Clean up animation classes
+                setTimeout(() => {
+                    themeBtn.classList.remove('switching');
+                    themeBubble.classList.remove('pop');
+                }, 800);
             });
         });
     </script>
