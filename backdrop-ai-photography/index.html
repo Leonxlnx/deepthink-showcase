@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BackDrop - AI Product Photography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Modern CSS Reset & Vars */
+        :root {
+            --bg-base: #000000;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --hover-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Top Radial Glow */
+        .ambient-glow {
+            position: absolute;
+            top: -20vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            height: 60vh;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.07) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* High-Performance Pure CSS Starry Dust */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            z-index: 0;
+            pointer-events: none;
+            box-shadow:
+                -350px 80px 0 0px rgba(255, 255, 255, 0.7),
+                280px 120px 0 1px rgba(255, 255, 255, 0.5),
+                -150px 60px 0 0px rgba(255, 255, 255, 0.8),
+                180px 90px 0 0.5px rgba(255, 255, 255, 0.4),
+                350px 70px 0 0px rgba(255, 255, 255, 0.6),
+                -400px 150px 0 0.5px rgba(255, 255, 255, 0.5),
+                220px 180px 0 0px rgba(255, 255, 255, 0.7),
+                -200px 210px 0 0.5px rgba(255, 255, 255, 0.5),
+                120px 240px 0 0px rgba(255, 255, 255, 0.6),
+                -100px 200px 0 0.5px rgba(255, 255, 255, 0.4),
+                40px 110px 0 1px rgba(255, 255, 255, 0.8),
+                70px 180px 0 0px rgba(255, 255, 255, 0.5),
+                -60px 140px 0 0.5px rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .stars::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: transparent;
+            border-radius: 50%;
+            box-shadow:
+                -250px 50px 0 0px rgba(255, 255, 255, 0.5),
+                150px 80px 0 0.5px rgba(255, 255, 255, 0.4),
+                -50px 90px 0 1px rgba(255, 255, 255, 0.6),
+                300px 130px 0 0px rgba(255, 255, 255, 0.7),
+                -320px 190px 0 0.5px rgba(255, 255, 255, 0.5),
+                270px 200px 0 0px rgba(255, 255, 255, 0.6),
+                -180px 240px 0 0.5px rgba(255, 255, 255, 0.8),
+                80px 270px 0 0px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Navigation Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            position: relative;
+            z-index: 20;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+        }
+
+        .logo svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Glassmorphism Pill Menu */
+        nav {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 28px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 10px 32px;
+            border-radius: 100px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a.active,
+        nav a:hover {
+            color: var(--text-main);
+        }
+
+        /* Premium Interface Buttons */
+        .btn {
+            background: var(--glass-bg);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background: var(--hover-bg);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-header {
+            padding: 10px 24px;
+        }
+
+        .btn-main {
+            padding: 14px 32px;
+            font-size: 15px;
+        }
+
+        /* Hero Text Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            padding-top: 80px;
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 500;
+            line-height: 1.15;
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+            max-width: 800px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        /* 3D Overlapping Gallery Deck */
+        .gallery-wrapper {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            perspective: 1200px;
+            overflow: hidden;
+        }
+
+        .card {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            will-change: transform, filter;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        .card-3 {
+            width: 310px;
+            height: 450px;
+            transform: translate(-50%, 0) rotate(0deg);
+            z-index: 3;
+            border-top-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 1), 0 0 30px rgba(255, 255, 255, 0.05);
+        }
+
+        .card-2 {
+            width: 270px;
+            height: 390px;
+            transform: translate(calc(-50% - 180px), 35px) rotate(-6deg);
+            z-index: 2;
+            filter: brightness(0.75);
+        }
+
+        .card-4 {
+            width: 270px;
+            height: 390px;
+            transform: translate(calc(-50% + 180px), 35px) rotate(6deg);
+            z-index: 2;
+            filter: brightness(0.75);
+        }
+
+        .card-1 {
+            width: 230px;
+            height: 340px;
+            transform: translate(calc(-50% - 330px), 80px) rotate(-12deg);
+            z-index: 1;
+            filter: brightness(0.45);
+        }
+
+        .card-5 {
+            width: 230px;
+            height: 340px;
+            transform: translate(calc(-50% + 330px), 80px) rotate(12deg);
+            z-index: 1;
+            filter: brightness(0.45);
+        }
+
+        .gallery-wrapper:hover .card {
+            filter: brightness(0.35);
+        }
+
+        .gallery-wrapper .card:hover {
+            z-index: 10;
+            filter: brightness(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 1), 0 0 40px rgba(255, 255, 255, 0.15);
+        }
+
+        .gallery-wrapper .card-3:hover {
+            transform: translate(-50%, -20px) rotate(0deg) scale(1.03);
+        }
+
+        .gallery-wrapper .card-2:hover {
+            transform: translate(calc(-50% - 195px), 15px) rotate(-3deg) scale(1.04);
+        }
+
+        .gallery-wrapper .card-4:hover {
+            transform: translate(calc(-50% + 195px), 15px) rotate(3deg) scale(1.04);
+        }
+
+        .gallery-wrapper .card-1:hover {
+            transform: translate(calc(-50% - 345px), 60px) rotate(-8deg) scale(1.05);
+        }
+
+        .gallery-wrapper .card-5:hover {
+            transform: translate(calc(-50% + 345px), 60px) rotate(8deg) scale(1.05);
+        }
+
+        .bottom-mask {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0.85) 45%, transparent 100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+            h1 {
+                font-size: 46px;
+            }
+
+            .card-1,
+            .card-5 {
+                display: none;
+            }
+
+            .card-2 {
+                transform: translate(calc(-50% - 160px), 35px) rotate(-6deg);
+            }
+
+            .card-4 {
+                transform: translate(calc(-50% + 160px), 35px) rotate(6deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 24px;
+            }
+
+            nav {
+                position: relative;
+                left: 0;
+                transform: none;
+                width: 100%;
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 36px;
+                padding: 0 20px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+                padding: 0 20px;
+            }
+
+            .card-2,
+            .card-4 {
+                display: none;
+            }
+
+            .card-3 {
+                width: 280px;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="stars"></div>
+
+    <header>
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="4" width="6" height="6" rx="1.5" fill="#a1a1aa" />
+                <rect x="14" y="4" width="6" height="6" rx="1.5" fill="#fff" />
+                <rect x="4" y="14" width="6" height="6" rx="1.5" fill="#fff" />
+                <rect x="14" y="14" width="6" height="6" rx="1.5" fill="#fff" />
+            </svg>
+            BackDrop
+        </div>
+
+        <nav>
+            <a href="#" class="active">Home</a>
+            <a href="#">About</a>
+            <a href="#">Features</a>
+            <a href="#">Pricing</a>
+        </nav>
+
+        <a href="#" class="btn btn-header">Get Started</a>
+    </header>
+
+    <main>
+        <h1>AI Product Photography for<br>E-commerce Brands</h1>
+
+        <p class="subtitle">Generate realistic lifestyle visuals from one simple upload perfect<br>for Shopify stores,
+            ads, and product launches.</p>
+
+        <a href="#" class="btn btn-main">Get Started</a>
+
+        <div class="gallery-wrapper">
+            <div class="card card-1">
+                <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800"
+                    alt="Pink Glass Perfume">
+            </div>
+
+            <div class="card card-2">
+                <img src="https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&q=80&w=600&h=800"
+                    alt="Liquid Product Splash Pour">
+            </div>
+
+            <div class="card card-3">
+                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=800&h=1100"
+                    alt="Vibrant Floral Pink Beverage">
+            </div>
+
+            <div class="card card-4">
+                <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=600&h=800"
+                    alt="Green Skincare Nature Scene">
+            </div>
+
+            <div class="card card-5">
+                <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=600&h=800"
+                    alt="Pink Sand Desert Cosmetic Landscape">
+            </div>
+
+            <div class="bottom-mask"></div>
+        </div>
+    </main>
+
+</body>
+
+</html>
